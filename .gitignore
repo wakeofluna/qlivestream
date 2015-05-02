@@ -1,0 +1,3 @@
+# Build directories and Eclipse stuff
+build-*/
+.settings/

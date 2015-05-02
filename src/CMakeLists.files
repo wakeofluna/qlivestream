@@ -1,0 +1,22 @@
+set (QT_HEADER_FILES
+)
+
+set (QT_FORMS
+)
+
+set (QT_RESOURCES
+)
+
+set (HEADER_FILES
+	${QT_HEADER_FILES}
+)
+
+set (SOURCE_FILES
+	main.cpp
+)
+
+source_group("Source Files" FILES ${SOURCE_FILES})
+source_group("Header Files" FILES ${HEADER_FILES})
+source_group("Forms" FILES ${QT_FORMS})
+source_group("Resources" FILES ${QT_RESOURCES})
+source_group("" FILES CMakeLists.txt CMakeLists.files)
