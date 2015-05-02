@@ -2,6 +2,9 @@
 #define FORMS_FORM_BASE_H_
 
 #include <QWidget>
+#include <QSettings>
+
+class QSettings;
 
 namespace forms
 {
@@ -15,7 +18,9 @@ public:
 
 protected:
 	typedef T ui_type;
+
 	T * ui;
+	QSettings * settings;
 };
 
 } // namespace forms

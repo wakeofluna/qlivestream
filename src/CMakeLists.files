@@ -11,6 +11,9 @@ set (QT_RESOURCES
 
 set (HEADER_FILES
 	${QT_HEADER_FILES}
+	forms/form_base.h
+	forms/form_base.hpp
+	config.h
 )
 
 set (SOURCE_FILES
