@@ -17,10 +17,14 @@ EditProfile::EditProfile(Profile & pProfile, QWidget * parent) : QDialog(parent,
 	ui->txtName->setText(mProfile.mName);
 	ui->txtAccount->setText(mProfile.mAccount);
 
+	bool lIsNewProfile = mProfile.mAccount.isEmpty();
+
 	mCheckboxes.reserve(AuthScope::max);
 	for (int i = 0; i < AuthScope::max; ++i)
 	{
 		AuthScope lScope((AuthScope::Scope)i);
+		if (lIsNewProfile && lScope.isDefault())
+			mProfile.mRequested.set(lScope);
 
 		QCheckBox * lCheckBox = new QCheckBox(this);
 		lCheckBox->setText(lScope.description());

@@ -62,7 +62,8 @@ public:
 	QString toString() const;
 	static AuthScope fromString(QString pString);
 
-	inline bool valid() const { return mScope >= 0 && mScope < max; }
+	bool isDefault() const;
+	inline bool isValid() const { return mScope >= 0 && mScope < max; }
 
 private:
 	Scope mScope;

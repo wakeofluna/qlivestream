@@ -93,7 +93,6 @@ QString AuthScope::toString() const
 			Q_ASSERT_X(false, "AuthScope", "invalid scope");
 			return QString();
 	}
-
 }
 
 AuthScope AuthScope::fromString(QString pString)
@@ -106,6 +105,29 @@ AuthScope AuthScope::fromString(QString pString)
 	}
 
 	return AuthScope(max_auth_scope);
+}
+
+bool AuthScope::isDefault() const
+{
+	switch (mScope)
+	{
+		case user_blocks_edit:
+		case user_blocks_read:
+		case channel_editor:
+		case channel_commercial:
+		case channel_subscriptions:
+		case channel_check_subscription:
+		case chat_login:
+			return true;
+
+		case user_read:
+		case user_follows_edit:
+		case user_subscriptions:
+		case channel_read:
+		case channel_stream:
+		case max_auth_scope:
+			return false;
+	}
 }
 
 AuthScopes::AuthScopes()
