@@ -35,7 +35,7 @@ public:
 		return *this;
 	}
 
-private:
+protected:
 	std::bitset<T::max> c;
 
 	inline size_t value(T pos) const

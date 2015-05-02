@@ -116,6 +116,11 @@ AuthScopes::~AuthScopes()
 {
 }
 
+void AuthScopes::setAll()
+{
+	c.set();
+}
+
 QString AuthScopes::toString() const
 {
 	QString lString;

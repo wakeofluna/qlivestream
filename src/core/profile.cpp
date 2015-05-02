@@ -4,6 +4,7 @@
 #include <QApplication>
 #include <QSettings>
 #include <QStringList>
+#include <QVariant>
 
 Profile::Profile()
 {
@@ -36,6 +37,14 @@ Profile Profile::load(QString pName)
 	lProfile.mName = pName;
 	lProfile.mAccount = settings.value("account").toString();
 
+	for (int i = 0; i < AuthScope::max; ++i)
+	{
+		AuthScope lScope((AuthScope::Scope)i);
+		bool lSet = settings.value(lScope.toString(), false).toBool();
+		if (lSet)
+			lProfile.mRequested.set(lScope);
+	}
+
 	return lProfile;
 }
 
@@ -49,4 +58,10 @@ void Profile::save() const
 	settings.beginGroup("Profiles");
 	settings.beginGroup(mName);
 	settings.setValue("account", mAccount);
+
+	for (int i = 0; i < AuthScope::max; ++i)
+	{
+		AuthScope lScope((AuthScope::Scope)i);
+		settings.setValue(lScope.toString(), mRequested.test(lScope));
+	}
 }

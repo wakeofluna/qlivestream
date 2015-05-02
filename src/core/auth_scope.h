@@ -74,6 +74,8 @@ public:
 	AuthScopes();
 	~AuthScopes();
 
+	void setAll();
+
 	QString toString() const;
 	static AuthScopes fromString(QString pString);
 };

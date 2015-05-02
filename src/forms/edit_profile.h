@@ -2,8 +2,10 @@
 #define FORMS_EDIT_PROFILE_H_
 
 #include <QDialog>
+#include <QVector>
 
 class Profile;
+class QCheckBox;
 class QSettings;
 
 namespace Ui
@@ -28,6 +30,7 @@ public slots:
 private:
 	Ui::EditProfile * ui;
 	Profile & mProfile;
+	QVector<QCheckBox*> mCheckboxes;
 };
 
 } // namespace forms
