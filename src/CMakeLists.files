@@ -11,12 +11,16 @@ set (QT_RESOURCES
 
 set (HEADER_FILES
 	${QT_HEADER_FILES}
+	core/auth_scope.h
+	core/class_bitset.h
+	core/first_time.h
 	forms/form_base.h
 	forms/form_base.hpp
 	config.h
 )
 
 set (SOURCE_FILES
+	core/auth_scope.cpp
 	forms/select_profile.cpp
 	main.cpp
 )
