@@ -33,8 +33,10 @@ private:
 	void enableSave() const;
 
 	Ui::EditProfile * ui;
-	Profile & mProfile;
 	QVector<QCheckBox*> mCheckboxes;
+
+	Profile & mProfile;
+	QString mOriginalName;
 };
 
 } // namespace forms

@@ -48,20 +48,43 @@ Profile Profile::load(QString pName)
 	return lProfile;
 }
 
-void Profile::save() const
+void Profile::erase(QString pName)
 {
-	if (!isValid())
-		return;
-
 	SETTINGS(settings);
 
-	settings.beginGroup("Profiles");
-	settings.beginGroup(mName);
-	settings.setValue("account", mAccount);
+	eraseImpl(settings, pName);
+}
+
+void Profile::saveAndReplace(QString pOldName) const
+{
+	SETTINGS(settings);
+
+	if (!pOldName.isEmpty())
+		eraseImpl(settings, pOldName);
+
+	if (!mName.isEmpty())
+		saveImpl(settings);
+}
+
+void Profile::eraseImpl(QSettings & pSettings, QString pName)
+{
+	pSettings.beginGroup("Profiles");
+	pSettings.remove(pName);
+	pSettings.endGroup();
+}
+
+void Profile::saveImpl(QSettings & pSettings) const
+{
+	pSettings.beginGroup("Profiles");
+	pSettings.beginGroup(mName);
+	pSettings.setValue("account", mAccount);
 
 	for (int i = 0; i < AuthScope::max; ++i)
 	{
 		AuthScope lScope((AuthScope::Scope)i);
-		settings.setValue(lScope.toString(), mRequested.test(lScope));
+		pSettings.setValue(lScope.toString(), mRequested.test(lScope));
 	}
+
+	pSettings.endGroup();
+	pSettings.endGroup();
 }

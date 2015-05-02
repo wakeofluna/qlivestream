@@ -4,6 +4,7 @@
 #include "auth_scope.h"
 
 #include <QString>
+class QSettings;
 class QStringList;
 
 namespace forms
@@ -28,7 +29,11 @@ private:
 
 	static QStringList listProfiles();
 	static Profile load(QString pName);
-	void save() const;
+	static void erase(QString pName);
+	void saveAndReplace(QString pOldName) const;
+
+	static void eraseImpl(QSettings & pSettings, QString pName);
+	void saveImpl(QSettings & pSettings) const;
 
 	QString    mName;
 	QString    mAccount;

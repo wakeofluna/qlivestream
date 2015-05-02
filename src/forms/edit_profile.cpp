@@ -15,6 +15,7 @@ EditProfile::EditProfile(Profile & pProfile, QWidget * parent) : QDialog(parent,
 	ui = new Ui::EditProfile();
 	ui->setupUi(this);
 
+	mOriginalName = mProfile.mName;
 	ui->txtName->setText(mProfile.mName);
 	ui->txtAccount->setText(mProfile.mAccount);
 
@@ -68,7 +69,7 @@ void EditProfile::on_btnBox_accepted()
 			mProfile.mRequested.reset(lScope);
 	}
 
-	mProfile.save();
+	mProfile.saveAndReplace(mOriginalName);
 	accept();
 }
 
