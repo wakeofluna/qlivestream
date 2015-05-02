@@ -25,9 +25,13 @@ public:
 	~EditProfile();
 
 public slots:
+	void on_txtName_textChanged(QString const & pText);
+	void on_txtAccount_textChanged(QString const & pText);
 	void on_btnBox_accepted();
 
 private:
+	void enableSave() const;
+
 	Ui::EditProfile * ui;
 	Profile & mProfile;
 	QVector<QCheckBox*> mCheckboxes;

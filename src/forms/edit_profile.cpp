@@ -4,6 +4,7 @@
 #include "core/profile.h"
 
 #include <QCheckBox>
+#include <QPushButton>
 #include <QSettings>
 
 namespace forms
@@ -34,11 +35,23 @@ EditProfile::EditProfile(Profile & pProfile, QWidget * parent) : QDialog(parent,
 		mCheckboxes.append(lCheckBox);
 		ui->layScopes->addWidget(lCheckBox);
 	}
+
+	enableSave();
 }
 
 EditProfile::~EditProfile()
 {
 	delete ui;
+}
+
+void EditProfile::on_txtName_textChanged(QString const & pText)
+{
+	enableSave();
+}
+
+void EditProfile::on_txtAccount_textChanged(QString const & pText)
+{
+	enableSave();
 }
 
 void EditProfile::on_btnBox_accepted()
@@ -57,6 +70,12 @@ void EditProfile::on_btnBox_accepted()
 
 	mProfile.save();
 	accept();
+}
+
+void EditProfile::enableSave() const
+{
+	QPushButton * lButton = ui->btnBox->button(QDialogButtonBox::Save);
+	lButton->setEnabled(!ui->txtName->text().isEmpty() && !ui->txtAccount->text().isEmpty());
 }
 
 } // namespace forms
