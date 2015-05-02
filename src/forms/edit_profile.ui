@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>506</width>
     <height>181</height>
    </rect>
   </property>
@@ -53,29 +53,12 @@
    <item row="3" column="1">
     <widget class="QDialogButtonBox" name="btnBox">
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Discard|QDialogButtonBox::Save</set>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>btnBox</sender>
-   <signal>rejected()</signal>
-   <receiver>EditProfile</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>249</x>
-     <y>160</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>199</x>
-     <y>90</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

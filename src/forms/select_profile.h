@@ -25,7 +25,7 @@ public:
 public slots:
 	void updateProfiles();
 
-public slots:
+private slots:
 	void on_btnEdit_clicked();
 	void on_btnBox_accepted();
 

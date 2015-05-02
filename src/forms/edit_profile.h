@@ -5,6 +5,7 @@
 #include <QVector>
 
 class Profile;
+class QAbstractButton;
 class QCheckBox;
 class QSettings;
 
@@ -24,10 +25,10 @@ public:
 	explicit EditProfile(Profile & pProfile, QWidget * parent = 0);
 	~EditProfile();
 
-public slots:
+private slots:
 	void on_txtName_textChanged(QString const & pText);
 	void on_txtAccount_textChanged(QString const & pText);
-	void on_btnBox_accepted();
+	void on_btnBox_clicked(QAbstractButton * pButton);
 
 private:
 	void enableSave() const;

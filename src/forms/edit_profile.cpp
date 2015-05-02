@@ -4,6 +4,7 @@
 #include "core/profile.h"
 
 #include <QCheckBox>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QSettings>
 
@@ -20,6 +21,8 @@ EditProfile::EditProfile(Profile & pProfile, QWidget * parent) : QDialog(parent,
 	ui->txtAccount->setText(mProfile.mAccount);
 
 	bool lIsNewProfile = mProfile.mAccount.isEmpty();
+	if (lIsNewProfile)
+		ui->btnBox->button(QDialogButtonBox::Discard)->setEnabled(false);
 
 	mCheckboxes.reserve(AuthScope::max);
 	for (int i = 0; i < AuthScope::max; ++i)
@@ -55,22 +58,38 @@ void EditProfile::on_txtAccount_textChanged(QString const & pText)
 	enableSave();
 }
 
-void EditProfile::on_btnBox_accepted()
+void EditProfile::on_btnBox_clicked(QAbstractButton * pButton)
 {
-	mProfile.mName = ui->txtName->text();
-	mProfile.mAccount = ui->txtAccount->text();
-
-	for (int i = 0; i < AuthScope::max; ++i)
+	if (pButton == ui->btnBox->button(QDialogButtonBox::Save))
 	{
-		AuthScope lScope((AuthScope::Scope)i);
-		if (mCheckboxes[i]->checkState() == Qt::Checked)
-			mProfile.mRequested.set(lScope);
-		else
-			mProfile.mRequested.reset(lScope);
-	}
+		mProfile.mName = ui->txtName->text();
+		mProfile.mAccount = ui->txtAccount->text();
 
-	mProfile.saveAndReplace(mOriginalName);
-	accept();
+		for (int i = 0; i < AuthScope::max; ++i)
+		{
+			AuthScope lScope((AuthScope::Scope)i);
+			if (mCheckboxes[i]->checkState() == Qt::Checked)
+				mProfile.mRequested.set(lScope);
+			else
+				mProfile.mRequested.reset(lScope);
+		}
+
+		mProfile.saveAndReplace(mOriginalName);
+		accept();
+	}
+	else if (pButton == ui->btnBox->button(QDialogButtonBox::Discard))
+	{
+		int lAnswer = QMessageBox::question(this, tr("Remove profile"), tr("Are you sure you want to remove this profile?"));
+		if (lAnswer == QDialogButtonBox::Yes)
+		{
+			Profile::erase(mOriginalName);
+			accept();
+		}
+	}
+	else if (pButton == ui->btnBox->button(QDialogButtonBox::Cancel))
+	{
+		reject();
+	}
 }
 
 void EditProfile::enableSave() const
