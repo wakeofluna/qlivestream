@@ -15,7 +15,18 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QComboBox" name="cbbProfile"/>
+    <layout class="QHBoxLayout" name="layEdit">
+     <item>
+      <widget class="QComboBox" name="cbbProfile"/>
+     </item>
+     <item>
+      <widget class="QToolButton" name="btnEdit">
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="btnBox">

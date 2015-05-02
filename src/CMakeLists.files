@@ -1,8 +1,10 @@
 set (QT_HEADER_FILES
+	forms/edit_profile.h
 	forms/select_profile.h
 )
 
 set (QT_FORMS
+	forms/edit_profile.ui
 	forms/select_profile.ui
 )
 
@@ -14,13 +16,14 @@ set (HEADER_FILES
 	core/auth_scope.h
 	core/class_bitset.h
 	core/first_time.h
-	forms/form_base.h
-	forms/form_base.hpp
+	core/profile.h
 	config.h
 )
 
 set (SOURCE_FILES
 	core/auth_scope.cpp
+	core/profile.cpp
+	forms/edit_profile.cpp
 	forms/select_profile.cpp
 	main.cpp
 )

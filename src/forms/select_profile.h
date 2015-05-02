@@ -1,8 +1,10 @@
 #ifndef FORMS_SELECT_PROFILE_H_
 #define FORMS_SELECT_PROFILE_H_
 
-#include "form_base.h"
 #include <QWidget>
+
+class QSettings;
+class Profile;
 
 namespace Ui
 {
@@ -12,16 +14,23 @@ namespace Ui
 namespace forms
 {
 
-class SelectProfile : public FormBase<Ui::SelectProfile>
+class SelectProfile : public QWidget
 {
 Q_OBJECT
 
 public:
-	explicit SelectProfile(QWidget * parent = 0, Qt::WindowFlags f = 0);
+	explicit SelectProfile(QWidget * parent = 0);
 	~SelectProfile();
 
 public slots:
+	void updateProfiles();
+
+public slots:
+	void on_btnEdit_clicked();
 	void on_btnBox_accepted();
+
+private:
+	Ui::SelectProfile * ui;
 };
 
 } // namespace forms
