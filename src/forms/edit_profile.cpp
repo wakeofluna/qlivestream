@@ -83,6 +83,8 @@ void EditProfile::on_btnBox_clicked(QAbstractButton * pButton)
 		if (lAnswer == QDialogButtonBox::Yes)
 		{
 			Profile::erase(mOriginalName);
+			mProfile.mName.clear();
+			mProfile.mAccount.clear();
 			accept();
 		}
 	}

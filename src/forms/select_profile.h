@@ -22,6 +22,8 @@ public:
 	explicit SelectProfile(QWidget * parent = 0);
 	~SelectProfile();
 
+	bool setSelected(QString pName);
+
 public slots:
 	void updateProfiles();
 
@@ -30,6 +32,8 @@ private slots:
 	void on_btnBox_accepted();
 
 private:
+	Profile loadSelectedProfile();
+
 	Ui::SelectProfile * ui;
 };
 

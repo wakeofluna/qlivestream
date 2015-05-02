@@ -19,10 +19,28 @@ SelectProfile::SelectProfile(QWidget * parent) : QWidget(parent, Qt::Window)
 	ui->setupUi(this);
 
 	updateProfiles();
+
+	SETTINGS(settings);
+	settings.beginGroup(objectName());
+	setSelected(settings.value("last_selected").toString());
 }
 
 SelectProfile::~SelectProfile()
 {
+}
+
+bool SelectProfile::setSelected(QString pName)
+{
+	for (int i = 0; i < ui->cbbProfile->count(); ++i)
+	{
+		if (ui->cbbProfile->itemText(i) == pName)
+		{
+			ui->cbbProfile->setCurrentIndex(i);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void SelectProfile::updateProfiles()
@@ -31,33 +49,51 @@ void SelectProfile::updateProfiles()
 
 	ui->cbbProfile->clear();
 	ui->cbbProfile->addItems(lProfiles);
-	ui->cbbProfile->addItem("[add new]");
+	ui->cbbProfile->addItem(tr("[add new]"));
 }
 
 void SelectProfile::on_btnEdit_clicked()
+{
+	Profile lProfile = loadSelectedProfile();
+
+	EditProfile * lEditProfile = new EditProfile(lProfile, this);
+	int lResult = lEditProfile->exec();
+	if (lResult == QDialog::Accepted)
+	{
+		QString lSelected = lProfile.mName;
+		updateProfiles();
+		setSelected(lSelected);
+	}
+}
+
+void SelectProfile::on_btnBox_accepted()
+{
+	Profile lProfile = loadSelectedProfile();
+	if (!lProfile.isValid())
+	{
+		on_btnEdit_clicked();
+		return;
+	}
+
+	SETTINGS(settings);
+	settings.beginGroup(objectName());
+	settings.setValue("last_selected", lProfile.mName);
+}
+
+Profile SelectProfile::loadSelectedProfile()
 {
 	Profile lProfile;
 
 	int lIndex = ui->cbbProfile->currentIndex();
 	if (lIndex < ui->cbbProfile->count() - 1)
 	{
-		lProfile = Profile::load(ui->cbbProfile->itemText(lIndex));
+		QString lName = ui->cbbProfile->itemText(lIndex);
+		lProfile = Profile::load(lName);
 		if (!lProfile.isValid())
-		{
 			QMessageBox::critical(this, tr("Error in configuration"), tr("Failed to load profile"));
-			return;
-		}
 	}
 
-	EditProfile * lEditProfile = new EditProfile(lProfile, this);
-
-	QDialog::DialogCode lResult = (QDialog::DialogCode) lEditProfile->exec();
-	if (lResult == QDialog::Accepted)
-		updateProfiles();
-}
-
-void SelectProfile::on_btnBox_accepted()
-{
+	return lProfile;
 }
 
 } // namespace forms
