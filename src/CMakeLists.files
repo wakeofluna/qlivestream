@@ -1,7 +1,9 @@
 set (QT_HEADER_FILES
+	forms/select_profile.h
 )
 
 set (QT_FORMS
+	forms/select_profile.ui
 )
 
 set (QT_RESOURCES
@@ -12,6 +14,7 @@ set (HEADER_FILES
 )
 
 set (SOURCE_FILES
+	forms/select_profile.cpp
 	main.cpp
 )
 
