@@ -155,7 +155,7 @@ QString AuthScopes::toString() const
 		if (!test(lScope))
 			continue;
 
-		if (lFirst)
+		if (!lFirst)
 			lStream << '+';
 
 		lStream << lScope.toString();

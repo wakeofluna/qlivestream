@@ -3,6 +3,8 @@
 #include "ui_select_profile.h"
 #include "core/profile.h"
 #include "edit_profile.h"
+#include "perform_login.h"
+#include "main_window.h"
 
 #include <QComboBox>
 #include <QMessageBox>
@@ -57,6 +59,8 @@ void SelectProfile::on_btnEdit_clicked()
 	Profile lProfile = loadSelectedProfile();
 
 	EditProfile * lEditProfile = new EditProfile(lProfile, this);
+	lEditProfile->setAttribute(Qt::WA_DeleteOnClose);
+
 	int lResult = lEditProfile->exec();
 	if (lResult == QDialog::Accepted)
 	{
@@ -78,6 +82,17 @@ void SelectProfile::on_btnBox_accepted()
 	SETTINGS(settings);
 	settings.beginGroup(objectName());
 	settings.setValue("last_selected", lProfile.mName);
+
+	PerformLogin * lPerformLogin = new PerformLogin(lProfile, this);
+	lPerformLogin->setAttribute(Qt::WA_DeleteOnClose);
+	int lResult = lPerformLogin->exec();
+	if (lResult == QDialog::Accepted)
+	{
+		MainWindow * lMainWindow = new MainWindow(lProfile);
+		lMainWindow->setAttribute(Qt::WA_DeleteOnClose);
+		lMainWindow->show();
+		close();
+	}
 }
 
 Profile SelectProfile::loadSelectedProfile()

@@ -9,8 +9,9 @@ int main(int argc, char **argv)
 	qapp.setOrganizationName("AstralKey");
 	qapp.setApplicationName(APP_NAME);
 
-	forms::SelectProfile lWindow;
-	lWindow.show();
+	forms::SelectProfile * lWindow = new forms::SelectProfile();
+	lWindow->setAttribute(Qt::WA_DeleteOnClose);
+	lWindow->show();
 
 	return qapp.exec();
 }

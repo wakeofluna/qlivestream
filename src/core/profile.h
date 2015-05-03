@@ -11,6 +11,7 @@ namespace forms
 {
 	class SelectProfile;
 	class EditProfile;
+	class PerformLogin;
 }
 
 class Profile
@@ -25,6 +26,7 @@ public:
 private:
 	friend class forms::SelectProfile;
 	friend class forms::EditProfile;
+	friend class forms::PerformLogin;
 	Profile();
 
 	static QStringList listProfiles();
