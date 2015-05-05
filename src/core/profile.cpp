@@ -36,6 +36,7 @@ Profile Profile::load(QString pName)
 	settings.beginGroup(pName);
 	lProfile.mName = pName;
 	lProfile.mAccount = settings.value("account").toString();
+	lProfile.mAuthToken = settings.value("token").toString();
 
 	for (int i = 0; i < AuthScope::max; ++i)
 	{
@@ -53,6 +54,11 @@ void Profile::erase(QString pName)
 	SETTINGS(settings);
 
 	eraseImpl(settings, pName);
+}
+
+void Profile::save() const
+{
+	saveAndReplace(mName);
 }
 
 void Profile::saveAndReplace(QString pOldName) const
@@ -78,6 +84,7 @@ void Profile::saveImpl(QSettings & pSettings) const
 	pSettings.beginGroup("Profiles");
 	pSettings.beginGroup(mName);
 	pSettings.setValue("account", mAccount);
+	pSettings.setValue("token", mAuthToken);
 
 	for (int i = 0; i < AuthScope::max; ++i)
 	{

@@ -20,6 +20,7 @@ set (HEADER_FILES
 	core/auth_scope.h
 	core/class_bitset.h
 	core/first_time.h
+	core/network_access.h
 	core/profile.h
 	config.h
 )
@@ -29,6 +30,7 @@ set (SOURCE_FILES
 	core/profile.cpp
 	forms/edit_profile.cpp
 	forms/main_window.cpp
+	core/network_access.cpp
 	forms/perform_login.cpp
 	forms/select_profile.cpp
 	main.cpp

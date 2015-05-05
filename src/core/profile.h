@@ -21,6 +21,7 @@ public:
 
 	bool isValid() const;
 
+	inline QString getToken() const { return mAuthToken; }
 	inline AuthScopes const & privileges() const { return mAuthScope; }
 
 private:
@@ -32,6 +33,7 @@ private:
 	static QStringList listProfiles();
 	static Profile load(QString pName);
 	static void erase(QString pName);
+	void save() const;
 	void saveAndReplace(QString pOldName) const;
 
 	static void eraseImpl(QSettings & pSettings, QString pName);

@@ -6,7 +6,15 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QDesktopServices>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonValue>
+#include <QMessageBox>
+#include <QNetworkReply>
+#include <QSignalMapper>
 #include <QUrl>
+#include <QVariantList>
 
 namespace forms
 {
@@ -15,11 +23,59 @@ PerformLogin::PerformLogin(Profile & pProfile, QWidget * parent) : QDialog(paren
 {
 	ui = new Ui::PerformLogin();
 	ui->setupUi(this);
+
+	mStep = 0;
+
+	if (!mProfile.mAuthToken.isEmpty())
+	{
+		mStep = 1;
+		ui->stkFeedback->setCurrentIndex(mStep);
+	}
+
+	on_stkFeedback_currentChanged(ui->stkFeedback->currentIndex());
 }
 
 PerformLogin::~PerformLogin()
 {
 	delete ui;
+}
+
+void PerformLogin::on_stkFeedback_currentChanged(int pIndex)
+{
+	switch (pIndex)
+	{
+		case 0:
+		{
+			ui->prgStep->setValue(0);
+			ui->prgStep->setFormat("Acquiring token from Twitch");
+			break;
+		}
+
+		case 1:
+		{
+			ui->prgStep->setValue(20);
+			ui->prgStep->setFormat("Checking login token");
+
+
+			QNetworkRequest lRequest = networkRequest(&mProfile);
+
+			QUrl lUrl = networkUrl();
+			lRequest.setUrl(lUrl);
+
+			QNetworkAccessManager * lNetwork = network();
+			QNetworkReply * lReply = lNetwork->get(lRequest);
+
+			QSignalMapper * lMapper = new QSignalMapper(lReply);
+			lMapper->setMapping(lReply, lReply);
+			connect(lReply, SIGNAL(finished()), lMapper, SLOT(map()));
+			connect(lMapper, SIGNAL(mapped(QObject*)), this, SLOT(checkTokenFinished(QObject*)));
+
+			break;
+		}
+
+		default:
+			break;
+	}
 }
 
 void PerformLogin::on_btnAcquire_clicked()
@@ -52,8 +108,41 @@ void PerformLogin::on_txtToken_textChanged(QString const & pValue)
 
 void PerformLogin::on_btnToken_clicked()
 {
+	mProfile.mAuthToken = ui->txtToken->text();
+	mProfile.save();
+
 	// TODO goto next step in verification
 	accept();
+}
+
+void PerformLogin::checkTokenFinished(QObject * pObject)
+{
+	QNetworkReply * lReply = qobject_cast<QNetworkReply*>(pObject);
+
+	QByteArray lBytes = lReply->readAll();
+	lReply->deleteLater();
+
+	QJsonParseError lError;
+	QVariantMap lResponse = QJsonDocument::fromJson(lBytes, &lError).object().toVariantMap();
+	if (lError.error != QJsonParseError::NoError)
+	{
+		QMessageBox::critical(this, "Parse error in response", "Got invalid JSON reply from Twitch, cannot continue");
+		reject();
+		return;
+	}
+
+	QVariantMap lToken = lResponse.value("token").toMap();
+	bool lTokenValid = lToken.value("valid").toBool();
+	QVariantMap lTokenAuth = lToken.value("authorization").toMap();
+	QVariantList lTokenScopes = lTokenAuth.value("scopes").toList();
+	for (int i = 0; i < lTokenScopes.size(); ++i)
+	{
+		AuthScope lScope = AuthScope::fromString(lTokenScopes[i].toString());
+		mProfile.mAuthScope.set(lScope);
+	}
+
+	if (lTokenValid)
+		accept();
 }
 
 } // namespace forms

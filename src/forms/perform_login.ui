@@ -16,9 +16,6 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QProgressBar" name="prgStep">
-     <property name="value">
-      <number>0</number>
-     </property>
      <property name="format">
       <string notr="true"/>
      </property>
@@ -27,7 +24,7 @@
    <item>
     <widget class="QStackedWidget" name="stkFeedback">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="pagNoToken">
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -176,6 +173,7 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="page"/>
     </widget>
    </item>
   </layout>
