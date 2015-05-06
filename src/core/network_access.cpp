@@ -15,9 +15,12 @@ NetworkAccess::NetworkAccess()
 {
 	static QMutex lMutex;
 
-	QMutexLocker lLock(&lMutex);
 	if (mNetwork == nullptr)
-		mNetwork = new QNetworkAccessManager();
+	{
+		QMutexLocker lLock(&lMutex);
+		if (mNetwork == nullptr)
+			mNetwork = new QNetworkAccessManager();
+	}
 }
 
 NetworkAccess::~NetworkAccess()
