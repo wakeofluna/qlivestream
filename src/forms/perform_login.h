@@ -28,7 +28,7 @@ private slots:
 	void on_txtToken_textChanged(QString const & pValue);
 	void on_btnToken_clicked();
 
-	void checkTokenFinished(QObject * pObject);
+	void checkTokenFinished(QObject * pReply);
 
 private:
 	Ui::PerformLogin * ui;

@@ -12,7 +12,6 @@
 #include <QJsonValue>
 #include <QMessageBox>
 #include <QNetworkReply>
-#include <QSignalMapper>
 #include <QUrl>
 #include <QVariantList>
 
@@ -56,20 +55,11 @@ void PerformLogin::on_stkFeedback_currentChanged(int pIndex)
 			ui->prgStep->setValue(20);
 			ui->prgStep->setFormat("Checking login token");
 
-
 			QNetworkRequest lRequest = networkRequest(&mProfile);
-
 			QUrl lUrl = networkUrl();
 			lRequest.setUrl(lUrl);
 
-			QNetworkAccessManager * lNetwork = network();
-			QNetworkReply * lReply = lNetwork->get(lRequest);
-
-			QSignalMapper * lMapper = new QSignalMapper(lReply);
-			lMapper->setMapping(lReply, lReply);
-			connect(lReply, SIGNAL(finished()), lMapper, SLOT(map()));
-			connect(lMapper, SIGNAL(mapped(QObject*)), this, SLOT(checkTokenFinished(QObject*)));
-
+			networkGet(lRequest, this, SLOT(checkTokenFinished(QObject*)));
 			break;
 		}
 
@@ -115,9 +105,9 @@ void PerformLogin::on_btnToken_clicked()
 	accept();
 }
 
-void PerformLogin::checkTokenFinished(QObject * pObject)
+void PerformLogin::checkTokenFinished(QObject * pReply)
 {
-	QNetworkReply * lReply = qobject_cast<QNetworkReply*>(pObject);
+	QNetworkReply * lReply = qobject_cast<QNetworkReply*>(pReply);
 
 	QByteArray lBytes = lReply->readAll();
 	lReply->deleteLater();

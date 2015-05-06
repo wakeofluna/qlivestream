@@ -3,6 +3,11 @@
 #include "core/profile.h"
 
 #include <QMutex>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QSignalMapper>
+#include <QUrl>
 
 QNetworkAccessManager * NetworkAccess::mNetwork = nullptr;
 
@@ -17,11 +22,6 @@ NetworkAccess::NetworkAccess()
 
 NetworkAccess::~NetworkAccess()
 {
-}
-
-QNetworkAccessManager * NetworkAccess::network() const
-{
-	return mNetwork;
 }
 
 QNetworkRequest NetworkAccess::networkRequest(Profile * pProfile) const
@@ -47,4 +47,14 @@ QUrl NetworkAccess::networkUrl() const
 	lUrl.setHost("api.twitch.tv");
 	lUrl.setPath("/kraken");
 	return lUrl;
+}
+
+void NetworkAccess::networkGet(QNetworkRequest const & pRequest, QObject * pReceiver, char const * pSlotCallback) const
+{
+	QNetworkReply * lReply = mNetwork->get(pRequest);
+
+	QSignalMapper * lMapper = new QSignalMapper(lReply);
+	lMapper->setMapping(lReply, lReply);
+	QObject::connect(lReply, SIGNAL(finished()), lMapper, SLOT(map()));
+	QObject::connect(lMapper, SIGNAL(mapped(QObject*)), pReceiver, pSlotCallback);
 }
