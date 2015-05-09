@@ -2,6 +2,7 @@
 #define FORMS_PERFORM_LOGIN_H_
 
 #include "core/network_access.h"
+#include "replies/token_check.h"
 #include <QDialog>
 
 class Profile;
@@ -28,7 +29,7 @@ private slots:
 	void on_txtToken_textChanged(QString const & pValue);
 	void on_btnToken_clicked();
 
-	void checkTokenFinished(QObject * pReply);
+	void replyTokenCheck(TokenCheck::Ptr & pToken);
 
 private:
 	Ui::PerformLogin * ui;

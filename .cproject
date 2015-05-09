@@ -30,8 +30,9 @@
 									<listOptionValue builtIn="false" value="/usr/include/qt5/QtGui"/>
 									<listOptionValue builtIn="false" value="/usr/include/qt5/QtWidgets"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.preprocessor.def.560278127" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+								<option id="gnu.cpp.compiler.option.preprocessor.def.560278127" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__cplusplus=201402L"/>
+									<listOptionValue builtIn="false" value="CDT_PARSER"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.226230243" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>

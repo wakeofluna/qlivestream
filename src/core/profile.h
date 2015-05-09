@@ -21,7 +21,7 @@ public:
 
 	bool isValid() const;
 
-	inline QString getToken() const { return mAuthToken; }
+	inline QString token() const { return mAuthToken; }
 	inline AuthScopes const & privileges() const { return mAuthScope; }
 
 private:

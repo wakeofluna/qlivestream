@@ -27,23 +27,23 @@ NetworkAccess::~NetworkAccess()
 {
 }
 
-QNetworkRequest NetworkAccess::networkRequest(Profile * pProfile) const
+QNetworkRequest NetworkAccess::networkRequest(Profile & pProfile) const
 {
 	QNetworkRequest lRequest;
 	lRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
 	lRequest.setHeader(QNetworkRequest::UserAgentHeader, "Qtwitch");
 	lRequest.setRawHeader("Accept", "application/vnd.twitchtv3+json");
 
-	if (pProfile != nullptr)
+	if (!pProfile.token().isEmpty())
 	{
-		QString lAuth = QString("OAuth ") + pProfile->getToken();
+		QString lAuth = QString("OAuth ") + pProfile.token();
 		lRequest.setRawHeader("Authorization", lAuth.toUtf8());
 	}
 
 	return lRequest;
 }
 
-QUrl NetworkAccess::networkUrl() const
+QUrl NetworkAccess::networkUrl(Profile & pProfile) const
 {
 	QUrl lUrl;
 	lUrl.setScheme("https");
@@ -52,12 +52,18 @@ QUrl NetworkAccess::networkUrl() const
 	return lUrl;
 }
 
-void NetworkAccess::networkGet(QNetworkRequest const & pRequest, QObject * pReceiver, char const * pSlotCallback) const
+void NetworkAccess::networkGet(QNetworkRequest const & pRequest, Receiver && pReceiver) const
 {
 	QNetworkReply * lReply = mNetwork->get(pRequest);
 
 	QSignalMapper * lMapper = new QSignalMapper(lReply);
 	lMapper->setMapping(lReply, lReply);
 	QObject::connect(lReply, SIGNAL(finished()), lMapper, SLOT(map()));
-	QObject::connect(lMapper, SIGNAL(mapped(QObject*)), pReceiver, pSlotCallback);
+
+	QObject::connect(lMapper, static_cast<void (QSignalMapper::*)(QObject*)>(&QSignalMapper::mapped), [CAPTURE(pReceiver)] (QObject * o)
+	{
+		QNetworkReply * lReply = qobject_cast<QNetworkReply*>(o);
+		lReply->deleteLater();
+		pReceiver(*lReply);
+	});
 }

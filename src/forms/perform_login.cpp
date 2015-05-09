@@ -2,18 +2,13 @@
 #include "perform_login.h"
 #include "ui_perform_login.h"
 #include "core/profile.h"
+#include "replies/token_check.h"
 
 #include <QApplication>
 #include <QClipboard>
 #include <QDesktopServices>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonValue>
 #include <QMessageBox>
-#include <QNetworkReply>
 #include <QUrl>
-#include <QVariantList>
 
 namespace forms
 {
@@ -54,12 +49,7 @@ void PerformLogin::on_stkFeedback_currentChanged(int pIndex)
 		{
 			ui->prgStep->setValue(20);
 			ui->prgStep->setFormat("Checking login token");
-
-			QNetworkRequest lRequest = networkRequest(&mProfile);
-			QUrl lUrl = networkUrl();
-			lRequest.setUrl(lUrl);
-
-			networkGet(lRequest, this, SLOT(checkTokenFinished(QObject*)));
+			TokenCheck::request(*this, mProfile, [this] (TokenCheck::Ptr & p) { replyTokenCheck(p); });
 			break;
 		}
 
@@ -105,33 +95,16 @@ void PerformLogin::on_btnToken_clicked()
 	accept();
 }
 
-void PerformLogin::checkTokenFinished(QObject * pReply)
+void PerformLogin::replyTokenCheck(TokenCheck::Ptr & pToken)
 {
-	QNetworkReply * lReply = qobject_cast<QNetworkReply*>(pReply);
-
-	QByteArray lBytes = lReply->readAll();
-	lReply->deleteLater();
-
-	QJsonParseError lError;
-	QVariantMap lResponse = QJsonDocument::fromJson(lBytes, &lError).object().toVariantMap();
-	if (lError.error != QJsonParseError::NoError)
+	if (pToken->hasError())
 	{
-		QMessageBox::critical(this, "Parse error in response", "Got invalid JSON reply from Twitch, cannot continue");
+		QMessageBox::critical(this, "Parse error in response", "Got invalid reply, cannot continue");
 		reject();
 		return;
 	}
 
-	QVariantMap lToken = lResponse.value("token").toMap();
-	bool lTokenValid = lToken.value("valid").toBool();
-	QVariantMap lTokenAuth = lToken.value("authorization").toMap();
-	QVariantList lTokenScopes = lTokenAuth.value("scopes").toList();
-	for (int i = 0; i < lTokenScopes.size(); ++i)
-	{
-		AuthScope lScope = AuthScope::fromString(lTokenScopes[i].toString());
-		mProfile.mAuthScope.set(lScope);
-	}
-
-	if (lTokenValid)
+	if (pToken->isValid())
 		accept();
 }
 

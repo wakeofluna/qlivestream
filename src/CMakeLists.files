@@ -22,17 +22,23 @@ set (HEADER_FILES
 	core/first_time.h
 	core/network_access.h
 	core/profile.h
+	replies/twitchtv3/root.h
+	replies/reply_base.h
+	replies/token_check.h
 	config.h
 )
 
 set (SOURCE_FILES
 	core/auth_scope.cpp
+	core/network_access.cpp
 	core/profile.cpp
 	forms/edit_profile.cpp
 	forms/main_window.cpp
-	core/network_access.cpp
 	forms/perform_login.cpp
 	forms/select_profile.cpp
+	replies/twitchtv3/root.cpp
+	replies/reply_base.cpp
+	replies/token_check.cpp
 	main.cpp
 )
 

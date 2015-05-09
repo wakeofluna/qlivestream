@@ -7,4 +7,11 @@
 #define SETTINGS_PTR(x) x = new QSettings(SETTINGS_DEF)
 #define SETTINGS(x) QSettings x(SETTINGS_DEF)
 
+// Helper for lambda captures
+#if defined(CDT_PARSER) || __cplusplus < 201402L
+#define CAPTURE(x) x
+#else
+#define CAPTURE(x) x = std::move(x)
+#endif
+
 #endif // _CONFIG_H_
