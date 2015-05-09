@@ -1,6 +1,7 @@
 set (QT_HEADER_FILES
 	forms/edit_profile.h
 	forms/main_window.h
+	forms/perform_login_sub.h
 	forms/perform_login.h
 	forms/select_profile.h
 )
@@ -8,6 +9,7 @@ set (QT_HEADER_FILES
 set (QT_FORMS
 	forms/edit_profile.ui
 	forms/main_window.ui
+	forms/perform_login_acquire.ui
 	forms/perform_login.ui
 	forms/select_profile.ui
 )
@@ -34,6 +36,7 @@ set (SOURCE_FILES
 	core/profile.cpp
 	forms/edit_profile.cpp
 	forms/main_window.cpp
+	forms/perform_login_sub.cpp
 	forms/perform_login.cpp
 	forms/select_profile.cpp
 	replies/twitchtv3/root.cpp

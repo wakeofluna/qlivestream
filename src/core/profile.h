@@ -21,7 +21,10 @@ public:
 
 	bool isValid() const;
 
+	inline QString name() const { return mName; }
+	inline QString account() const { return mAccount; }
 	inline QString token() const { return mAuthToken; }
+	inline AuthScopes const & requested() const { return mRequested; }
 	inline AuthScopes const & privileges() const { return mAuthScope; }
 
 private:
@@ -41,8 +44,8 @@ private:
 
 	QString    mName;
 	QString    mAccount;
-	AuthScopes mRequested;
 	QString    mAuthToken;
+	AuthScopes mRequested;
 	AuthScopes mAuthScope;
 };
 

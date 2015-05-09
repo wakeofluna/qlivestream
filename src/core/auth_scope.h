@@ -77,6 +77,10 @@ public:
 
 	void setAll();
 
+	using ClassBitset<AuthScope>::operator =;
+	using ClassBitset<AuthScope>::operator ==;
+	using ClassBitset<AuthScope>::operator !=;
+
 	QString toString() const;
 	static AuthScopes fromString(QString pString);
 };

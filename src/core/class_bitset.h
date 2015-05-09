@@ -35,6 +35,22 @@ public:
 		return *this;
 	}
 
+	inline ClassBitset<T> & operator= (ClassBitset<T> const & pOther)
+	{
+		c = pOther.c;
+		return *this;
+	}
+
+	inline bool operator== (ClassBitset<T> const & pOther) const
+	{
+		return c == pOther.c;
+	}
+
+	inline bool operator!= (ClassBitset<T> const & pOther) const
+	{
+		return c != pOther.c;
+	}
+
 protected:
 	std::bitset<T::max> c;
 

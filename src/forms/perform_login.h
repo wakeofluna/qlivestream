@@ -23,19 +23,18 @@ public:
 	explicit PerformLogin(Profile & pProfile, QWidget * parent = 0);
 	~PerformLogin();
 
-private slots:
-	void on_stkFeedback_currentChanged(int pIndex);
-	void on_btnAcquire_clicked();
-	void on_txtToken_textChanged(QString const & pValue);
-	void on_btnToken_clicked();
-
-	void replyTokenCheck(TokenCheck::Ptr & pToken);
+private:
+	void proceed();
+	void restart();
+	void runStep();
 
 private:
 	Ui::PerformLogin * ui;
 
 	Profile & mProfile;
 	int mStep;
+	QWidget * mSubPanel;
+	TokenCheck::Ptr mTokenCheck;
 };
 
 } // namespace forms
