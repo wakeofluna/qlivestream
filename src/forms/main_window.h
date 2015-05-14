@@ -17,7 +17,7 @@ class MainWindow : public QMainWindow
 Q_OBJECT
 
 public:
-	MainWindow(Profile pProfile, QWidget *parent = 0);
+	MainWindow(Profile && pProfile, QWidget *parent = 0);
 	~MainWindow();
 
 private slots:

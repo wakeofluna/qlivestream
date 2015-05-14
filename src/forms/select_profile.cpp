@@ -88,7 +88,7 @@ void SelectProfile::on_btnBox_accepted()
 	int lResult = lPerformLogin->exec();
 	if (lResult == QDialog::Accepted)
 	{
-		MainWindow * lMainWindow = new MainWindow(lProfile);
+		MainWindow * lMainWindow = new MainWindow(std::move(lProfile));
 		lMainWindow->setAttribute(Qt::WA_DeleteOnClose);
 		lMainWindow->show();
 		close();
