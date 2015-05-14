@@ -15,13 +15,18 @@ PerformLogin::PerformLogin(Profile & pProfile, QWidget * parent) : QDialog(paren
 	ui->setupUi(this);
 
 	mSubPanel = nullptr;
-	mStep = 0;
-	runStep();
+	mStep = -1;
 }
 
 PerformLogin::~PerformLogin()
 {
 	delete ui;
+}
+
+void PerformLogin::showEvent(QShowEvent * event)
+{
+	if (mStep == -1)
+		proceed();
 }
 
 void PerformLogin::proceed()
@@ -50,7 +55,7 @@ void PerformLogin::runStep()
 	{
 		case 0:
 			ui->prgStep->setValue(25);
-			ui->prgStep->setFormat(tr("Getting permission from service"));
+			ui->prgStep->setFormat(tr("Login to service"));
 			if (mProfile.mAuthToken.isEmpty())
 			{
 				SubPanelAcquire * lPanel = new SubPanelAcquire(mProfile, this);
@@ -69,13 +74,17 @@ void PerformLogin::runStep()
 		case 1:
 		{
 			ui->prgStep->setValue(50);
-			ui->prgStep->setFormat(tr("Checking granted permissions"));
+			ui->prgStep->setFormat(tr("Checking login"));
 			TokenCheck::request(*this, mProfile, [this] (TokenCheck::Ptr & pToken)
 			{
 				if (pToken->hasError())
 				{
-					QMessageBox::critical(this, "Invalid reply", pToken->error());
-					reject();
+					SubPanelError * lPanel = new SubPanelError(pToken->error(), this);
+					mSubPanel = lPanel;
+					connect(lPanel, &SubPanelError::cancel, [this]
+					{
+						reject();
+					});
 					return;
 				}
 				mTokenCheck.swap(pToken);
@@ -87,9 +96,18 @@ void PerformLogin::runStep()
 		case 2:
 			if (!mTokenCheck->isValid())
 			{
-				//mProfile.mAuthToken.clear();
-				//mProfile.save();
-				//restart();
+				SubPanelInvalid * lPanel = new SubPanelInvalid(mProfile, this);
+				mSubPanel = lPanel;
+				connect(lPanel, &SubPanelInvalid::cancel, [this]
+				{
+					reject();
+				});
+				connect(lPanel, &SubPanelInvalid::retry, [this]
+				{
+					mProfile.mAuthToken.clear();
+					mProfile.save();
+					restart();
+				});
 				break;
 			}
 			proceed();
@@ -98,6 +116,8 @@ void PerformLogin::runStep()
 		case 3:
 			if (mTokenCheck->username() != mProfile.account())
 			{
+				// TODO implement error window for mismatching username
+
 				//mProfile.mAuthToken.clear();
 				//mProfile.save();
 				//restart();
@@ -114,6 +134,8 @@ void PerformLogin::runStep()
 		case 4:
 			if (mTokenCheck->scopes() != mProfile.requested())
 			{
+				// TODO implement error window for mismatching privilege scope
+
 				//mProfile.mAuthToken.clear();
 				//mProfile.save();
 				//restart();
@@ -144,10 +166,6 @@ void PerformLogin::runStep()
 
 	if (mSubPanel != nullptr)
 		ui->layout->addWidget(mSubPanel);
-
-	QSize lHint = sizeHint();
-	QSize lSize = size();
-	setFixedSize(lSize.width(), lHint.height());
 }
 
 } // namespace forms

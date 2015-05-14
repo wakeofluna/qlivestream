@@ -23,6 +23,9 @@ public:
 	explicit PerformLogin(Profile & pProfile, QWidget * parent = 0);
 	~PerformLogin();
 
+protected:
+	void showEvent(QShowEvent * event);
+
 private:
 	void proceed();
 	void restart();

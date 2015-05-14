@@ -10,6 +10,8 @@ set (QT_FORMS
 	forms/edit_profile.ui
 	forms/main_window.ui
 	forms/perform_login_acquire.ui
+	forms/perform_login_error.ui
+	forms/perform_login_invalid.ui
 	forms/perform_login.ui
 	forms/select_profile.ui
 )

@@ -70,7 +70,7 @@
        <item>
         <widget class="QLabel" name="txtFallback">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -82,7 +82,7 @@
           <enum>QFrame::Raised</enum>
          </property>
          <property name="text">
-          <string>...</string>
+          <string notr="true">...</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -107,7 +107,10 @@
      <item>
       <widget class="QLabel" name="lblToken">
        <property name="text">
-        <string>Token:</string>
+        <string>&amp;Token:</string>
+       </property>
+       <property name="buddy">
+        <cstring>txtToken</cstring>
        </property>
       </widget>
      </item>
