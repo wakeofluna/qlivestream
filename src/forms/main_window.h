@@ -20,6 +20,12 @@ public:
 	MainWindow(Profile pProfile, QWidget *parent = 0);
 	~MainWindow();
 
+private slots:
+	void on_mnuFileLogout_triggered();
+	void on_mnuFileExit_triggered();
+	void on_mnuHelpAbout_triggered();
+	void on_mnuHelpAboutQt_triggered();
+
 private:
 	Ui::MainWindow * ui;
 

@@ -216,7 +216,7 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <addaction name="mnuFileSwitch"/>
+    <addaction name="mnuFileLogout"/>
     <addaction name="separator"/>
     <addaction name="mnuFileExit"/>
    </widget>
@@ -225,24 +225,39 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="mnuHelpAbout"/>
+    <addaction name="mnuHelpAboutQt"/>
    </widget>
    <addaction name="mnuFile"/>
    <addaction name="mnuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="mnuHelpAbout">
+  <action name="mnuHelpAboutQt">
    <property name="text">
-    <string>&amp;About</string>
+    <string>About &amp;Qt</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutQtRole</enum>
    </property>
   </action>
-  <action name="mnuFileSwitch">
+  <action name="mnuFileLogout">
    <property name="text">
-    <string>Switch profile ...</string>
+    <string>&amp;Logout</string>
    </property>
   </action>
   <action name="mnuFileExit">
    <property name="text">
     <string>E&amp;xit</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::QuitRole</enum>
+   </property>
+  </action>
+  <action name="mnuHelpAbout">
+   <property name="text">
+    <string>&amp;About</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutRole</enum>
    </property>
   </action>
  </widget>

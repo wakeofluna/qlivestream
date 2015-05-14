@@ -1,5 +1,6 @@
 set (QT_HEADER_FILES
 	forms/edit_profile.h
+	forms/main_about.h
 	forms/main_window.h
 	forms/perform_login_sub.h
 	forms/perform_login.h
@@ -8,6 +9,7 @@ set (QT_HEADER_FILES
 
 set (QT_FORMS
 	forms/edit_profile.ui
+	forms/main_about.ui
 	forms/main_window.ui
 	forms/perform_login_acquire.ui
 	forms/perform_login_error.ui
@@ -37,6 +39,7 @@ set (SOURCE_FILES
 	core/network_access.cpp
 	core/profile.cpp
 	forms/edit_profile.cpp
+	forms/main_about.cpp
 	forms/main_window.cpp
 	forms/perform_login_sub.cpp
 	forms/perform_login.cpp
