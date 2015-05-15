@@ -76,6 +76,7 @@ void StorageAccess::initialize()
 void StorageAccess::finalize()
 {
 	mStorageDatabase.close();
+	mStorageDatabase = QSqlDatabase();
 }
 
 #define SQLERR Exception("Error creating database", q.lastError().text())
