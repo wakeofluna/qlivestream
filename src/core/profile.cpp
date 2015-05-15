@@ -3,11 +3,14 @@
 
 #include <QApplication>
 #include <QSettings>
+#include <QSqlError>
+#include <QSqlQuery>
 #include <QStringList>
 #include <QVariant>
 
 Profile::Profile()
 {
+	mId = -1;
 }
 
 Profile::~Profile()
@@ -16,82 +19,95 @@ Profile::~Profile()
 
 bool Profile::isValid() const
 {
-	return !mAccount.isEmpty();
+	return mId >= 0;
 }
 
 QStringList Profile::listProfiles()
 {
-	SETTINGS(settings);
+	QStringList lProfiles;
 
-	settings.beginGroup("Profiles");
-	return settings.childGroups();
+	QSqlQuery q;
+	q.prepare("select id,service,name from profile order by name");
+	SQL_EXEC(q);
+
+	while (q.next())
+		lProfiles.append(q.value(2).toString());
+
+	return lProfiles;
 }
 
 Profile Profile::load(QString pName)
 {
-	SETTINGS(settings);
-
 	Profile lProfile;
-	settings.beginGroup("Profiles");
-	settings.beginGroup(pName);
-	lProfile.mName = pName;
-	lProfile.mAccount = settings.value("account").toString();
-	lProfile.mAuthToken = settings.value("token").toString();
+	lProfile.mAccount = pName;
 
-	for (int i = 0; i < AuthScope::max; ++i)
+	QSqlQuery q;
+	q.prepare("select id,token from profile where name=?");
+	q.bindValue(0, pName);
+	SQL_EXEC(q);
+
+	if (!q.next())
+		return lProfile;
+
+	lProfile.mId = q.value(0).toInt();
+	lProfile.mToken = q.value(1).toString();
+
+	q.prepare("select scope from profile_scope where profile_id=?");
+	q.bindValue(0, lProfile.mId);
+	SQL_EXEC(q);
+
+	while (q.next())
 	{
-		AuthScope lScope((AuthScope::Scope)i);
-		bool lSet = settings.value(lScope.toString(), false).toBool();
-		if (lSet)
+		AuthScope lScope = AuthScope::fromString(q.value(0).toString());
+		if (lScope.isValid())
 			lProfile.mRequested.set(lScope);
 	}
 
 	return lProfile;
 }
 
-void Profile::erase(QString pName)
+void Profile::erase() const
 {
-	SETTINGS(settings);
-
-	eraseImpl(settings, pName);
+	QSqlQuery q;
+	q.prepare("delete from profile where id=?");
+	q.bindValue(0, mId);
+	SQL_EXEC(q);
 }
 
 void Profile::save() const
 {
-	saveAndReplace(mName);
-}
+	QSqlQuery q;
+	if (mId == -1)
+	{
+		q.prepare("insert into profile (service,name,token) values (?,?,?)");
+		q.bindValue(0, "twitch");
+		q.bindValue(1, mAccount);
+		q.bindValue(2, mToken);
+		SQL_EXEC(q);
+		const_cast<Profile*>(this)->mId = q.lastInsertId().toInt();
+	}
+	else
+	{
+		q.prepare("update profile set name=?, token=? where id=?");
+		q.bindValue(0, mAccount);
+		q.bindValue(1, mToken);
+		q.bindValue(2, mId);
+		SQL_EXEC(q);
+	}
 
-void Profile::saveAndReplace(QString pOldName) const
-{
-	SETTINGS(settings);
+	q.prepare("delete from profile_scope where profile_id=?");
+	q.bindValue(0, mId);
+	SQL_EXEC(q);
 
-	if (!pOldName.isEmpty())
-		eraseImpl(settings, pOldName);
-
-	if (!mName.isEmpty())
-		saveImpl(settings);
-}
-
-void Profile::eraseImpl(QSettings & pSettings, QString pName)
-{
-	pSettings.beginGroup("Profiles");
-	pSettings.remove(pName);
-	pSettings.endGroup();
-}
-
-void Profile::saveImpl(QSettings & pSettings) const
-{
-	pSettings.beginGroup("Profiles");
-	pSettings.beginGroup(mName);
-	pSettings.setValue("account", mAccount);
-	pSettings.setValue("token", mAuthToken);
-
+	q.prepare("insert into profile_scope (profile_id,scope) values (?,?)");
+	q.bindValue(0, mId);
 	for (int i = 0; i < AuthScope::max; ++i)
 	{
 		AuthScope lScope((AuthScope::Scope)i);
-		pSettings.setValue(lScope.toString(), mRequested.test(lScope));
+		if (mRequested.test(lScope))
+		{
+			q.bindValue(1, lScope.toString());
+			SQL_EXEC(q);
+		}
 	}
-
-	pSettings.endGroup();
-	pSettings.endGroup();
 }

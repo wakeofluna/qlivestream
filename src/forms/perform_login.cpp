@@ -56,13 +56,13 @@ void PerformLogin::runStep()
 		case 0:
 			ui->prgStep->setValue(25);
 			ui->prgStep->setFormat(tr("Login to service"));
-			if (mProfile.mAuthToken.isEmpty())
+			if (mProfile.mToken.isEmpty())
 			{
 				SubPanelAcquire * lPanel = new SubPanelAcquire(mProfile, this);
 				mSubPanel = lPanel;
 				connect(lPanel, &SubPanelAcquire::onSetToken, [this] (QString pToken)
 				{
-					mProfile.mAuthToken = pToken;
+					mProfile.mToken = pToken;
 					mProfile.save();
 					proceed();
 				});
@@ -104,7 +104,7 @@ void PerformLogin::runStep()
 				});
 				connect(lPanel, &SubPanelInvalid::retry, [this]
 				{
-					mProfile.mAuthToken.clear();
+					mProfile.mToken.clear();
 					mProfile.save();
 					restart();
 				});

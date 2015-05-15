@@ -26,7 +26,6 @@ public:
 	~EditProfile();
 
 private slots:
-	void on_txtName_textChanged(QString const & pText);
 	void on_txtAccount_textChanged(QString const & pText);
 	void on_btnBox_clicked(QAbstractButton * pButton);
 
@@ -37,7 +36,6 @@ private:
 	QVector<QCheckBox*> mCheckboxes;
 
 	Profile & mProfile;
-	QString mOriginalName;
 };
 
 } // namespace forms

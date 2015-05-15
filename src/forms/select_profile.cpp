@@ -22,9 +22,9 @@ SelectProfile::SelectProfile(QWidget * parent) : QWidget(parent, Qt::Window)
 
 	updateProfiles();
 
-	SETTINGS(settings);
-	settings.beginGroup(objectName());
-	setSelected(settings.value("last_selected").toString());
+	//SETTINGS(settings);
+	//settings.beginGroup(objectName());
+	//setSelected(settings.value("last_selected").toString());
 }
 
 SelectProfile::~SelectProfile()
@@ -64,7 +64,7 @@ void SelectProfile::on_btnEdit_clicked()
 	int lResult = lEditProfile->exec();
 	if (lResult == QDialog::Accepted)
 	{
-		QString lSelected = lProfile.mName;
+		QString lSelected = lProfile.mAccount;
 		updateProfiles();
 		setSelected(lSelected);
 	}
@@ -79,9 +79,9 @@ void SelectProfile::on_btnBox_accepted()
 		return;
 	}
 
-	SETTINGS(settings);
-	settings.beginGroup(objectName());
-	settings.setValue("last_selected", lProfile.mName);
+	//SETTINGS(settings);
+	//settings.beginGroup(objectName());
+	//settings.setValue("last_selected", lProfile.mName);
 
 	PerformLogin * lPerformLogin = new PerformLogin(lProfile, this);
 	lPerformLogin->setAttribute(Qt::WA_DeleteOnClose);

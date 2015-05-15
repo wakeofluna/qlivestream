@@ -29,6 +29,7 @@
 									<listOptionValue builtIn="false" value="/usr/include/qt5/QtNetwork"/>
 									<listOptionValue builtIn="false" value="/usr/include/qt5/QtGui"/>
 									<listOptionValue builtIn="false" value="/usr/include/qt5/QtWidgets"/>
+									<listOptionValue builtIn="false" value="/usr/include/qt5/QtSql"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.560278127" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__cplusplus=201402L"/>

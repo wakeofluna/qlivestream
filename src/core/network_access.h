@@ -10,20 +10,26 @@ class QNetworkRequest;
 class QObject;
 class QUrl;
 
+template <typename T> class Initializer;
+
 class NetworkAccess
 {
 public:
 	typedef std::function<void (QNetworkReply &)> Receiver;
 
 public:
-	NetworkAccess();
-	~NetworkAccess();
+	inline NetworkAccess() {}
+	inline ~NetworkAccess() {}
 
 	QNetworkRequest networkRequest(Profile & pProfile) const;
 	QUrl networkUrl(Profile & pProfile) const;
 	void networkGet(QNetworkRequest const & pRequest, Receiver && pReceiver) const;
 
 private:
+	friend class Initializer<NetworkAccess>;
+	static void initialize();
+	static void finalize();
+
 	static QNetworkAccessManager * mNetwork;
 };
 

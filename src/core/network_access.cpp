@@ -11,22 +11,6 @@
 
 QNetworkAccessManager * NetworkAccess::mNetwork = nullptr;
 
-NetworkAccess::NetworkAccess()
-{
-	static QMutex lMutex;
-
-	if (mNetwork == nullptr)
-	{
-		QMutexLocker lLock(&lMutex);
-		if (mNetwork == nullptr)
-			mNetwork = new QNetworkAccessManager();
-	}
-}
-
-NetworkAccess::~NetworkAccess()
-{
-}
-
 QNetworkRequest NetworkAccess::networkRequest(Profile & pProfile) const
 {
 	QNetworkRequest lRequest;
@@ -66,4 +50,15 @@ void NetworkAccess::networkGet(QNetworkRequest const & pRequest, Receiver && pRe
 		lReply->deleteLater();
 		pReceiver(*lReply);
 	});
+}
+
+void NetworkAccess::initialize()
+{
+	Q_ASSERT_X(mNetwork == nullptr, "NetworkAccess::initialize", "network was already initialised!");
+	mNetwork = new QNetworkAccessManager();
+}
+
+void NetworkAccess::finalize()
+{
+	delete mNetwork;
 }

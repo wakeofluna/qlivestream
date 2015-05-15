@@ -15,23 +15,20 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QLabel" name="lblName">
+    <widget class="QLabel" name="lblAccount">
      <property name="text">
-      <string>Profile name:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="lblTwitch">
-     <property name="text">
-      <string>Twitch account:</string>
+      <string>Account name:</string>
      </property>
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QLineEdit" name="txtName"/>
+    <widget class="QLineEdit" name="txtAccount">
+     <property name="inputMethodHints">
+      <set>Qt::ImhLowercaseOnly|Qt::ImhNoPredictiveText</set>
+     </property>
+    </widget>
    </item>
-   <item row="2" column="0">
+   <item row="1" column="0">
     <widget class="QLabel" name="lblScopes">
      <property name="text">
       <string>Scopes:</string>
@@ -42,12 +39,9 @@
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QLineEdit" name="txtAccount"/>
-   </item>
-   <item row="2" column="1">
     <layout class="QVBoxLayout" name="layScopes"/>
    </item>
-   <item row="3" column="1">
+   <item row="2" column="1">
     <widget class="QDialogButtonBox" name="btnBox">
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Discard|QDialogButtonBox::Save</set>

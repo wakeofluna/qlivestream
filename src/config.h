@@ -1,11 +1,9 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
-#define APP_NAME "Qtwitch"
+#include "core/exception.h"
 
-#define SETTINGS_DEF QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(), QApplication::applicationName()
-#define SETTINGS_PTR(x) x = new QSettings(SETTINGS_DEF)
-#define SETTINGS(x) QSettings x(SETTINGS_DEF)
+#define APP_NAME "Qtwitch"
 
 // Helper for lambda captures
 #if defined(CDT_PARSER) || __cplusplus < 201402L
@@ -13,5 +11,7 @@
 #else
 #define CAPTURE(x) x = std::move(x)
 #endif
+
+#define SQL_EXEC(q) do { if (!q.exec()) throw q; } while (0)
 
 #endif // _CONFIG_H_

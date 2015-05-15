@@ -21,9 +21,8 @@ public:
 
 	bool isValid() const;
 
-	inline QString name() const { return mName; }
 	inline QString account() const { return mAccount; }
-	inline QString token() const { return mAuthToken; }
+	inline QString token() const { return mToken; }
 	inline AuthScopes const & requested() const { return mRequested; }
 	inline AuthScopes const & privileges() const { return mAuthScope; }
 
@@ -35,16 +34,12 @@ private:
 
 	static QStringList listProfiles();
 	static Profile load(QString pName);
-	static void erase(QString pName);
+	void erase() const;
 	void save() const;
-	void saveAndReplace(QString pOldName) const;
 
-	static void eraseImpl(QSettings & pSettings, QString pName);
-	void saveImpl(QSettings & pSettings) const;
-
-	QString    mName;
+	int        mId;
 	QString    mAccount;
-	QString    mAuthToken;
+	QString    mToken;
 	AuthScopes mRequested;
 	AuthScopes mAuthScope;
 };

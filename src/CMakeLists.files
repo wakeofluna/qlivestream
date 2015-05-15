@@ -23,11 +23,15 @@ set (QT_RESOURCES
 
 set (HEADER_FILES
 	${QT_HEADER_FILES}
+	core/application.h
 	core/auth_scope.h
 	core/class_bitset.h
+	core/exception.h
 	core/first_time.h
+	core/initializer.h
 	core/network_access.h
 	core/profile.h
+	core/storage_access.h
 	replies/twitchtv3/root.h
 	replies/reply_base.h
 	replies/token_check.h
@@ -35,9 +39,12 @@ set (HEADER_FILES
 )
 
 set (SOURCE_FILES
+	core/application.cpp
 	core/auth_scope.cpp
+	core/exception.cpp
 	core/network_access.cpp
 	core/profile.cpp
+	core/storage_access.cpp
 	forms/edit_profile.cpp
 	forms/main_about.cpp
 	forms/main_window.cpp
