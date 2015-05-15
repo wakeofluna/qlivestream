@@ -2,6 +2,7 @@
 #include "application.h"
 #include "core/exception.h"
 #include "core/network_access.h"
+#include "core/profile_factory.h"
 #include "core/storage_access.h"
 
 #include <QDebug>

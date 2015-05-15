@@ -9,7 +9,10 @@
 #include <QSignalMapper>
 #include <QUrl>
 
-QNetworkAccessManager * NetworkAccess::mNetwork = nullptr;
+namespace
+{
+	QNetworkAccessManager * mNetwork = nullptr;
+}
 
 QNetworkRequest NetworkAccess::networkRequest(Profile & pProfile) const
 {

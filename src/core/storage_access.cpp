@@ -11,8 +11,11 @@
 #include <QSqlQuery>
 #include <QDebug>
 
-QDir StorageAccess::mStorageCache;
-QSqlDatabase StorageAccess::mStorageDatabase;
+namespace
+{
+	QDir mStorageCache;
+	QSqlDatabase mStorageDatabase;
+}
 
 QDir StorageAccess::cache() const
 {
@@ -70,6 +73,11 @@ void StorageAccess::initialize()
 	checkDatabaseStructure();
 }
 
+void StorageAccess::finalize()
+{
+	mStorageDatabase.close();
+}
+
 #define SQLERR Exception("Error creating database", q.lastError().text())
 void StorageAccess::checkDatabaseStructure()
 {
@@ -93,8 +101,3 @@ void StorageAccess::checkDatabaseStructure()
 	}
 }
 #undef SQLERR
-
-void StorageAccess::finalize()
-{
-	mStorageDatabase.close();
-}

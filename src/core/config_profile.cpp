@@ -53,19 +53,22 @@ QDateTime ConfigProfile::lastAccess() const
 	return QDateTime::fromTime_t(mLastAccess);
 }
 
-Profile::Ptr ConfigProfile::load()
+Profile::Ptr ConfigProfile::load() const
 {
-	throw Exception("Error loading profile", "Unknown service identifier: " + mService);
+	Profile::Ptr lProfile = createProfile(*this);
+	if (!lProfile)
+		throw Exception("Error loading profile", "Unknown service identifier: " + mService);
 
 	// Load succesful, update access time
-
-	mLastAccess = QDateTime::currentDateTimeUtc().toTime_t();
+	int lLastAccess = QDateTime::currentDateTimeUtc().toTime_t();
 
 	QSqlQuery q;
 	q.prepare("update profile set last_access=? where id=?");
-	q.bindValue(0, mLastAccess);
+	q.bindValue(0, lLastAccess);
 	q.bindValue(1, mId);
 	SQL_EXEC(q);
+
+	return lProfile;
 }
 
 void ConfigProfile::setAccount(QString pAccount)

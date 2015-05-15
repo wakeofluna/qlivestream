@@ -17,7 +17,7 @@ class NetworkAccess
 public:
 	typedef std::function<void (QNetworkReply &)> Receiver;
 
-public:
+protected:
 	inline NetworkAccess() {}
 	inline ~NetworkAccess() {}
 
@@ -29,8 +29,6 @@ private:
 	friend class Initializer<NetworkAccess>;
 	static void initialize();
 	static void finalize();
-
-	static QNetworkAccessManager * mNetwork;
 };
 
 #endif // CORE_NETWORK_ACCESS_H_

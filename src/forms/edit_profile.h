@@ -1,6 +1,7 @@
 #ifndef FORMS_EDIT_PROFILE_H_
 #define FORMS_EDIT_PROFILE_H_
 
+#include "core/profile_factory.h"
 #include <QDialog>
 #include <QVector>
 
@@ -17,7 +18,7 @@ namespace Ui
 namespace forms
 {
 
-class EditProfile : public QDialog
+class EditProfile : public QDialog, public ProfileFactory
 {
 Q_OBJECT
 

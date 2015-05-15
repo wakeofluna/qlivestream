@@ -5,6 +5,7 @@
 #include "core/initializer.h"
 
 class NetworkAccess;
+class ProfileFactory;
 class StorageAccess;
 
 class Application : public QApplication
@@ -16,6 +17,7 @@ public:
 	bool notify(QObject * receiver, QEvent * e) override;
 
 private:
+	Initializer<ProfileFactory> mProfileFactory;
 	Initializer<NetworkAccess> mNetworkAccess;
 	Initializer<StorageAccess> mStorageAccess;
 };

@@ -16,8 +16,9 @@ EditProfile::EditProfile(ConfigProfile & pProfile, QWidget * parent) : QDialog(p
 	ui = new Ui::EditProfile();
 	ui->setupUi(this);
 
-	// TODO iterate this from somewhere
-	ui->cbbService->addItem("Twitch.TV");
+	ProfileFactory::List lFactories = listServices();
+	for (auto & i : lFactories)
+		ui->cbbService->addItem(i.first);
 
 	ui->txtAccount->setText(mProfile.account());
 	ui->cbbService->setCurrentText(mProfile.service());

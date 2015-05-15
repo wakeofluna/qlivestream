@@ -74,6 +74,7 @@ void PerformLogin::runStep()
 		{
 			ui->prgStep->setValue(50);
 			ui->prgStep->setFormat(tr("Checking login"));
+			/*
 			TokenCheck::request(*this, mProfile, [this] (TokenCheck::Ptr & pToken)
 			{
 				if (pToken->hasError())
@@ -89,6 +90,7 @@ void PerformLogin::runStep()
 				mTokenCheck.swap(pToken);
 				proceed();
 			});
+			*/
 			break;
 		}
 

@@ -2,6 +2,7 @@
 #define CORE_CONFIG_PROFILE_H_
 
 #include "core/profile.h"
+#include "core/profile_factory.h"
 #include <QString>
 #include <QVector>
 
@@ -12,7 +13,7 @@ namespace forms
 	class EditProfile;
 }
 
-class ConfigProfile : public Profile
+class ConfigProfile : public Profile, public ProfileFactory
 {
 public:
 	typedef QVector<ConfigProfile> List;
@@ -26,7 +27,7 @@ public:
 
 	QString service() const override;
 	QDateTime lastAccess() const;
-	Profile::Ptr load();
+	Profile::Ptr load() const;
 
 	inline bool operator< (ConfigProfile const & rhs) const { return mLastAccess < rhs.mLastAccess; }
 

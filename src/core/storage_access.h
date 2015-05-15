@@ -2,7 +2,6 @@
 #define CORE_STORAGE_ACCESS_H_
 
 class QDir;
-class QSqlDatabase;
 
 template <typename T> class Initializer;
 
@@ -12,16 +11,14 @@ public:
 	inline StorageAccess() {}
 	inline ~StorageAccess() {}
 
+protected:
 	QDir cache() const;
 
 private:
 	friend class Initializer<StorageAccess>;
 	static void initialize();
-	static void checkDatabaseStructure();
 	static void finalize();
-
-	static QDir mStorageCache;
-	static QSqlDatabase mStorageDatabase;
+	static void checkDatabaseStructure();
 };
 
 #endif // CORE_STORAGE_ACCESS_H_

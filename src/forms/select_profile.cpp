@@ -81,8 +81,7 @@ void SelectProfile::on_btnBox_accepted()
 		return;
 	}
 
-	ConfigProfile lConfig = mProfiles[ui->cbbProfile->currentIndex()];
-
+	ConfigProfile & lConfig = mProfiles[ui->cbbProfile->currentIndex()];
 	Profile::Ptr lProfile = lConfig.load();
 
 	PerformLogin * lPerformLogin = new PerformLogin(*lProfile, this);
