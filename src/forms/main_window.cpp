@@ -10,7 +10,7 @@
 namespace forms
 {
 
-MainWindow::MainWindow(Profile && pProfile, QWidget *parent) : QMainWindow(parent, Qt::Window), mProfile(std::move(pProfile))
+MainWindow::MainWindow(Profile::Ptr && pProfile, QWidget *parent) : QMainWindow(parent, Qt::Window), mProfile(std::move(pProfile))
 {
 	ui = new Ui::MainWindow();
 	ui->setupUi(this);

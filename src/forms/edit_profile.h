@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <QVector>
 
-class Profile;
+class ConfigProfile;
 class QAbstractButton;
 class QCheckBox;
 class QSettings;
@@ -22,7 +22,7 @@ class EditProfile : public QDialog
 Q_OBJECT
 
 public:
-	explicit EditProfile(Profile & pProfile, QWidget * parent = 0);
+	explicit EditProfile(ConfigProfile & pProfile, QWidget * parent = 0);
 	~EditProfile();
 
 private slots:
@@ -33,9 +33,7 @@ private:
 	void enableSave() const;
 
 	Ui::EditProfile * ui;
-	QVector<QCheckBox*> mCheckboxes;
-
-	Profile & mProfile;
+	ConfigProfile & mProfile;
 };
 
 } // namespace forms

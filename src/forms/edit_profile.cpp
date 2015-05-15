@@ -1,7 +1,7 @@
 #include "config.h"
 #include "edit_profile.h"
 #include "ui_edit_profile.h"
-#include "core/profile.h"
+#include "core/config_profile.h"
 
 #include <QCheckBox>
 #include <QMessageBox>
@@ -11,31 +11,23 @@
 namespace forms
 {
 
-EditProfile::EditProfile(Profile & pProfile, QWidget * parent) : QDialog(parent, Qt::Dialog), mProfile(pProfile)
+EditProfile::EditProfile(ConfigProfile & pProfile, QWidget * parent) : QDialog(parent, Qt::Dialog), mProfile(pProfile)
 {
 	ui = new Ui::EditProfile();
 	ui->setupUi(this);
-	ui->txtAccount->setText(mProfile.mAccount);
 
-	bool lIsNewProfile = mProfile.mAccount.isEmpty();
+	// TODO iterate this from somewhere
+	ui->cbbService->addItem("Twitch.TV");
+
+	ui->txtAccount->setText(mProfile.account());
+	ui->cbbService->setCurrentText(mProfile.service());
+	ui->optClient->setChecked(mProfile.level() == Profile::CLIENT);
+	ui->optModerator->setChecked(mProfile.level() == Profile::MODERATOR);
+	ui->optStreamer->setChecked(mProfile.level() == Profile::STREAMER);
+
+	bool lIsNewProfile = mProfile.account().isEmpty();
 	if (lIsNewProfile)
 		ui->btnBox->button(QDialogButtonBox::Discard)->setEnabled(false);
-
-	mCheckboxes.reserve(AuthScope::max);
-	for (int i = 0; i < AuthScope::max; ++i)
-	{
-		AuthScope lScope((AuthScope::Scope)i);
-		if (lIsNewProfile && lScope.isDefault())
-			mProfile.mRequested.set(lScope);
-
-		QCheckBox * lCheckBox = new QCheckBox(this);
-		lCheckBox->setText(lScope.description());
-		if (mProfile.mRequested.test(lScope))
-			lCheckBox->setCheckState(Qt::Checked);
-
-		mCheckboxes.append(lCheckBox);
-		ui->layScopes->addWidget(lCheckBox);
-	}
 
 	enableSave();
 }
@@ -54,17 +46,11 @@ void EditProfile::on_btnBox_clicked(QAbstractButton * pButton)
 {
 	if (pButton == ui->btnBox->button(QDialogButtonBox::Save))
 	{
-		mProfile.mAccount = ui->txtAccount->text();
-
-		for (int i = 0; i < AuthScope::max; ++i)
-		{
-			AuthScope lScope((AuthScope::Scope)i);
-			if (mCheckboxes[i]->checkState() == Qt::Checked)
-				mProfile.mRequested.set(lScope);
-			else
-				mProfile.mRequested.reset(lScope);
-		}
-
+		mProfile.setAccount(ui->txtAccount->text());
+		mProfile.setService(ui->cbbService->currentText());
+		mProfile.setLevel(Profile::CLIENT);
+		if (ui->optModerator->isChecked()) mProfile.setLevel(Profile::MODERATOR);
+		if (ui->optStreamer->isChecked()) mProfile.setLevel(Profile::STREAMER);
 		mProfile.save();
 		accept();
 	}
@@ -74,7 +60,6 @@ void EditProfile::on_btnBox_clicked(QAbstractButton * pButton)
 		if (lAnswer == QDialogButtonBox::Yes)
 		{
 			mProfile.erase();
-			mProfile.mAccount.clear();
 			accept();
 		}
 	}

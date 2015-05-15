@@ -83,22 +83,10 @@ void StorageAccess::checkDatabaseStructure()
 				"id INTEGER PRIMARY KEY AUTOINCREMENT,"
 				"service VARCHAR(16),"
 				"name VARCHAR(32),"
+				"level INTEGER,"
 				"token VARCHAR(64),"
 				"last_access INTEGER,"
 				"UNIQUE (service,name)"
-				")"
-		);
-		if (!q.exec()) throw SQLERR;
-	}
-
-	if (!lTables.contains("profile_scope"))
-	{
-		q.prepare(
-				"create table profile_scope ("
-				"profile_id INTEGER,"
-				"scope VARCHAR(32),"
-				"PRIMARY KEY (profile_id, scope),"
-				"FOREIGN KEY (profile_id) REFERENCES profile (id) ON DELETE CASCADE"
 				")"
 		);
 		if (!q.exec()) throw SQLERR;

@@ -26,6 +26,7 @@ set (HEADER_FILES
 	core/application.h
 	core/auth_scope.h
 	core/class_bitset.h
+	core/config_profile.h
 	core/exception.h
 	core/first_time.h
 	core/initializer.h
@@ -41,6 +42,7 @@ set (HEADER_FILES
 set (SOURCE_FILES
 	core/application.cpp
 	core/auth_scope.cpp
+	core/config_profile.cpp
 	core/exception.cpp
 	core/network_access.cpp
 	core/profile.cpp

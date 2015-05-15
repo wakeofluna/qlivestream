@@ -20,15 +20,15 @@ int main(int argc, char **argv)
 	}
 	catch (Exception & e)
 	{
-		qCritical() << e.title() << ':' << e.description();
+		qCritical() << "MAIN :" << e.title() << ':' << e.description();
 	}
 	catch (QException & e)
 	{
-		qCritical() << "Uncaught Qt exception!";
+		qCritical() << "MAIN : Uncaught Qt exception!";
 	}
 	catch (...)
 	{
-		qCritical() << "Uncaught unknown exception!";
+		qCritical() << "MAIN : Uncaught unknown exception!";
 	}
 	return EXIT_FAILURE;
 }

@@ -1,6 +1,7 @@
 #ifndef FORMS_SELECT_PROFILE_H_
 #define FORMS_SELECT_PROFILE_H_
 
+#include "core/config_profile.h"
 #include <QWidget>
 
 class QSettings;
@@ -22,7 +23,7 @@ public:
 	explicit SelectProfile(QWidget * parent = 0);
 	~SelectProfile();
 
-	bool setSelected(QString pName);
+	bool setSelected(ConfigProfile const & pProfile);
 
 public slots:
 	void updateProfiles();
@@ -32,9 +33,8 @@ private slots:
 	void on_btnBox_accepted();
 
 private:
-	Profile loadSelectedProfile();
-
 	Ui::SelectProfile * ui;
+	ConfigProfile::List mProfiles;
 };
 
 } // namespace forms

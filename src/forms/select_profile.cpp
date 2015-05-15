@@ -1,11 +1,11 @@
 #include "config.h"
 #include "select_profile.h"
 #include "ui_select_profile.h"
-#include "core/profile.h"
 #include "edit_profile.h"
 #include "perform_login.h"
 #include "main_window.h"
 
+#include <algorithm>
 #include <QComboBox>
 #include <QMessageBox>
 #include <QSettings>
@@ -22,20 +22,21 @@ SelectProfile::SelectProfile(QWidget * parent) : QWidget(parent, Qt::Window)
 
 	updateProfiles();
 
-	//SETTINGS(settings);
-	//settings.beginGroup(objectName());
-	//setSelected(settings.value("last_selected").toString());
+	auto lSelected = std::max_element(mProfiles.begin(), mProfiles.end());
+	if (lSelected != mProfiles.end())
+		setSelected(*lSelected);
 }
 
 SelectProfile::~SelectProfile()
 {
 }
 
-bool SelectProfile::setSelected(QString pName)
+bool SelectProfile::setSelected(ConfigProfile const & pProfile)
 {
+	QString lTag = pProfile.toString();
 	for (int i = 0; i < ui->cbbProfile->count(); ++i)
 	{
-		if (ui->cbbProfile->itemText(i) == pName)
+		if (ui->cbbProfile->itemText(i) == lTag)
 		{
 			ui->cbbProfile->setCurrentIndex(i);
 			return true;
@@ -47,16 +48,19 @@ bool SelectProfile::setSelected(QString pName)
 
 void SelectProfile::updateProfiles()
 {
-	QStringList lProfiles = Profile::listProfiles();
+	mProfiles = ConfigProfile::listProfiles();
 
 	ui->cbbProfile->clear();
-	ui->cbbProfile->addItems(lProfiles);
+	for (auto & lProfile : mProfiles)
+		ui->cbbProfile->addItem(lProfile.toString());
 	ui->cbbProfile->addItem(tr("[add new]"));
 }
 
 void SelectProfile::on_btnEdit_clicked()
 {
-	Profile lProfile = loadSelectedProfile();
+	ConfigProfile lProfile;
+	if (ui->cbbProfile->currentIndex() < mProfiles.size())
+		lProfile = mProfiles[ui->cbbProfile->currentIndex()];
 
 	EditProfile * lEditProfile = new EditProfile(lProfile, this);
 	lEditProfile->setAttribute(Qt::WA_DeleteOnClose);
@@ -64,26 +68,24 @@ void SelectProfile::on_btnEdit_clicked()
 	int lResult = lEditProfile->exec();
 	if (lResult == QDialog::Accepted)
 	{
-		QString lSelected = lProfile.mAccount;
 		updateProfiles();
-		setSelected(lSelected);
+		setSelected(lProfile);
 	}
 }
 
 void SelectProfile::on_btnBox_accepted()
 {
-	Profile lProfile = loadSelectedProfile();
-	if (!lProfile.isValid())
+	if (ui->cbbProfile->currentIndex() >= mProfiles.size())
 	{
 		on_btnEdit_clicked();
 		return;
 	}
 
-	//SETTINGS(settings);
-	//settings.beginGroup(objectName());
-	//settings.setValue("last_selected", lProfile.mName);
+	ConfigProfile lConfig = mProfiles[ui->cbbProfile->currentIndex()];
 
-	PerformLogin * lPerformLogin = new PerformLogin(lProfile, this);
+	Profile::Ptr lProfile = lConfig.load();
+
+	PerformLogin * lPerformLogin = new PerformLogin(*lProfile, this);
 	lPerformLogin->setAttribute(Qt::WA_DeleteOnClose);
 	int lResult = lPerformLogin->exec();
 	if (lResult == QDialog::Accepted)
@@ -93,22 +95,6 @@ void SelectProfile::on_btnBox_accepted()
 		lMainWindow->show();
 		close();
 	}
-}
-
-Profile SelectProfile::loadSelectedProfile()
-{
-	Profile lProfile;
-
-	int lIndex = ui->cbbProfile->currentIndex();
-	if (lIndex < ui->cbbProfile->count() - 1)
-	{
-		QString lName = ui->cbbProfile->itemText(lIndex);
-		lProfile = Profile::load(lName);
-		if (!lProfile.isValid())
-			QMessageBox::critical(this, tr("Error in configuration"), tr("Failed to load profile"));
-	}
-
-	return lProfile;
 }
 
 } // namespace forms

@@ -32,7 +32,7 @@ void SubPanelAcquire::on_btnAcquire_clicked()
 	lUrl.setScheme("https");
 	lUrl.setHost("kitsune.astralkey.nl");
 	lUrl.setPath("/qtwitch");
-	lUrl.setFragment(QString("scope=") + mProfile.requested().toString());
+	//lUrl.setFragment(QString("scope=") + mProfile.requested().toString());
 
 	if (!QDesktopServices::openUrl(lUrl))
 	{

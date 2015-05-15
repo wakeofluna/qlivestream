@@ -1,47 +1,47 @@
 #ifndef CORE_PROFILE_H_
 #define CORE_PROFILE_H_
 
-#include "auth_scope.h"
-
+#include <memory>
 #include <QString>
-class QSettings;
-class QStringList;
 
 namespace forms
 {
-	class SelectProfile;
-	class EditProfile;
 	class PerformLogin;
 }
 
 class Profile
 {
 public:
-	~Profile();
+	typedef std::unique_ptr<Profile> Ptr;
 
-	bool isValid() const;
+public:
+	enum Level
+	{
+		CLIENT = 0,
+		MODERATOR = 1,
+		STREAMER = 2
+	};
 
+public:
+	virtual ~Profile();
+
+	inline int id() const { return mId; }
 	inline QString account() const { return mAccount; }
 	inline QString token() const { return mToken; }
-	inline AuthScopes const & requested() const { return mRequested; }
-	inline AuthScopes const & privileges() const { return mAuthScope; }
+	inline Level level() const { return mLevel; }
 
-private:
-	friend class forms::SelectProfile;
-	friend class forms::EditProfile;
+	virtual QString service() const = 0;
+
+protected:
 	friend class forms::PerformLogin;
 	Profile();
 
-	static QStringList listProfiles();
-	static Profile load(QString pName);
-	void erase() const;
-	void save() const;
+	void updateToken(QString pToken) const;
 
 	int        mId;
 	QString    mAccount;
 	QString    mToken;
-	AuthScopes mRequested;
-	AuthScopes mAuthScope;
+	Level      mLevel;
 };
 
 #endif // CORE_PROFILE_H_
