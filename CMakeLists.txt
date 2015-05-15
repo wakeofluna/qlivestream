@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.11)
 
-project ( qtwitch CXX )
+project ( qlivestream CXX )
 
 if (NOT DEFINED CMAKE_BUILD_TYPE)
         set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build")

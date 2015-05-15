@@ -3,7 +3,7 @@
 
 #include "core/exception.h"
 
-#define APP_NAME "Qtwitch"
+#define APP_NAME "Qlivestream"
 
 // Helper for lambda captures
 #if defined(CDT_PARSER) || __cplusplus < 201402L

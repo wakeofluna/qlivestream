@@ -18,7 +18,7 @@ QNetworkRequest NetworkAccess::networkRequest(Profile & pProfile) const
 {
 	QNetworkRequest lRequest;
 	lRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
-	lRequest.setHeader(QNetworkRequest::UserAgentHeader, "Qtwitch");
+	lRequest.setHeader(QNetworkRequest::UserAgentHeader, APP_NAME);
 	lRequest.setRawHeader("Accept", "application/vnd.twitchtv3+json");
 
 	if (!pProfile.token().isEmpty())

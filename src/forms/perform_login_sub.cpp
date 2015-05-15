@@ -31,7 +31,7 @@ void SubPanelAcquire::on_btnAcquire_clicked()
 	QUrl lUrl;
 	lUrl.setScheme("https");
 	lUrl.setHost("kitsune.astralkey.nl");
-	lUrl.setPath("/qtwitch");
+	lUrl.setPath("/qlivestream/twitchtv3");
 	//lUrl.setFragment(QString("scope=") + mProfile.requested().toString());
 
 	if (!QDesktopServices::openUrl(lUrl))
