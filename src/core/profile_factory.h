@@ -13,7 +13,8 @@ template <typename T> class Initializer;
 class ProfileFactory
 {
 public:
-	typedef Profile * (*CreateFunc)(ConfigProfile const & pTemplate);
+	typedef const char * (*NameFunc)();
+	typedef Profile * (*CreateFunc)();
 	typedef QPair<QString, CreateFunc> ServicePair;
 	typedef QList<ServicePair> List;
 
@@ -22,13 +23,14 @@ protected:
 	inline ~ProfileFactory() {}
 
 	void registerService(QString pService, CreateFunc pFunction);
-	Profile::Ptr createProfile(ConfigProfile const & pTemplate) const;
+	Profile::Ptr createProfile(QString pService) const;
 	List const & listServices() const;
 
 private:
 	friend class Initializer<ProfileFactory>;
 	static void initialize();
 	static void finalize();
+	static bool loadModule(QString pModuleName);
 };
 
 #endif // CORE_PROFILE_FACTORY_H_

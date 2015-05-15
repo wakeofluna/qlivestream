@@ -1,0 +1,8 @@
+set (HEADER_FILES
+	profile.h
+)
+
+set (SOURCE_FILES
+	profile.cpp
+	main.cpp
+)

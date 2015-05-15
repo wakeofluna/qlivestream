@@ -55,9 +55,14 @@ QDateTime ConfigProfile::lastAccess() const
 
 Profile::Ptr ConfigProfile::load() const
 {
-	Profile::Ptr lProfile = createProfile(*this);
+	Profile::Ptr lProfile = createProfile(mService);
 	if (!lProfile)
 		throw Exception("Error loading profile", "Unknown service identifier: " + mService);
+
+	lProfile->mId = mId;
+	lProfile->mAccount = mAccount;
+	lProfile->mToken = mToken;
+	lProfile->mLevel = mLevel;
 
 	// Load succesful, update access time
 	int lLastAccess = QDateTime::currentDateTimeUtc().toTime_t();

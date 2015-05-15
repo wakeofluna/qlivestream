@@ -1,6 +1,8 @@
 include(CMakeLists.files)
 include_directories(.)
 
+add_subdirectory(services)
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package (Qt5Core REQUIRED)

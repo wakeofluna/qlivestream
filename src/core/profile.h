@@ -4,6 +4,8 @@
 #include <memory>
 #include <QString>
 
+class ConfigProfile;
+
 namespace forms
 {
 	class PerformLogin;
@@ -33,6 +35,7 @@ public:
 	virtual QString service() const = 0;
 
 protected:
+	friend class ConfigProfile;
 	friend class forms::PerformLogin;
 	Profile();
 
