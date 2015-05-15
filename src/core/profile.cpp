@@ -10,6 +10,7 @@
 
 Profile::Profile()
 {
+	mLoggedIn = false;
 	mId = -1;
 	mLevel = STREAMER;
 }
@@ -18,11 +19,12 @@ Profile::~Profile()
 {
 }
 
-void Profile::updateToken(QString pToken) const
+void Profile::updateToken(QString pToken)
 {
 	QSqlQuery q;
 	q.prepare("update profile set token=? where id=?");
-	q.bindValue(0, mToken);
+	q.bindValue(0, pToken);
 	q.bindValue(1, mId);
 	SQL_EXEC(q);
+	mToken = pToken;
 }

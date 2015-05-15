@@ -1,6 +1,6 @@
 #include "config.h"
 #include "auth_scope.h"
-#include "first_time.h"
+#include "core/first_time.h"
 #include <QString>
 #include <QTextStream>
 

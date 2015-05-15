@@ -7,6 +7,8 @@
 
 ConfigProfile::ConfigProfile()
 {
+	mId = -1;
+	mLevel = 0;
 	mLastAccess = 0;
 }
 
@@ -20,7 +22,7 @@ ConfigProfile::List ConfigProfile::listProfiles()
 	List lProfiles;
 
 	QSqlQuery q;
-	q.prepare("select id,service,name,level,last_access from profile order by name");
+	q.prepare("select id,service,name,level,token,last_access from profile order by name");
 	SQL_EXEC(q);
 
 	lProfiles.reserve(q.size() == -1 ? 8 : q.size());
@@ -31,8 +33,9 @@ ConfigProfile::List ConfigProfile::listProfiles()
 		lProfile.mId = q.value(0).toInt();
 		lProfile.mService = q.value(1).toString();
 		lProfile.mAccount = q.value(2).toString();
-		lProfile.mLevel = (Level)q.value(3).toInt();
-		lProfile.mLastAccess = q.value(4).toInt();
+		lProfile.mLevel = q.value(3).toInt();
+		lProfile.mToken = q.value(4).toString();
+		lProfile.mLastAccess = q.value(5).toInt();
 	}
 
 	return lProfiles;
@@ -62,7 +65,7 @@ Profile::Ptr ConfigProfile::load() const
 	lProfile->mId = mId;
 	lProfile->mAccount = mAccount;
 	lProfile->mToken = mToken;
-	lProfile->mLevel = mLevel;
+	lProfile->mLevel = (Profile::Level)mLevel;
 
 	// Load succesful, update access time
 	int lLastAccess = QDateTime::currentDateTimeUtc().toTime_t();
@@ -86,7 +89,7 @@ void ConfigProfile::setService(QString pService)
 	mService = pService;
 }
 
-void ConfigProfile::setLevel(Level pLevel)
+void ConfigProfile::setLevel(int pLevel)
 {
 	mLevel = pLevel;
 }

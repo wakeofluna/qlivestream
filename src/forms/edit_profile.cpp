@@ -20,13 +20,13 @@ EditProfile::EditProfile(ConfigProfile & pProfile, QWidget * parent) : QDialog(p
 	for (auto & i : lFactories)
 		ui->cbbService->addItem(i.first);
 
-	ui->txtAccount->setText(mProfile.account());
+	ui->txtAccount->setText(mProfile.mAccount);
 	ui->cbbService->setCurrentText(mProfile.service());
-	ui->optClient->setChecked(mProfile.level() == Profile::CLIENT);
-	ui->optModerator->setChecked(mProfile.level() == Profile::MODERATOR);
-	ui->optStreamer->setChecked(mProfile.level() == Profile::STREAMER);
+	ui->optClient->setChecked(mProfile.mLevel == Profile::CLIENT);
+	ui->optModerator->setChecked(mProfile.mLevel == Profile::MODERATOR);
+	ui->optStreamer->setChecked(mProfile.mLevel == Profile::STREAMER);
 
-	bool lIsNewProfile = mProfile.account().isEmpty();
+	bool lIsNewProfile = mProfile.mAccount.isEmpty();
 	if (lIsNewProfile)
 		ui->btnBox->button(QDialogButtonBox::Discard)->setEnabled(false);
 

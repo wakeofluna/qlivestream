@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Logging in to Twitch ...</string>
+   <string>Logging in to service ...</string>
   </property>
   <layout class="QVBoxLayout" name="layout">
    <property name="sizeConstraint">

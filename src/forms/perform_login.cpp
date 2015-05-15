@@ -3,7 +3,6 @@
 #include "perform_login_sub.h"
 #include "ui_perform_login.h"
 #include "core/profile.h"
-#include "replies/token_check.h"
 #include <QMessageBox>
 
 namespace forms
@@ -38,7 +37,6 @@ void PerformLogin::proceed()
 void PerformLogin::restart()
 {
 	mStep = 0;
-	mTokenCheck.reset();
 	runStep();
 }
 
@@ -59,12 +57,13 @@ void PerformLogin::runStep()
 			if (mProfile.token().isEmpty())
 			{
 				SubPanelAcquire * lPanel = new SubPanelAcquire(mProfile, this);
-				mSubPanel = lPanel;
 				connect(lPanel, &SubPanelAcquire::onSetToken, [this] (QString pToken)
 				{
 					mProfile.updateToken(pToken);
 					proceed();
 				});
+				mSubPanel = lPanel;
+				ui->layout->addWidget(mSubPanel);
 				break;
 			}
 			proceed();
@@ -74,31 +73,28 @@ void PerformLogin::runStep()
 		{
 			ui->prgStep->setValue(50);
 			ui->prgStep->setFormat(tr("Checking login"));
-			/*
-			TokenCheck::request(*this, mProfile, [this] (TokenCheck::Ptr & pToken)
+			mProfile.performLogin([this] ()
 			{
-				if (pToken->hasError())
+				if (mProfile.hasError())
 				{
-					SubPanelError * lPanel = new SubPanelError(pToken->error(), this);
-					mSubPanel = lPanel;
+					SubPanelError * lPanel = new SubPanelError(mProfile.lastError(), this);
 					connect(lPanel, &SubPanelError::cancel, [this]
 					{
 						reject();
 					});
+					mSubPanel = lPanel;
+					ui->layout->addWidget(mSubPanel);
 					return;
 				}
-				mTokenCheck.swap(pToken);
 				proceed();
 			});
-			*/
 			break;
 		}
 
 		case 2:
-			if (!mTokenCheck->isValid())
+			if (!mProfile.loggedIn())
 			{
 				SubPanelInvalid * lPanel = new SubPanelInvalid(mProfile, this);
-				mSubPanel = lPanel;
 				connect(lPanel, &SubPanelInvalid::cancel, [this]
 				{
 					reject();
@@ -108,36 +104,20 @@ void PerformLogin::runStep()
 					mProfile.updateToken(QString());
 					restart();
 				});
+				mSubPanel = lPanel;
+				ui->layout->addWidget(mSubPanel);
 				break;
 			}
 			proceed();
 			return;
 
 		case 3:
-			if (mTokenCheck->username() != mProfile.account())
-			{
-				// TODO implement error window for mismatching username
-
-				//mProfile.mAuthToken.clear();
-				//mProfile.save();
-				//restart();
-
-				//mProfile.mAccount = mTokenCheck->username();
-				//mProfile.save();
-				//proceed();
-
-				break;
-			}
-			proceed();
-			return;
-
-		case 4:
 			ui->prgStep->setValue(75);
 			ui->prgStep->setFormat("Getting channel information");
 			proceed();
 			return;
 
-		case 5:
+		case 4:
 			accept();
 			break;
 
@@ -145,9 +125,6 @@ void PerformLogin::runStep()
 			break;
 
 	}
-
-	if (mSubPanel != nullptr)
-		ui->layout->addWidget(mSubPanel);
 }
 
 } // namespace forms

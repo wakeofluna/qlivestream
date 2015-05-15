@@ -21,8 +21,6 @@ protected:
 	inline NetworkAccess() {}
 	inline ~NetworkAccess() {}
 
-	QNetworkRequest networkRequest(Profile & pProfile) const;
-	QUrl networkUrl(Profile & pProfile) const;
 	void networkGet(QNetworkRequest const & pRequest, Receiver && pReceiver) const;
 
 private:

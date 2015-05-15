@@ -1,7 +1,6 @@
 #ifndef CORE_CONFIG_PROFILE_H_
 #define CORE_CONFIG_PROFILE_H_
 
-#include "core/profile.h"
 #include "core/profile_factory.h"
 #include <QString>
 #include <QVector>
@@ -13,7 +12,7 @@ namespace forms
 	class EditProfile;
 }
 
-class ConfigProfile : public Profile, public ProfileFactory
+class ConfigProfile : public ProfileFactory
 {
 public:
 	typedef QVector<ConfigProfile> List;
@@ -25,7 +24,7 @@ public:
 	static List listProfiles();
 	QString toString() const;
 
-	QString service() const override;
+	QString service() const;
 	QDateTime lastAccess() const;
 	Profile::Ptr load() const;
 
@@ -36,10 +35,14 @@ private:
 
 	void setAccount(QString pAccount);
 	void setService(QString pService);
-	void setLevel(Level pLevel);
+	void setLevel(int pLevel);
 	void erase() const;
 	void save();
 
+	int     mId;
+	QString mAccount;
+	QString mToken;
+	int     mLevel;
 	QString mService;
 	int mLastAccess;
 };

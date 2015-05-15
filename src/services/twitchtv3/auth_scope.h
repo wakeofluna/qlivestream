@@ -1,7 +1,7 @@
 #ifndef CORE_AUTH_SCOPE_H_
 #define CORE_AUTH_SCOPE_H_
 
-#include "class_bitset.h"
+#include "core/class_bitset.h"
 
 class QString;
 

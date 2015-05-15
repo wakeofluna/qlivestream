@@ -1,8 +1,12 @@
 set (HEADER_FILES
+	auth_scope.h
 	profile.h
+	root.h
 )
 
 set (SOURCE_FILES
+	auth_scope.cpp
 	profile.cpp
+	root.cpp
 	main.cpp
 )

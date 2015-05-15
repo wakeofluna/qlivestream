@@ -12,7 +12,7 @@ public:
 	virtual inline ~ReplyBase() {}
 
 	inline bool hasError() const { return !mParseError.isEmpty(); }
-	inline QString error() const { return mParseError; }
+	inline QString lastError() const { return mParseError; }
 
 protected:
 	inline ReplyBase() {}

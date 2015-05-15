@@ -14,31 +14,6 @@ namespace
 	QNetworkAccessManager * mNetwork = nullptr;
 }
 
-QNetworkRequest NetworkAccess::networkRequest(Profile & pProfile) const
-{
-	QNetworkRequest lRequest;
-	lRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
-	lRequest.setHeader(QNetworkRequest::UserAgentHeader, APP_NAME);
-	lRequest.setRawHeader("Accept", "application/vnd.twitchtv3+json");
-
-	if (!pProfile.token().isEmpty())
-	{
-		QString lAuth = QString("OAuth ") + pProfile.token();
-		lRequest.setRawHeader("Authorization", lAuth.toUtf8());
-	}
-
-	return lRequest;
-}
-
-QUrl NetworkAccess::networkUrl(Profile & pProfile) const
-{
-	QUrl lUrl;
-	lUrl.setScheme("https");
-	lUrl.setHost("api.twitch.tv");
-	lUrl.setPath("/kraken");
-	return lUrl;
-}
-
 void NetworkAccess::networkGet(QNetworkRequest const & pRequest, Receiver && pReceiver) const
 {
 	QNetworkReply * lReply = mNetwork->get(pRequest);

@@ -2,7 +2,6 @@
 #define FORMS_PERFORM_LOGIN_H_
 
 #include "core/network_access.h"
-#include "replies/token_check.h"
 #include <QDialog>
 
 class Profile;
@@ -37,7 +36,6 @@ private:
 	Profile & mProfile;
 	int mStep;
 	QWidget * mSubPanel;
-	TokenCheck::Ptr mTokenCheck;
 };
 
 } // namespace forms

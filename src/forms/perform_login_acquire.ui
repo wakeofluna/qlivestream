@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="lblExplain">
      <property name="text">
-      <string>Qlivestream currently has no Twitch Authentication Token for this profile. You need to authorize this application to control your stream details. When you press the button below, your internet browser will open to a small website that will explain the procedure to you.</string>
+      <string>Qlivestream currently has no Authentication Token for this profile. You need to authorize this application to control your stream details. When you press the button below, your internet browser will open to a small website that will explain the procedure to you.</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

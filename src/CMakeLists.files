@@ -24,7 +24,6 @@ set (QT_RESOURCES
 set (HEADER_FILES
 	${QT_HEADER_FILES}
 	core/application.h
-	core/auth_scope.h
 	core/class_bitset.h
 	core/config_profile.h
 	core/exception.h
@@ -34,12 +33,12 @@ set (HEADER_FILES
 	core/profile_factory.h
 	core/profile.h
 	core/storage_access.h
+	services/reply_base.h
 	config.h
 )
 
 set (SOURCE_FILES
 	core/application.cpp
-	core/auth_scope.cpp
 	core/config_profile.cpp
 	core/exception.cpp
 	core/network_access.cpp
@@ -52,6 +51,7 @@ set (SOURCE_FILES
 	forms/perform_login_sub.cpp
 	forms/perform_login.cpp
 	forms/select_profile.cpp
+	services/reply_base.cpp
 	main.cpp
 )
 

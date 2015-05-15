@@ -1,5 +1,5 @@
 #include "config.h"
-#include "../twitchtv3/root.h"
+#include "root.h"
 
 #include <QNetworkReply>
 #include <QUrl>
@@ -21,11 +21,13 @@ Root::Root(QNetworkReply & pReply)
 
 	QVariantMap lTokenAuth = lToken.value("authorization").toMap();
 	QVariantList lTokenScopes = lTokenAuth.value("scopes").toList();
+	/* TODO
 	for (int i = 0; i < lTokenScopes.size(); ++i)
 	{
 		AuthScope lScope = AuthScope::fromString(lTokenScopes[i].toString());
 		mScopes.set(lScope);
 	}
+	*/
 }
 
 Root::~Root()
