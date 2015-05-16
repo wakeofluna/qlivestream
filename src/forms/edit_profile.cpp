@@ -22,7 +22,8 @@ EditProfile::EditProfile(ConfigProfile & pProfile, QWidget * parent) : QDialog(p
 
 	ui->txtAccount->setText(mProfile.mAccount);
 	ui->cbbService->setCurrentText(mProfile.service());
-	ui->optClient->setChecked(mProfile.mLevel == Profile::CLIENT);
+	ui->optAnonymous->setChecked(mProfile.mLevel == Profile::ANONYMOUS);
+	ui->optViewer->setChecked(mProfile.mLevel == Profile::VIEWER);
 	ui->optModerator->setChecked(mProfile.mLevel == Profile::MODERATOR);
 	ui->optStreamer->setChecked(mProfile.mLevel == Profile::STREAMER);
 
@@ -49,7 +50,8 @@ void EditProfile::on_btnBox_clicked(QAbstractButton * pButton)
 	{
 		mProfile.setAccount(ui->txtAccount->text());
 		mProfile.setService(ui->cbbService->currentText());
-		mProfile.setLevel(Profile::CLIENT);
+		mProfile.setLevel(Profile::ANONYMOUS);
+		if (ui->optViewer->isChecked()) mProfile.setLevel(Profile::VIEWER);
 		if (ui->optModerator->isChecked()) mProfile.setLevel(Profile::MODERATOR);
 		if (ui->optStreamer->isChecked()) mProfile.setLevel(Profile::STREAMER);
 		mProfile.save();

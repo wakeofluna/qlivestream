@@ -8,7 +8,7 @@
 ConfigProfile::ConfigProfile()
 {
 	mId = -1;
-	mLevel = 0;
+	mLevel = Profile::ANONYMOUS;
 	mLastAccess = 0;
 }
 

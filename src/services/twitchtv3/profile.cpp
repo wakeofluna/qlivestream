@@ -90,7 +90,7 @@ QNetworkRequest Profile::serviceRequest() const
 	lRequest.setHeader(QNetworkRequest::UserAgentHeader, APP_NAME);
 	lRequest.setRawHeader("Accept", "application/vnd.twitchtv3+json");
 
-	if (!token().isEmpty())
+	if (level() != ANONYMOUS && !token().isEmpty())
 	{
 		QString lAuth = QString("OAuth ") + token();
 		lRequest.setRawHeader("Authorization", lAuth.toUtf8());

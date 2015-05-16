@@ -22,9 +22,10 @@ public:
 public:
 	enum Level
 	{
-		CLIENT = 0,
-		MODERATOR = 1,
-		STREAMER = 2
+		ANONYMOUS = 0,
+		VIEWER = 1,
+		MODERATOR = 2,
+		STREAMER = 3
 	};
 
 public:

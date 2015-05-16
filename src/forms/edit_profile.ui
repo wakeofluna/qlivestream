@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>506</width>
-    <height>176</height>
+    <height>202</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,12 +51,19 @@
    <item row="2" column="2">
     <layout class="QVBoxLayout" name="layScopes">
      <item>
-      <widget class="QRadioButton" name="optClient">
+      <widget class="QRadioButton" name="optAnonymous">
+       <property name="text">
+        <string>Anonymous</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="optViewer">
        <property name="toolTip">
         <string>Connect to the service as a client. You will not have any options to control stream settings for your or any other channel.</string>
        </property>
        <property name="text">
-        <string>Client</string>
+        <string>Viewer</string>
        </property>
       </widget>
      </item>
