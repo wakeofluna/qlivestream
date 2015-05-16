@@ -43,7 +43,7 @@ ConfigProfile::List ConfigProfile::listProfiles()
 
 QString ConfigProfile::toString() const
 {
-	return QString('[') + mService + "] " + mAccount;
+	return QString("[%1] %2").arg(mService).arg(mAccount);
 }
 
 QString ConfigProfile::service() const
@@ -60,7 +60,7 @@ Profile::UPtr ConfigProfile::load() const
 {
 	Profile::UPtr lProfile = createProfile(mService);
 	if (!lProfile)
-		throw Exception("Error loading profile", "Unknown service identifier: " + mService);
+		throw Exception("Error loading profile", QString("Unknown service identifier: %1").arg(mService));
 
 	lProfile->mId = mId;
 	lProfile->mAccount = mAccount;

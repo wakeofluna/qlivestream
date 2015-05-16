@@ -47,7 +47,7 @@ bool ReplyBase::checkNetworkStatus()
 		ERR(InternalServerError, QT_TRANSLATE_NOOP("NetworkStatus", "Internal server error"));
 		ERR(ServiceUnavailableError, QT_TRANSLATE_NOOP("NetworkStatus", "Service unavailable error"));
 
-		default: setError("Network error #" + QString::number(lNetworkError)); break;
+		default: setError(QString("Network error #%1").arg(lNetworkError)); break;
 	}
 
 	return false;

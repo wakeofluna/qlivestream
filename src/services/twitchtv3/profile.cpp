@@ -42,7 +42,7 @@ QUrl Profile::acquireTokenUrl() const
 	lUrl.setScheme("https");
 	lUrl.setHost("kitsune.astralkey.nl");
 	lUrl.setPath("/qlivestream/twitch/");
-	lUrl.setFragment(QString("scope=") + lRequested.toString());
+	lUrl.setFragment(QString("scope=%1").arg(lRequested.toString()));
 
 	return lUrl;
 }
@@ -89,7 +89,7 @@ QNetworkRequest Profile::serviceRequest() const
 
 	if (level() != ANONYMOUS && !token().isEmpty())
 	{
-		QString lAuth = QString("OAuth ") + token();
+		QString lAuth = QString("OAuth %1").arg(token());
 		lRequest.setRawHeader("Authorization", lAuth.toUtf8());
 	}
 

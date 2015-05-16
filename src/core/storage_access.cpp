@@ -32,7 +32,7 @@ void StorageAccess::initialize()
 	if (!lPathOk)
 		lPathOk = lCacheLocation.mkpath(".");
 	if (!lPathOk)
-		throw Exception("Error accessing path", "No access to cache data path : " + lCacheLocation.path());
+		throw Exception("Error accessing path", QString("No access to cache data path : %1").arg(lCacheLocation.path()));
 
 	// Save cache path
 	mStorageCache = lCacheLocation;
@@ -43,7 +43,7 @@ void StorageAccess::initialize()
 	if (!lPathOk)
 		lPathOk = lAppDataLocation.mkpath(".");
 	if (!lPathOk)
-		throw Exception("Error accessing path", "No access to roaming data path : " + lAppDataLocation.path());
+		throw Exception("Error accessing path", QString("No access to roaming data path : %1").arg(lAppDataLocation.path()));
 
 	// Open/create database
 	mStorageDatabase = QSqlDatabase::addDatabase("QSQLITE");
