@@ -4,6 +4,7 @@
 #include "core/exception.h"
 
 #define APP_NAME "Qlivestream"
+#define APP_NAME_LC "qlivestream"
 
 // Helper for lambda captures
 #if defined(CDT_PARSER) || __cplusplus < 201402L

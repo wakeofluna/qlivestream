@@ -5,10 +5,10 @@
 #include <QApplication>
 #include <QDir>
 #include <QFileInfo>
-#include <QSettings>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
+#include <QStandardPaths>
 #include <QDebug>
 
 namespace
@@ -24,51 +24,35 @@ QDir StorageAccess::cache() const
 
 void StorageAccess::initialize()
 {
-	QSettings lSettings(QSettings::IniFormat, QSettings::UserScope, QApplication::applicationName(), "settings");
+	bool lPathOk;
 
-	// Access the settings file first to make sure the directory exists
-	lSettings.beginGroup("database");
-	if (!lSettings.contains("type"))
-	{
-		lSettings.setValue("type", "sqlite");
-		lSettings.sync();
-	}
-
-	// Get path of settings (with userscope it should be somewhere in the users home)
-	QFileInfo lSettingsFile = lSettings.fileName();
-	QDir lConfigPath = lSettingsFile.path();
-
-	// Determine path to local storage cache
-	mStorageCache = lConfigPath;
-	bool lPathOk = mStorageCache.cd("cache");
+	// Check local data location
+	QDir lCacheLocation = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+	lPathOk = lCacheLocation.exists();
 	if (!lPathOk)
-	{
-		mStorageCache.mkdir("cache");
-		lPathOk = mStorageCache.cd("cache");
-	}
+		lPathOk = lCacheLocation.mkpath(".");
 	if (!lPathOk)
-		throw Exception("Invalid local storage", "Cannot access/create local storage cache");
+		throw Exception("Error accessing path", "No access to cache data path : " + lCacheLocation.path());
 
-	// Access database
-	QString lDBType = lSettings.value("type").toString();
-	if (lDBType == "sqlite")
-	{
-		QString lDBName = lConfigPath.filePath("appdata.sqlite");
-		mStorageDatabase = QSqlDatabase::addDatabase("QSQLITE");
-		mStorageDatabase.setDatabaseName(lDBName);
-	}
-	else
-		throw Exception("Error initializing database", "Unknown database type: " + lDBType);
+	// Save cache path
+	mStorageCache = lCacheLocation;
 
+	// Check roaming data location
+	QDir lAppDataLocation = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+	lPathOk = lAppDataLocation.exists();
+	if (!lPathOk)
+		lPathOk = lAppDataLocation.mkpath(".");
+	if (!lPathOk)
+		throw Exception("Error accessing path", "No access to roaming data path : " + lAppDataLocation.path());
+
+	// Open/create database
+	mStorageDatabase = QSqlDatabase::addDatabase("QSQLITE");
+	mStorageDatabase.setDatabaseName(lAppDataLocation.filePath(APP_NAME_LC ".sqlite"));
 	if (!mStorageDatabase.open())
 		throw Exception("Error opening database", mStorageDatabase.lastError().databaseText());
 
 	// Database post initialization
-	if (lDBType == "sqlite")
-	{
-		QSqlQuery q("PRAGMA foreign_keys = ON;");
-		q.finish();
-	}
+	QSqlQuery("PRAGMA foreign_keys = ON;");
 
 	checkDatabaseStructure();
 }
