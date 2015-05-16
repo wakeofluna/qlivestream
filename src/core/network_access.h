@@ -8,14 +8,25 @@ class QNetworkAccessManager;
 class QNetworkReply;
 class QNetworkRequest;
 class QObject;
+class QString;
 class QUrl;
+class QVariant;
 
 template <typename T> class Initializer;
+
+namespace forms
+{
+	class DebugNetworkMessages;
+}
 
 class NetworkAccess
 {
 public:
 	typedef std::function<void (QNetworkReply &)> Receiver;
+
+public:
+	static forms::DebugNetworkMessages * networkCaptureWindow();
+	static void networkLogMessage(QString pTag, QVariant const & pMessage);
 
 protected:
 	inline NetworkAccess() {}

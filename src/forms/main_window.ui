@@ -59,8 +59,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>98</width>
-             <height>106</height>
+             <width>451</width>
+             <height>376</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -177,6 +177,9 @@
     <property name="title">
      <string>&amp;Help</string>
     </property>
+    <addaction name="separator"/>
+    <addaction name="mnuHelpDebugNetwork"/>
+    <addaction name="separator"/>
     <addaction name="mnuHelpAbout"/>
     <addaction name="mnuHelpAboutQt"/>
    </widget>
@@ -211,6 +214,11 @@
    </property>
    <property name="menuRole">
     <enum>QAction::AboutRole</enum>
+   </property>
+  </action>
+  <action name="mnuHelpDebugNetwork">
+   <property name="text">
+    <string>Debug : network capture</string>
    </property>
   </action>
  </widget>

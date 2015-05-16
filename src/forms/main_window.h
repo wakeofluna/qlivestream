@@ -23,6 +23,7 @@ public:
 private slots:
 	void on_mnuFileLogout_triggered();
 	void on_mnuFileExit_triggered();
+	void on_mnuHelpDebugNetwork_triggered();
 	void on_mnuHelpAbout_triggered();
 	void on_mnuHelpAboutQt_triggered();
 

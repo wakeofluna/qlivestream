@@ -11,7 +11,7 @@ namespace twitchtv3
 
 Root::Root(QNetworkReply & pReply)
 {
-	QVariantMap lResponse = parseJsonReply(pReply);
+	QVariantMap lResponse = parseJsonReply("Authentication check", pReply);
 	if (lResponse.isEmpty())
 		return;
 

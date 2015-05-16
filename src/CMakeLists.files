@@ -1,4 +1,5 @@
 set (QT_HEADER_FILES
+	forms/debug_network_messages.h
 	forms/edit_profile.h
 	forms/main_about.h
 	forms/main_window.h
@@ -8,6 +9,7 @@ set (QT_HEADER_FILES
 )
 
 set (QT_FORMS
+	forms/debug_network_messages.ui
 	forms/edit_profile.ui
 	forms/main_about.ui
 	forms/main_window.ui
@@ -45,6 +47,7 @@ set (SOURCE_FILES
 	core/profile_factory.cpp
 	core/profile.cpp
 	core/storage_access.cpp
+	forms/debug_network_messages.cpp
 	forms/edit_profile.cpp
 	forms/main_about.cpp
 	forms/main_window.cpp

@@ -1,7 +1,9 @@
 #include "config.h"
 #include "main_window.h"
 #include "ui_main_window.h"
+#include "core/network_access.h"
 #include "core/profile.h"
+#include "forms/debug_network_messages.h"
 #include "forms/main_about.h"
 #include "forms/select_profile.h"
 
@@ -34,6 +36,12 @@ void MainWindow::on_mnuFileLogout_triggered()
 void MainWindow::on_mnuFileExit_triggered()
 {
 	QApplication::exit(0);
+}
+
+void MainWindow::on_mnuHelpDebugNetwork_triggered()
+{
+	auto * lWindow = NetworkAccess::networkCaptureWindow();
+	lWindow->show();
 }
 
 void MainWindow::on_mnuHelpAbout_triggered()
