@@ -17,7 +17,7 @@ class Profile
 {
 public:
 	typedef std::function<void ()> DefaultCallback;
-	typedef std::unique_ptr<Profile> Ptr;
+	typedef std::unique_ptr<Profile> UPtr;
 
 public:
 	enum Level

@@ -26,7 +26,7 @@ public:
 
 	QString service() const;
 	QDateTime lastAccess() const;
-	Profile::Ptr load() const;
+	Profile::UPtr load() const;
 
 	inline bool operator< (ConfigProfile const & rhs) const { return mLastAccess < rhs.mLastAccess; }
 

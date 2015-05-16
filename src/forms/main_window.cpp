@@ -10,10 +10,12 @@
 namespace forms
 {
 
-MainWindow::MainWindow(Profile::Ptr && pProfile, QWidget *parent) : QMainWindow(parent, Qt::Window), mProfile(std::move(pProfile))
+MainWindow::MainWindow(Profile::UPtr && pProfile, QWidget *parent) : QMainWindow(parent, Qt::Window), mProfile(std::move(pProfile))
 {
 	ui = new Ui::MainWindow();
 	ui->setupUi(this);
+	ui->tabWidget->setCurrentWidget(ui->tabFollowing);
+	ui->txtActiveAccount->setText(mProfile->account());
 }
 
 MainWindow::~MainWindow()

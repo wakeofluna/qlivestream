@@ -17,7 +17,7 @@ class MainWindow : public QMainWindow
 Q_OBJECT
 
 public:
-	MainWindow(Profile::Ptr && pProfile, QWidget *parent = 0);
+	MainWindow(Profile::UPtr && pProfile, QWidget *parent = 0);
 	~MainWindow();
 
 private slots:
@@ -29,7 +29,7 @@ private slots:
 private:
 	Ui::MainWindow * ui;
 
-	Profile::Ptr mProfile;
+	Profile::UPtr mProfile;
 };
 
 } // namespace forms

@@ -82,7 +82,7 @@ void SelectProfile::on_btnBox_accepted()
 	}
 
 	ConfigProfile & lConfig = mProfiles[ui->cbbProfile->currentIndex()];
-	Profile::Ptr lProfile = lConfig.load();
+	Profile::UPtr lProfile = lConfig.load();
 
 	int lResult;
 	if (lProfile->level() == Profile::ANONYMOUS)

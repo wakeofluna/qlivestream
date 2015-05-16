@@ -56,9 +56,9 @@ QDateTime ConfigProfile::lastAccess() const
 	return QDateTime::fromTime_t(mLastAccess);
 }
 
-Profile::Ptr ConfigProfile::load() const
+Profile::UPtr ConfigProfile::load() const
 {
-	Profile::Ptr lProfile = createProfile(mService);
+	Profile::UPtr lProfile = createProfile(mService);
 	if (!lProfile)
 		throw Exception("Error loading profile", "Unknown service identifier: " + mService);
 

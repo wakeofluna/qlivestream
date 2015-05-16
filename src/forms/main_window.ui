@@ -6,200 +6,153 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>512</width>
-    <height>227</height>
+    <width>493</width>
+    <height>505</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Qlivestream</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="4" column="2">
-     <widget class="QComboBox" name="cbbPlaying">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>40</height>
-       </size>
-      </property>
-      <property name="editable">
-       <bool>true</bool>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="lblAccount">
-      <property name="text">
-       <string>Account:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="2">
-     <layout class="QHBoxLayout" name="layChannelStats">
-      <item>
-       <widget class="QLabel" name="lblNumSubscribers">
-        <property name="styleSheet">
-         <string notr="true">color: rgb(0, 0, 127)</string>
-        </property>
-        <property name="text">
-         <string>0</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="lblSubscribers">
-        <property name="text">
-         <string>subscribers</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="lblNumFollowers">
-        <property name="styleSheet">
-         <string notr="true">color: rgb(0, 0, 127)</string>
-        </property>
-        <property name="text">
-         <string>0</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="lblFollowers">
-        <property name="text">
-         <string>followers</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="lblNumViewers">
-        <property name="styleSheet">
-         <string notr="true">color: rgb(0, 0, 127)</string>
-        </property>
-        <property name="text">
-         <string>0</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="lblViewers">
-        <property name="text">
-         <string>viewers</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="lblChannelStats">
-      <property name="text">
-       <string>Statistics:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2">
-     <widget class="QLineEdit" name="txtName">
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="lblName">
-      <property name="text">
-       <string>Profile:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="lblPlaying">
-      <property name="text">
-       <string>Now playing:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="2">
-     <widget class="QLineEdit" name="txtAccount">
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="lblTitle">
-      <property name="text">
-       <string>Broadcast title:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="2">
-     <widget class="QLineEdit" name="txtTitle"/>
-    </item>
-    <item row="5" column="0">
-     <widget class="QLabel" name="lblGameStats">
-      <property name="text">
-       <string>Game statistics:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="2">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QLabel" name="lblNumGameChannels">
-        <property name="styleSheet">
-         <string notr="true">color: rgb(0, 0, 127)</string>
-        </property>
+       <widget class="QLabel" name="lblActiveAccount">
         <property name="text">
-         <string>0</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <string>Account:</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="lblGameChannels">
-        <property name="text">
-         <string>total channels</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="lblNumGameViewers">
-        <property name="styleSheet">
-         <string notr="true">color: rgb(0, 0, 127)</string>
+       <widget class="QLabel" name="txtActiveAccount">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
         <property name="text">
-         <string>0</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="lblGameViewers">
-        <property name="text">
-         <string>total viewers</string>
+         <string notr="true">...</string>
         </property>
        </widget>
       </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
+      <widget class="QWidget" name="tabFollowing">
+       <attribute name="title">
+        <string>Following</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QScrollArea" name="scrFollowing">
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="scrFollowingContents">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>98</width>
+             <height>106</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <widget class="QGroupBox" name="grpFollowingOnline">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="title">
+               <string>Online</string>
+              </property>
+              <layout class="QGridLayout" name="gridFollowingOnline"/>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="grpFollowingOffline">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="title">
+               <string>Offline</string>
+              </property>
+              <layout class="QGridLayout" name="gridFollowingOffline"/>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tabGames">
+       <attribute name="title">
+        <string>Games</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QScrollArea" name="scrGames">
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="scrGamesContents">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>451</width>
+             <height>376</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QGroupBox" name="grpGamesFavourite">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="title">
+               <string>Favourite</string>
+              </property>
+              <layout class="QGridLayout" name="gridGamesFavourite"/>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="grpGamesAll">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="title">
+               <string>All</string>
+              </property>
+              <layout class="QGridLayout" name="gridGamesAll"/>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -208,7 +161,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>512</width>
+     <width>493</width>
      <height>19</height>
     </rect>
    </property>

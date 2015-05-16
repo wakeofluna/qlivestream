@@ -21,7 +21,7 @@ void ProfileFactory::registerService(QString pService, CreateFunc pFunction)
 	_registerService(pService, pFunction);
 }
 
-Profile::Ptr ProfileFactory::createProfile(QString pService) const
+Profile::UPtr ProfileFactory::createProfile(QString pService) const
 {
 	auto lItem = std::find_if(mList.begin(), mList.end(),
 			[pService] (ServicePair const & i) -> bool
@@ -32,7 +32,7 @@ Profile::Ptr ProfileFactory::createProfile(QString pService) const
 	if (lItem == mList.end())
 		return nullptr;
 
-	return Profile::Ptr(lItem->second());
+	return Profile::UPtr(lItem->second());
 }
 
 ProfileFactory::List const & ProfileFactory::listServices() const
