@@ -20,14 +20,13 @@ Root::Root(QNetworkReply & pReply)
 	mUsername = lToken.value("user_name").toString();
 
 	QVariantMap lTokenAuth = lToken.value("authorization").toMap();
+
 	QVariantList lTokenScopes = lTokenAuth.value("scopes").toList();
-	/* TODO
 	for (int i = 0; i < lTokenScopes.size(); ++i)
 	{
 		AuthScope lScope = AuthScope::fromString(lTokenScopes[i].toString());
 		mScopes.set(lScope);
 	}
-	*/
 }
 
 Root::~Root()

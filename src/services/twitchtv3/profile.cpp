@@ -65,7 +65,10 @@ void Profile::performLogin(DefaultCallback && pCallback)
 			if (lReply.hasError())
 				mLastError = lReply.lastError();
 			else if (lReply.valid() && lReply.username() == account())
+			{
 				mLoggedIn = true;
+				mScopes = lReply.scopes();
+			}
 		}
 		else
 			mLastError = "Invalid/unknown API reply";
