@@ -1,4 +1,6 @@
 set (QT_HEADER_FILES
+	core/category_object.h
+	forms/category_object_widget.h
 	forms/debug_network_messages.h
 	forms/edit_profile.h
 	forms/main_about.h
@@ -9,6 +11,7 @@ set (QT_HEADER_FILES
 )
 
 set (QT_FORMS
+	forms/category_object_widget.ui
 	forms/debug_network_messages.ui
 	forms/edit_profile.ui
 	forms/main_about.ui
@@ -26,6 +29,7 @@ set (QT_RESOURCES
 set (HEADER_FILES
 	${QT_HEADER_FILES}
 	core/application.h
+	core/channel_object.h
 	core/class_bitset.h
 	core/config_profile.h
 	core/exception.h
@@ -36,17 +40,21 @@ set (HEADER_FILES
 	core/profile.h
 	core/storage_access.h
 	services/reply_base.h
+	services/reply_binary.h
 	config.h
 )
 
 set (SOURCE_FILES
 	core/application.cpp
+	core/category_object.cpp
+	core/channel_object.cpp
 	core/config_profile.cpp
 	core/exception.cpp
 	core/network_access.cpp
 	core/profile_factory.cpp
 	core/profile.cpp
 	core/storage_access.cpp
+	forms/category_object_widget.cpp
 	forms/debug_network_messages.cpp
 	forms/edit_profile.cpp
 	forms/main_about.cpp
@@ -55,6 +63,7 @@ set (SOURCE_FILES
 	forms/perform_login.cpp
 	forms/select_profile.cpp
 	services/reply_base.cpp
+	services/reply_binary.cpp
 	main.cpp
 )
 

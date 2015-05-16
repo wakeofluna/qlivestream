@@ -1,9 +1,12 @@
 #include "config.h"
 #include "profile.h"
 #include "root.h"
+#include "games.h"
+
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QUrl>
+#include <QUrlQuery>
 
 namespace twitchtv3
 {
@@ -71,12 +74,42 @@ void Profile::performLogin(DefaultCallback && pCallback)
 	});
 }
 
-QUrl Profile::serviceUrl() const
+void Profile::getTopCategories(int pStart, int pLimit, CategoryCallback && pCallback)
+{
+	QUrlQuery lUrlQuery;
+	lUrlQuery.addQueryItem("limit", QString::number(pLimit));
+	lUrlQuery.addQueryItem("offset", QString::number(pStart));
+
+	QUrl lUrl = serviceUrl("/games/top");
+	lUrl.setQuery(lUrlQuery);
+
+	QNetworkRequest lRequest = serviceRequest();
+	lRequest.setUrl(lUrl);
+
+	networkGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
+	{
+		QVector<CategoryObject*> lList;
+
+		twitchtv3::Games lGames(pReply);
+		if (lGames.hasError())
+			mLastError = lGames.lastError();
+		else
+			lList = lGames.createList();
+
+		pCallback(lList);
+	});
+}
+
+void Profile::getFollowings(int pStart, int pLimit, ChannelCallback && pCallback)
+{
+}
+
+QUrl Profile::serviceUrl(QString pAppend) const
 {
 	QUrl lUrl;
 	lUrl.setScheme("https");
 	lUrl.setHost("api.twitch.tv");
-	lUrl.setPath("/kraken");
+	lUrl.setPath(QString("/kraken%1").arg(pAppend));
 	return lUrl;
 }
 

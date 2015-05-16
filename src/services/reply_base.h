@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QVariantMap>
+class QByteArray;
 class QNetworkReply;
 
 
@@ -23,6 +24,7 @@ protected:
 	void setError(QString pError);
 	bool checkNetworkStatus();
 	QVariantMap parseJsonReply();
+	QByteArray readByteArray();
 
 	QNetworkReply & mReply;
 

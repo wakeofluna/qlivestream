@@ -3,12 +3,14 @@
 #include "core/exception.h"
 
 #include <QApplication>
+#include <QByteArray>
 #include <QDir>
 #include <QFileInfo>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QStandardPaths>
+#include <QUrl>
 #include <QDebug>
 
 namespace
@@ -17,9 +19,45 @@ namespace
 	QSqlDatabase mStorageDatabase;
 }
 
-QDir StorageAccess::cache() const
+void StorageAccess::accessCache(QString const & pCacheString, CacheMissCallback && pMiss, CacheHitCallback && pHit)
 {
-	return mStorageCache;
+	QByteArray lData;
+	if (fromCache(pCacheString, lData))
+	{
+		pHit(lData);
+	}
+	else
+	{
+		pMiss([this, pCacheString, CAPTURE(pHit)] (QByteArray const& pData)
+		{
+			insertInCache(pCacheString, pData);
+			pHit(pData);
+		});
+	}
+}
+
+bool StorageAccess::fromCache(QString const & pCacheString, QByteArray & pData) const
+{
+	QFile lFile(mStorageCache.filePath(pCacheString));
+	if (!lFile.exists())
+		return false;
+
+	lFile.open(QFile::ReadOnly | QFile::Unbuffered);
+	pData = lFile.readAll();
+	lFile.close();
+
+	return !pData.isEmpty();
+}
+
+void StorageAccess::insertInCache(QString const & pCacheString, QByteArray const & pData)
+{
+	if (pData.isEmpty())
+		return;
+
+	QFile lFile(mStorageCache.filePath(pCacheString));
+	lFile.open(QFile::WriteOnly | QFile::Truncate);
+	lFile.write(pData);
+	lFile.close();
 }
 
 void StorageAccess::initialize()

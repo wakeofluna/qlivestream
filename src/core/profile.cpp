@@ -1,11 +1,15 @@
 #include "config.h"
 #include "profile.h"
+#include "core/category_object.h"
+#include "core/channel_object.h"
+#include "services/reply_binary.h"
 
 #include <QApplication>
-#include <QSettings>
+#include <QByteArray>
+#include <QNetworkReply>
+#include <QNetworkRequest>
 #include <QSqlError>
 #include <QSqlQuery>
-#include <QStringList>
 #include <QVariant>
 
 Profile::Profile()
@@ -17,6 +21,19 @@ Profile::Profile()
 
 Profile::~Profile()
 {
+}
+
+void Profile::downloadLogo(QUrl const & pUrl, DataCallback && pCallback)
+{
+	QNetworkRequest lRequest;
+	lRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
+	lRequest.setUrl(pUrl);
+
+	networkGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
+	{
+		ReplyBinary lReply(pReply, "Logo");
+		pCallback(lReply.data());
+	});
 }
 
 void Profile::updateToken(QString pToken)

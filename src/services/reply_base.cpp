@@ -70,3 +70,13 @@ QVariantMap ReplyBase::parseJsonReply()
 
 	return lResponse;
 }
+
+QByteArray ReplyBase::readByteArray()
+{
+	QByteArray lBytes = mReply.readAll();
+
+	if (!hasError())
+		NetworkAccess::networkLogMessage(tag(), QString("(%1 bytes)").arg(lBytes.size()));
+
+	return lBytes;
+}

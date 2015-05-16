@@ -1,10 +1,7 @@
 #include "config.h"
 #include "root.h"
 
-#include <QNetworkReply>
-#include <QUrl>
 #include <QVariantList>
-#include "core/network_access.h"
 
 namespace twitchtv3
 {
@@ -34,7 +31,7 @@ Root::~Root()
 
 QString Root::tag() const
 {
-	return QString("Authentication check");
+	return QStringLiteral("Authentication check");
 }
 
 } // namespace twitchtv3
