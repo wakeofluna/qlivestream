@@ -27,6 +27,7 @@ public:
 public:
 	static forms::DebugNetworkMessages * networkCaptureWindow();
 	static void networkLogMessage(QString pTag, QVariant const & pMessage);
+	static void networkLogError(QString pTag, QString const & pMessage);
 
 protected:
 	inline NetworkAccess() {}

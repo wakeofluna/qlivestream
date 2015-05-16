@@ -4,18 +4,17 @@
 #include <QNetworkReply>
 #include <QUrl>
 #include <QVariantList>
-
+#include "core/network_access.h"
 
 namespace twitchtv3
 {
 
-Root::Root(QNetworkReply & pReply)
+Root::Root(QNetworkReply & pReply) : ServerReply(pReply)
 {
-	QVariantMap lResponse = parseJsonReply("Authentication check", pReply);
-	if (lResponse.isEmpty())
+	if (!parse())
 		return;
 
-	QVariantMap lToken = lResponse.value("token").toMap();
+	QVariantMap lToken = mData.value("token").toMap();
 	mValid = lToken.value("valid").toBool();
 	mUsername = lToken.value("user_name").toString();
 
@@ -33,5 +32,9 @@ Root::~Root()
 {
 }
 
+QString Root::tag() const
+{
+	return QString("Authentication check");
+}
 
 } // namespace twitchtv3

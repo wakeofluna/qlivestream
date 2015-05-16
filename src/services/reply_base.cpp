@@ -7,10 +7,26 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-#define ERR(x,s) case QNetworkReply::x: setError(s); break
-bool ReplyBase::checkNetworkStatus(QNetworkReply & pReply)
+ReplyBase::ReplyBase(QNetworkReply & pReply) : mReply(pReply), mNetworkError(0)
 {
-	QNetworkReply::NetworkError lNetworkError = pReply.error();
+}
+
+ReplyBase::~ReplyBase()
+{
+}
+
+void ReplyBase::setError(QString pError)
+{
+	if (mLastError.isEmpty())
+		NetworkAccess::networkLogError(tag(), pError);
+
+	mLastError = pError;
+}
+
+#define ERR(x,s) case QNetworkReply::x: setError(s); break
+bool ReplyBase::checkNetworkStatus()
+{
+	QNetworkReply::NetworkError lNetworkError = mReply.error();
 	mNetworkError = lNetworkError;
 
 	if (lNetworkError == QNetworkReply::NoError)
@@ -38,24 +54,19 @@ bool ReplyBase::checkNetworkStatus(QNetworkReply & pReply)
 }
 #undef ERR
 
-QVariantMap ReplyBase::parseJsonReply(QString pTag, QNetworkReply & pReply)
+QVariantMap ReplyBase::parseJsonReply()
 {
 	QVariantMap lResponse;
 
-	if (checkNetworkStatus(pReply))
-	{
-		QByteArray lBytes = pReply.readAll();
+	QByteArray lBytes = mReply.readAll();
 
-		QJsonParseError lError;
-		lResponse = QJsonDocument::fromJson(lBytes, &lError).object().toVariantMap();
-		if (lError.error != QJsonParseError::NoError)
-			setError(lError.errorString());
-	}
+	QJsonParseError lError;
+	lResponse = QJsonDocument::fromJson(lBytes, &lError).object().toVariantMap();
+	if (lError.error != QJsonParseError::NoError)
+		setError(lError.errorString());
 
-	if (hasError())
-		NetworkAccess::networkLogMessage(pTag, lastError());
-	else
-		NetworkAccess::networkLogMessage(pTag, lResponse);
+	if (!hasError())
+		NetworkAccess::networkLogMessage(tag(), lResponse);
 
 	return lResponse;
 }

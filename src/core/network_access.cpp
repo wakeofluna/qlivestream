@@ -31,6 +31,14 @@ void NetworkAccess::networkLogMessage(QString pTag, QVariant const & pMessage)
 	mDebugMessages->addMessage(pTag, pMessage);
 }
 
+void NetworkAccess::networkLogError(QString pTag, QString const & pMessage)
+{
+	if (!mDebugMessages->isCapturing())
+		return;
+
+	mDebugMessages->addError(pTag, pMessage);
+}
+
 void NetworkAccess::networkGet(QNetworkRequest const & pRequest, Receiver && pReceiver) const
 {
 	QNetworkReply * lReply = mNetwork->get(pRequest);

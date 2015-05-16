@@ -58,20 +58,14 @@ void Profile::performLogin(DefaultCallback && pCallback)
 	{
 		mLastError.clear();
 
-		QByteArray lApi = pReply.rawHeader("X-API-Version");
-		if (lApi == "3")
+		twitchtv3::Root lReply(pReply);
+		if (lReply.hasError())
+			mLastError = lReply.lastError();
+		else if (lReply.valid() && lReply.username() == account())
 		{
-			twitchtv3::Root lReply(pReply);
-			if (lReply.hasError())
-				mLastError = lReply.lastError();
-			else if (lReply.valid() && lReply.username() == account())
-			{
-				mLoggedIn = true;
-				mScopes = lReply.scopes();
-			}
+			mLoggedIn = true;
+			mScopes = lReply.scopes();
 		}
-		else
-			mLastError = "Invalid/unknown API reply";
 
 		pCallback();
 	});

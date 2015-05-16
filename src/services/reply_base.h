@@ -9,22 +9,26 @@ class QNetworkReply;
 class ReplyBase
 {
 public:
-	virtual inline ~ReplyBase() {}
+	virtual ~ReplyBase();
 
-	inline bool hasError() const { return !mReplyError.isEmpty(); }
-	inline QString lastError() const { return mReplyError; }
+	virtual QString tag() const = 0;
+
+	inline bool hasError() const { return !mLastError.isEmpty(); }
+	inline QString lastError() const { return mLastError; }
+	inline int networkError() const { return mNetworkError; }
 
 protected:
-	inline ReplyBase() : mNetworkError(0) {}
-	inline ReplyBase(QString pError) : mReplyError(pError), mNetworkError(0) {}
-	inline void setError(QString pError) { mReplyError = pError; }
+	ReplyBase(QNetworkReply & pReply);
 
-	QVariantMap parseJsonReply(QString pTag, QNetworkReply & pReply);
-	QString mReplyError;
-	int mNetworkError;
+	void setError(QString pError);
+	bool checkNetworkStatus();
+	QVariantMap parseJsonReply();
+
+	QNetworkReply & mReply;
 
 private:
-	bool checkNetworkStatus(QNetworkReply & pReply);
+	int     mNetworkError;
+	QString mLastError;
 };
 
 #endif // REPLIES_REPLY_BASE_H_

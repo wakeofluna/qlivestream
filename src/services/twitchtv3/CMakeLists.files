@@ -2,11 +2,13 @@ set (HEADER_FILES
 	auth_scope.h
 	profile.h
 	root.h
+	server_reply.h
 )
 
 set (SOURCE_FILES
 	auth_scope.cpp
 	profile.cpp
 	root.cpp
+	server_reply.cpp
 	main.cpp
 )
