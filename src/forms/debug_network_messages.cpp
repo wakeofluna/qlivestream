@@ -5,6 +5,7 @@
 #include <QAbstractButton>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
+#include <QVariantList>
 #include <QVariantMap>
 
 namespace
@@ -23,6 +24,17 @@ void recursiveAdd(QTreeWidgetItem * pItem, QVariant const & pValue)
 			QTreeWidgetItem * lItem = new QTreeWidgetItem(pItem);
 			lItem->setText(0, s);
 			recursiveAdd(lItem, lMap.value(s));
+		}
+	}
+	else if (pValue.type() == QVariant::List)
+	{
+		QVariantList lList = pValue.toList();
+
+		for (int i = 0; i < lList.size(); ++i)
+		{
+			QTreeWidgetItem * lItem = new QTreeWidgetItem(pItem);
+			lItem->setText(0, QString("[%1]").arg(i));
+			recursiveAdd(lItem, lList.at(i));
 		}
 	}
 	else
