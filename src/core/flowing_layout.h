@@ -3,6 +3,7 @@
 
 #include <QLayout>
 #include <QStyle>
+class QAnimationGroup;
 
 class FlowingLayout : public QLayout
 {
@@ -46,6 +47,8 @@ protected:
 	int mCurrentRows;
 	int mCurrentColumns;
 	int mLayedoutItems;
+
+	QAnimationGroup * mAnimationGroup;
 };
 
 #endif // CORE_FLOWING_LAYOUT_H_

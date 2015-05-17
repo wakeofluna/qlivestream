@@ -1,6 +1,9 @@
 #include "config.h"
 #include "flowing_layout.h"
 
+#include <QGraphicsOpacityEffect>
+#include <QParallelAnimationGroup>
+#include <QPropertyAnimation>
 #include <QWidget>
 
 FlowingLayout::FlowingLayout(QWidget * parent) : QLayout(parent)
@@ -10,6 +13,7 @@ FlowingLayout::FlowingLayout(QWidget * parent) : QLayout(parent)
 	mCurrentRows = 0;
 	mCurrentColumns = 0;
 	mLayedoutItems = 0;
+	mAnimationGroup = nullptr;
 
 	setSizeConstraint(SetMinimumSize);
 }
@@ -116,6 +120,13 @@ int FlowingLayout::currentColumns() const
 
 void FlowingLayout::clear(bool pDeleteWidgets)
 {
+	if (mAnimationGroup != nullptr)
+	{
+		mAnimationGroup->stop();
+		delete mAnimationGroup;
+		mAnimationGroup = nullptr;
+	}
+
 	while (count() > 0)
 	{
 		QLayoutItem * lItem = takeAt(count() - 1);
@@ -170,6 +181,13 @@ QSize FlowingLayout::doLayout(QRect const & pRect, bool pApply)
 
 	if (pApply && (mCurrentColumns != lColumns || mCurrentRows != lRows || mLayedoutItems != mItems.size()))
 	{
+		if (mAnimationGroup != nullptr)
+		{
+			mAnimationGroup->stop();
+			delete mAnimationGroup;
+			mAnimationGroup = nullptr;
+		}
+
 		for (int i = 0; i < mItems.size(); ++i)
 		{
 			int y = i / lColumns;
@@ -180,12 +198,53 @@ QSize FlowingLayout::doLayout(QRect const & pRect, bool pApply)
 			lTopLeft.setY(lRect.top() + y * lItemSize.height() + (y-1) * lSpaceY);
 
 			QWidget * lWidget = mItems[i]->widget();
-			lWidget->setGeometry(QRect(lTopLeft, lItemSize));
+
+			if (true) // XXX if animated from settings
+			{
+				if (mAnimationGroup == nullptr)
+					mAnimationGroup = new QParallelAnimationGroup();
+
+				QPropertyAnimation * lAnim = new QPropertyAnimation();
+				lAnim->setDuration(500);
+				mAnimationGroup->addAnimation(lAnim);
+
+				if (lWidget->geometry().top() < top)
+				{
+					// Fade in
+					QGraphicsOpacityEffect * lEffect = new QGraphicsOpacityEffect(lAnim);
+					lEffect->setOpacity(0.0);
+					lWidget->setGraphicsEffect(lEffect);
+					lWidget->setGeometry(QRect(lTopLeft, lItemSize));
+					lAnim->setTargetObject(lEffect);
+					lAnim->setEasingCurve(QEasingCurve::InQuad);
+					lAnim->setPropertyName("opacity");
+					lAnim->setEndValue(1.0);
+					connect(lAnim, &QAbstractAnimation::finished, [lEffect] () { lEffect->deleteLater(); });
+				}
+				else
+				{
+					// Move
+					QEasingCurve lCurve(QEasingCurve::OutBack);
+					lCurve.setOvershoot(1);
+
+					lAnim->setTargetObject(lWidget);
+					lAnim->setPropertyName("geometry");
+					lAnim->setEasingCurve(lCurve);
+					lAnim->setEndValue(QRect(lTopLeft, lItemSize));
+				}
+			}
+			else
+			{
+				lWidget->setGeometry(QRect(lTopLeft, lItemSize));
+			}
 		}
 
 		mCurrentColumns = lColumns;
 		mCurrentRows = lRows;
 		mLayedoutItems = mItems.size();
+
+		if (mAnimationGroup != nullptr)
+			mAnimationGroup->start();
 	}
 
 	lSelfSize += QSize(left + right, top + bottom);
