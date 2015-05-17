@@ -3,7 +3,9 @@
 
 #include "core/profile.h"
 #include "core/storage_access.h"
+
 #include <QMainWindow>
+class QScrollArea;
 
 namespace Ui
 {
@@ -44,10 +46,20 @@ private slots:
 	void on_btnFollowingRefresh_clicked();
 	void on_btnGamesRefresh_clicked();
 
+	void checkRollupFollowing(int pSliderValue);
+	void checkRollupGames(int pSliderValue);
+
 private:
+	bool checkRollupFor(QScrollArea * pArea, int pSliderValue);
+	void appendCategoryObjects(QVector<CategoryObject*> const& pList, bool pClear = false);
+
 	Ui::MainWindow * ui;
 
 	Profile::UPtr mProfile;
+	bool mCanRollupFollowing;
+	bool mCanRollupGames;
+	int mRollupFollowingOffset;
+	int mRollupGamesOffset;
 };
 
 } // namespace forms
