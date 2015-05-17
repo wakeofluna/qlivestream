@@ -24,6 +24,9 @@ public:
 
 	void setLogo(QByteArray const & pData);
 
+public slots:
+	void updateFromObject();
+
 private:
 	Ui::CategoryObjectWidget * ui;
 	CategoryObject * mCategory;

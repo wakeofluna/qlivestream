@@ -34,6 +34,7 @@ set (HEADER_FILES
 	core/config_profile.h
 	core/exception.h
 	core/first_time.h
+	core/flowing_layout.h
 	core/initializer.h
 	core/network_access.h
 	core/profile_factory.h
@@ -50,6 +51,7 @@ set (SOURCE_FILES
 	core/channel_object.cpp
 	core/config_profile.cpp
 	core/exception.cpp
+	core/flowing_layout.cpp
 	core/network_access.cpp
 	core/profile_factory.cpp
 	core/profile.cpp

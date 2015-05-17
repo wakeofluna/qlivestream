@@ -20,8 +20,9 @@ CategoryObjectWidget::CategoryObjectWidget(CategoryObject * pObject, QWidget * p
 
 	ui->btnCategory->setText(lName);
 	ui->btnCategory->setToolTip(mCategory->name());
-	ui->lblChannels->setText(tr("%n channel(s)", 0, mCategory->numChannels()));
-	ui->lblViewers->setText(tr("%n viewer(s)", 0, mCategory->numViewers()));
+
+	connect(mCategory, &CategoryObject::statsChanged, this, &CategoryObjectWidget::updateFromObject);
+	updateFromObject();
 }
 
 CategoryObjectWidget::~CategoryObjectWidget()
@@ -40,6 +41,12 @@ void CategoryObjectWidget::setLogo(QByteArray const & pData)
 		ui->btnCategory->setIcon(lPixmap);
 		ui->btnCategory->setIconSize(lPixmap.size());
 	}
+}
+
+void CategoryObjectWidget::updateFromObject()
+{
+	ui->lblChannels->setText(tr("%n channel(s)", 0, mCategory->numChannels()));
+	ui->lblViewers->setText(tr("%n viewer(s)", 0, mCategory->numViewers()));
 }
 
 } // namespace forms

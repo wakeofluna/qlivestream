@@ -85,15 +85,6 @@
               <property name="flat">
                <bool>true</bool>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_6">
-               <item>
-                <layout class="QGridLayout" name="gridFollowingOnline">
-                 <property name="sizeConstraint">
-                  <enum>QLayout::SetFixedSize</enum>
-                 </property>
-                </layout>
-               </item>
-              </layout>
              </widget>
             </item>
             <item>
@@ -104,15 +95,6 @@
               <property name="flat">
                <bool>true</bool>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_7">
-               <item>
-                <layout class="QGridLayout" name="gridFollowingOffline">
-                 <property name="sizeConstraint">
-                  <enum>QLayout::SetFixedSize</enum>
-                 </property>
-                </layout>
-               </item>
-              </layout>
              </widget>
             </item>
            </layout>
@@ -138,9 +120,6 @@
           <property name="horizontalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOff</enum>
           </property>
-          <property name="sizeAdjustPolicy">
-           <enum>QAbstractScrollArea::AdjustToContents</enum>
-          </property>
           <property name="widgetResizable">
            <bool>true</bool>
           </property>
@@ -152,8 +131,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>98</width>
-             <height>110</height>
+             <width>594</width>
+             <height>346</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -165,15 +144,6 @@
               <property name="flat">
                <bool>true</bool>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_9">
-               <item>
-                <layout class="QGridLayout" name="gridGamesFavourite">
-                 <property name="sizeConstraint">
-                  <enum>QLayout::SetFixedSize</enum>
-                 </property>
-                </layout>
-               </item>
-              </layout>
              </widget>
             </item>
             <item>
@@ -184,15 +154,6 @@
               <property name="flat">
                <bool>true</bool>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_8">
-               <item>
-                <layout class="QGridLayout" name="gridGamesAll">
-                 <property name="sizeConstraint">
-                  <enum>QLayout::SetFixedSize</enum>
-                 </property>
-                </layout>
-               </item>
-              </layout>
              </widget>
             </item>
            </layout>

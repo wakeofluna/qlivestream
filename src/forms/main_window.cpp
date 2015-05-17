@@ -1,6 +1,7 @@
 #include "config.h"
 #include "main_window.h"
 #include "ui_main_window.h"
+#include "core/flowing_layout.h"
 #include "core/network_access.h"
 #include "core/profile.h"
 #include "forms/category_object_widget.h"
@@ -20,6 +21,12 @@ MainWindow::MainWindow(Profile::UPtr && pProfile, QWidget *parent) : QMainWindow
 {
 	ui = new Ui::MainWindow();
 	ui->setupUi(this);
+
+	ui->grpFollowingOnline->setLayout(new FlowingLayout(ui->grpFollowingOnline));
+	ui->grpFollowingOffline->setLayout(new FlowingLayout(ui->grpFollowingOffline));
+	ui->grpGamesFavourite->setLayout(new FlowingLayout(ui->grpGamesFavourite));
+	ui->grpGamesAll->setLayout(new FlowingLayout(ui->grpGamesAll));
+
 	ui->tabWidget->setCurrentWidget(ui->tabFollowing);
 	ui->txtActiveAccount->setText(mProfile->account());
 }
@@ -42,27 +49,18 @@ void MainWindow::refreshGames()
 	ui->statusbar->showMessage(tr("Fetching top category list ..."));
 	mProfile->getTopCategories(0, 25, [this] (QVector<CategoryObject*> const& pList)
 	{
-		while (ui->gridGamesFavourite->count() > 0)
-		{
-			QLayoutItem * lItem = ui->gridGamesFavourite->takeAt(ui->gridGamesFavourite->count() - 1);
-			delete lItem->widget();
-			delete lItem;
-		}
+		FlowingLayout * gridFavourite = static_cast<FlowingLayout*>(ui->grpGamesFavourite->layout());
+		FlowingLayout * gridAll = static_cast<FlowingLayout*>(ui->grpGamesAll->layout());
 
-		while (ui->gridGamesAll->count() > 0)
-		{
-			QLayoutItem * lItem = ui->gridGamesAll->takeAt(ui->gridGamesAll->count() - 1);
-			delete lItem->widget();
-			delete lItem;
-		}
+		gridFavourite->clear(true);
+		gridAll->clear(true);
 
 		for (int i = 0; i < pList.size(); ++i)
 		{
 			CategoryObjectWidget * lWidget = new CategoryObjectWidget(pList[i], ui->tabGames);
 
-			QGridLayout * lTarget = lWidget->object()->followed() ? ui->gridGamesFavourite : ui->gridGamesAll;
-			int lIndex = lTarget->count();
-			lTarget->addWidget(lWidget, lIndex / 3, lIndex % 3);
+			FlowingLayout * lTarget = lWidget->object()->followed() ? gridFavourite : gridAll;
+			lTarget->addWidget(lWidget);
 
 			QString lLogoCacheString = lWidget->object()->logoCacheString();
 			accessCache(lLogoCacheString,
