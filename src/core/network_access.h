@@ -33,7 +33,7 @@ protected:
 	inline NetworkAccess() {}
 	inline ~NetworkAccess() {}
 
-	void networkGet(QNetworkRequest const & pRequest, Receiver && pReceiver) const;
+	void networkGet(QNetworkRequest const & pRequest, Receiver && pReceiver, int pRedirection = 0) const;
 
 private:
 	friend class Initializer<NetworkAccess>;
