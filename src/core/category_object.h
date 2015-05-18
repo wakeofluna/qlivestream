@@ -1,14 +1,11 @@
 #ifndef CORE_CATEGORY_OBJECT_H_
 #define CORE_CATEGORY_OBJECT_H_
 
-#include <QObject>
 #include <QString>
 #include <QUrl>
 
-class CategoryObject : public QObject
+class CategoryObject
 {
-Q_OBJECT
-
 public:
 	CategoryObject();
 	virtual ~CategoryObject();
@@ -20,9 +17,6 @@ public:
 	inline bool followed() const { return mFollowed; }
 
 	virtual QString logoCacheString() const;
-
-signals:
-	void statsChanged();
 
 protected:
 	void setStats(int pChannels, int pViewers);

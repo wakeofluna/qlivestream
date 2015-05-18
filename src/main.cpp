@@ -1,7 +1,12 @@
 #include "config.h"
-#include "core/application.h"
+#include "application.h"
 #include "forms/select_profile.h"
 #include <QDebug>
+
+namespace
+{
+
+}
 
 int main(int argc, char **argv)
 {

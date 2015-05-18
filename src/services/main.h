@@ -4,11 +4,11 @@
 #define MAIN(cls,name) \
 extern "C" \
 { \
-Profile * ServiceFactory() \
+Q_DECL_EXPORT Profile * ServiceFactory() \
 { \
 	return new cls(); \
 } \
-const char * ServiceName() \
+Q_DECL_EXPORT const char * ServiceName() \
 { \
 	return name; \
 } \

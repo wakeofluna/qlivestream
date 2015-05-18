@@ -25,6 +25,6 @@ void CategoryObject::setStats(int pChannels, int pViewers)
 	{
 		mNumChannels = pChannels;
 		mNumViewers = pViewers;
-		emit statsChanged();
+		//emit statsChanged();
 	}
 }

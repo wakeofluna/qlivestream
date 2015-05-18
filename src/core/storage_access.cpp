@@ -2,7 +2,6 @@
 #include "storage_access.h"
 #include "core/exception.h"
 
-#include <QApplication>
 #include <QByteArray>
 #include <QDir>
 #include <QFileInfo>

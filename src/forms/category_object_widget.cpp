@@ -21,7 +21,7 @@ CategoryObjectWidget::CategoryObjectWidget(CategoryObject * pObject, QWidget * p
 	ui->btnCategory->setText(lName);
 	ui->btnCategory->setToolTip(mCategory->name());
 
-	connect(mCategory, &CategoryObject::statsChanged, this, &CategoryObjectWidget::updateFromObject);
+	//connect(mCategory, &CategoryObject::statsChanged, this, &CategoryObjectWidget::updateFromObject);
 	updateFromObject();
 }
 

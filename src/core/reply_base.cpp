@@ -18,7 +18,7 @@ ReplyBase::~ReplyBase()
 void ReplyBase::setError(QString pError)
 {
 	if (mLastError.isEmpty())
-		NetworkAccess::networkLogError(tag(), pError);
+		Logger::get()->logNetworkError(tag(), pError);
 
 	mLastError = pError;
 }
@@ -66,7 +66,7 @@ QVariantMap ReplyBase::parseJsonReply()
 		setError(lError.errorString());
 
 	if (!hasError())
-		NetworkAccess::networkLogMessage(tag(), lResponse);
+		Logger::get()->logNetworkMessage(tag(), lResponse);
 
 	return lResponse;
 }
@@ -76,7 +76,7 @@ QByteArray ReplyBase::readByteArray()
 	QByteArray lBytes = mReply.readAll();
 
 	if (!hasError())
-		NetworkAccess::networkLogMessage(tag(), QString("(%1 bytes)").arg(lBytes.size()));
+		Logger::get()->logNetworkMessage(tag(), QString("(%1 bytes)").arg(lBytes.size()));
 
 	return lBytes;
 }

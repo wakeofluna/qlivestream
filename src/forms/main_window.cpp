@@ -1,11 +1,11 @@
 #include "config.h"
 #include "main_window.h"
 #include "ui_main_window.h"
-#include "core/flowing_layout.h"
 #include "core/network_access.h"
 #include "core/profile.h"
 #include "forms/category_object_widget.h"
 #include "forms/debug_network_messages.h"
+#include "forms/flowing_layout.h"
 #include "forms/main_about.h"
 #include "forms/select_profile.h"
 
@@ -82,7 +82,7 @@ void MainWindow::closeEvent(QCloseEvent * event)
 	QMainWindow::closeEvent(event);
 	if (event->isAccepted())
 	{
-		auto * lWindow = NetworkAccess::networkCaptureWindow();
+		QWidget * lWindow = Logger::get()->networkCaptureWindow();
 		lWindow->close();
 	}
 }
@@ -102,7 +102,7 @@ void MainWindow::on_mnuFileExit_triggered()
 
 void MainWindow::on_mnuHelpDebugNetwork_triggered()
 {
-	auto * lWindow = NetworkAccess::networkCaptureWindow();
+	QWidget * lWindow = Logger::get()->networkCaptureWindow();
 	lWindow->show();
 }
 

@@ -1,7 +1,6 @@
 #include "config.h"
 #include "network_access.h"
 #include "core/profile.h"
-#include "forms/debug_network_messages.h"
 
 #include <QMutex>
 #include <QNetworkAccessManager>
@@ -15,28 +14,6 @@
 namespace
 {
 	QNetworkAccessManager * mNetwork = nullptr;
-	forms::DebugNetworkMessages * mDebugMessages = nullptr;
-}
-
-forms::DebugNetworkMessages * NetworkAccess::networkCaptureWindow()
-{
-	return mDebugMessages;
-}
-
-void NetworkAccess::networkLogMessage(QString pTag, QVariant const & pMessage)
-{
-	if (!mDebugMessages->isCapturing())
-		return;
-
-	mDebugMessages->addMessage(pTag, pMessage);
-}
-
-void NetworkAccess::networkLogError(QString pTag, QString const & pMessage)
-{
-	if (!mDebugMessages->isCapturing())
-		return;
-
-	mDebugMessages->addError(pTag, pMessage);
 }
 
 void NetworkAccess::networkGet(QNetworkRequest const & pRequest, Receiver && pReceiver, int pRedirection) const
@@ -73,14 +50,10 @@ void NetworkAccess::initialize()
 {
 	Q_ASSERT_X(mNetwork == nullptr, "NetworkAccess::initialize", "network was already initialised!");
 	mNetwork = new QNetworkAccessManager();
-	mDebugMessages = new forms::DebugNetworkMessages();
 }
 
 void NetworkAccess::finalize()
 {
-	delete mDebugMessages;
-	mDebugMessages = nullptr;
-
 	delete mNetwork;
 	mNetwork = nullptr;
 }

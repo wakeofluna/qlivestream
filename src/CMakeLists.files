@@ -1,5 +1,4 @@
 set (QT_HEADER_FILES
-	core/category_object.h
 	forms/category_object_widget.h
 	forms/debug_network_messages.h
 	forms/edit_profile.h
@@ -28,49 +27,21 @@ set (QT_RESOURCES
 
 set (HEADER_FILES
 	${QT_HEADER_FILES}
-	core/application.h
-	core/channel_object.h
-	core/class_bitset.h
-	core/config_profile.h
-	core/exception.h
-	core/first_time.h
-	core/flowing_layout.h
-	core/initializer.h
-	core/network_access.h
-	core/profile_factory.h
-	core/profile.h
-	core/storage_access.h
-	services/reply_base.h
-	services/reply_binary.h
+	forms/flowing_layout.h
+	application.h
 	config.h
 )
 
 set (SOURCE_FILES
-	core/application.cpp
-	core/category_object.cpp
-	core/channel_object.cpp
-	core/config_profile.cpp
-	core/exception.cpp
-	core/flowing_layout.cpp
-	core/network_access.cpp
-	core/profile_factory.cpp
-	core/profile.cpp
-	core/storage_access.cpp
 	forms/category_object_widget.cpp
 	forms/debug_network_messages.cpp
+	forms/flowing_layout.cpp
 	forms/edit_profile.cpp
 	forms/main_about.cpp
 	forms/main_window.cpp
 	forms/perform_login_sub.cpp
 	forms/perform_login.cpp
 	forms/select_profile.cpp
-	services/reply_base.cpp
-	services/reply_binary.cpp
+	application.cpp
 	main.cpp
 )
-
-source_group("Source Files" FILES ${SOURCE_FILES})
-source_group("Header Files" FILES ${HEADER_FILES})
-source_group("Forms" FILES ${QT_FORMS})
-source_group("Resources" FILES ${QT_RESOURCES})
-source_group("" FILES CMakeLists.txt CMakeLists.files)

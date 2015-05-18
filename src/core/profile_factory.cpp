@@ -63,7 +63,7 @@ void ProfileFactory::finalize()
 
 bool ProfileFactory::loadModule(QString pModuleName)
 {
-	QString lModuleName = QString("%1-%2").arg(QString(APP_NAME).toLower()).arg(pModuleName);
+	QString lModuleName = QString("lib%1-%2").arg(QString(APP_NAME).toLower()).arg(pModuleName);
 
 	QLibrary lLibrary;
 	lLibrary.setLoadHints(QLibrary::PreventUnloadHint);

@@ -45,8 +45,10 @@ QString AuthScope::description() const
 			return QT_TRANSLATE_NOOP("AuthScope", "Ability to log into chat and send messages.");
 
 		case max_auth_scope:
-			return QT_TRANSLATE_NOOP("AuthScope", "Invalid scope.");
+			break;
 	}
+
+	return QT_TRANSLATE_NOOP("AuthScope", "Invalid scope.");
 }
 
 QString AuthScope::toString() const
@@ -90,9 +92,12 @@ QString AuthScope::toString() const
 			return "chat_login";
 
 		case max_auth_scope:
-			Q_ASSERT_X(false, "AuthScope", "invalid scope");
-			return QString();
+			break;
+
 	}
+
+	Q_ASSERT_X(false, "AuthScope", "invalid scope");
+	return QString();
 }
 
 AuthScope AuthScope::fromString(QString pString)
@@ -125,9 +130,14 @@ bool AuthScope::isDefault() const
 		case user_subscriptions:
 		case channel_read:
 		case channel_stream:
-		case max_auth_scope:
 			return false;
+
+		case max_auth_scope:
+			break;
 	}
+
+	Q_ASSERT_X(false, "AuthScope", "invalid scope");
+	return false;
 }
 
 AuthScopes::AuthScopes()

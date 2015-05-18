@@ -1,7 +1,7 @@
 #ifndef SERVICES_TWITCHTV3_SERVER_REPLY_H_
 #define SERVICES_TWITCHTV3_SERVER_REPLY_H_
 
-#include "../reply_base.h"
+#include "core/reply_base.h"
 #include <QVariantMap>
 
 namespace twitchtv3

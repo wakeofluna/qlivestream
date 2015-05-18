@@ -1,6 +1,7 @@
 include(CMakeLists.files)
 include_directories(.)
 
+add_subdirectory(core)
 add_subdirectory(services)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -16,4 +17,4 @@ QT5_WRAP_UI(QT_FORMS_WRAPPED ${QT_FORMS})
 QT5_ADD_RESOURCES(QT_RESOURCES_WRAPPED ${QT_RESOURCES})
 
 add_executable(qlivestream ${SOURCE_FILES} ${QT_HEADER_FILES_WRAPPED} ${QT_FORMS_WRAPPED} ${QT_RESOURCES_WRAPPED})
-target_link_libraries(qlivestream Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Network Qt5::Sql)
+target_link_libraries(qlivestream core Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Network Qt5::Sql)

@@ -2,10 +2,8 @@
 #include "profile.h"
 #include "core/category_object.h"
 #include "core/channel_object.h"
-#include "services/reply_binary.h"
+#include "core/reply_binary.h"
 
-#include <QApplication>
-#include <QByteArray>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QSqlError>

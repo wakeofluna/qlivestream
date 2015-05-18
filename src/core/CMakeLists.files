@@ -1,0 +1,30 @@
+set (HEADER_FILES
+	category_object.h
+	channel_object.h
+	class_bitset.h
+	config_profile.h
+	exception.h
+	first_time.h
+	initializer.h
+	logger.h
+	network_access.h
+	profile_factory.h
+	profile.h
+	reply_base.h
+	reply_binary.h
+	storage_access.h
+)
+
+set (SOURCE_FILES
+	category_object.cpp
+	channel_object.cpp
+	config_profile.cpp
+	exception.cpp
+	logger.cpp
+	network_access.cpp
+	profile_factory.cpp
+	profile.cpp
+	reply_base.cpp
+	reply_binary.cpp
+	storage_access.cpp
+)

@@ -1,8 +1,6 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
-#include "core/exception.h"
-
 #define APP_NAME "Qlivestream"
 #define APP_NAME_LC "qlivestream"
 
@@ -14,5 +12,8 @@
 #endif
 
 #define SQL_EXEC(q) do { if (!q.exec()) throw q; } while (0)
+
+#include "core/exception.h"
+#include "core/logger.h"
 
 #endif // _CONFIG_H_
