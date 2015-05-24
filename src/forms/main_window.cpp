@@ -37,8 +37,32 @@ MainWindow::MainWindow(Profile::UPtr && pProfile, QWidget *parent) : QMainWindow
 	connect(ui->scrFollowing->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::checkRollupFollowing);
 	connect(ui->scrGames->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::checkRollupGames);
 
-	ui->tabWidget->setCurrentWidget(ui->tabFollowing);
 	ui->txtActiveAccount->setText(mProfile->account());
+
+	// Make backups of the tab titles
+	for (int i = 0; i < ui->tabWidget->count(); ++i)
+	{
+		QWidget * lWidget = ui->tabWidget->widget(i);
+		lWidget->setProperty("title", ui->tabWidget->tabText(i));
+	}
+
+	switch (mProfile->level())
+	{
+		case Profile::ANONYMOUS:
+			ui->mnuViewChannel->setEnabled(false);
+			// no break
+
+		case Profile::VIEWER:
+		case Profile::MODERATOR:
+			toggleTabVisible(ui->tabYourChannel);
+			ui->mnuViewChannel->setChecked(false);
+			ui->tabWidget->setCurrentWidget(ui->tabFollowing);
+			break;
+
+		case Profile::STREAMER:
+			ui->tabWidget->setCurrentWidget(ui->tabYourChannel);
+			break;
+	}
 }
 
 MainWindow::~MainWindow()
@@ -100,6 +124,23 @@ void MainWindow::on_mnuFileExit_triggered()
 	QApplication::exit(0);
 }
 
+void MainWindow::on_mnuViewChannel_triggered()
+{
+	toggleTabVisible(ui->tabYourChannel);
+}
+
+void MainWindow::on_mnuViewFollowing_triggered()
+{
+	if (toggleTabVisible(ui->tabFollowing))
+		refreshFollowing();
+}
+
+void MainWindow::on_mnuViewGames_triggered()
+{
+	if (toggleTabVisible(ui->tabGames))
+		refreshGames();
+}
+
 void MainWindow::on_mnuHelpDebugNetwork_triggered()
 {
 	QWidget * lWindow = Logger::get()->networkCaptureWindow();
@@ -118,6 +159,21 @@ void MainWindow::on_mnuHelpAboutQt_triggered()
 	QApplication::aboutQt();
 }
 
+void MainWindow::on_tabWidget_tabCloseRequested(int pIndex)
+{
+	QWidget * pWidget = ui->tabWidget->widget(pIndex);
+	ui->tabWidget->removeTab(pIndex);
+
+	if (pWidget == ui->tabYourChannel)
+		ui->mnuViewChannel->setChecked(false);
+	else if (pWidget == ui->tabFollowing)
+		ui->mnuViewFollowing->setChecked(false);
+	else if (pWidget == ui->tabGames)
+		ui->mnuViewGames->setChecked(false);
+	else
+		delete pWidget;
+}
+
 void MainWindow::on_btnFollowingRefresh_clicked()
 {
 	refreshFollowing();
@@ -126,6 +182,22 @@ void MainWindow::on_btnFollowingRefresh_clicked()
 void MainWindow::on_btnGamesRefresh_clicked()
 {
 	refreshGames();
+}
+
+bool MainWindow::toggleTabVisible(QWidget * pWidget)
+{
+	int i = ui->tabWidget->indexOf(pWidget);
+	if (i >= 0)
+	{
+		ui->tabWidget->removeTab(i);
+		return false;
+	}
+	else
+	{
+		ui->tabWidget->addTab(pWidget, pWidget->property("title").toString());
+		ui->tabWidget->setCurrentWidget(pWidget);
+		return true;
+	}
 }
 
 void MainWindow::checkRollupFollowing(int pSliderValue)

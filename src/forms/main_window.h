@@ -39,10 +39,14 @@ protected:
 private slots:
 	void on_mnuFileLogout_triggered();
 	void on_mnuFileExit_triggered();
+	void on_mnuViewChannel_triggered();
+	void on_mnuViewFollowing_triggered();
+	void on_mnuViewGames_triggered();
 	void on_mnuHelpDebugNetwork_triggered();
 	void on_mnuHelpAbout_triggered();
 	void on_mnuHelpAboutQt_triggered();
 
+	void on_tabWidget_tabCloseRequested(int pIndex);
 	void on_btnFollowingRefresh_clicked();
 	void on_btnGamesRefresh_clicked();
 
@@ -50,6 +54,7 @@ private slots:
 	void checkRollupGames(int pSliderValue);
 
 private:
+	bool toggleTabVisible(QWidget * pWidget);
 	bool checkRollupFor(QScrollArea * pArea, int pSliderValue);
 	void appendCategoryObjects(QVector<CategoryObject*> const& pList, bool pClear = false);
 
