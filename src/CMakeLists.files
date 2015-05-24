@@ -6,7 +6,9 @@ set (QT_HEADER_FILES
 	forms/main_window.h
 	forms/perform_login_sub.h
 	forms/perform_login.h
+	forms/proxy_authentication.h
 	forms/select_profile.h
+	forms/ssl_errors.h
 )
 
 set (QT_FORMS
@@ -19,7 +21,9 @@ set (QT_FORMS
 	forms/perform_login_error.ui
 	forms/perform_login_invalid.ui
 	forms/perform_login.ui
+	forms/proxy_authentication.ui
 	forms/select_profile.ui
+	forms/ssl_errors.ui
 )
 
 set (QT_RESOURCES
@@ -41,7 +45,9 @@ set (SOURCE_FILES
 	forms/main_window.cpp
 	forms/perform_login_sub.cpp
 	forms/perform_login.cpp
+	forms/proxy_authentication.cpp
 	forms/select_profile.cpp
+	forms/ssl_errors.cpp
 	application.cpp
 	main.cpp
 )

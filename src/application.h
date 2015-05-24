@@ -7,6 +7,11 @@
 class NetworkAccess;
 class ProfileFactory;
 class StorageAccess;
+class QAuthenticator;
+class QNetworkProxy;
+class QNetworkReply;
+class QSslError;
+template <typename T> class QList;
 
 namespace forms
 {
@@ -26,11 +31,17 @@ public:
 	void logNetworkError(QString pTag, QString const & pMessage) override;
 
 private:
+	void proxyAuthenticationRequired(QNetworkProxy const & proxy, QAuthenticator * authenticator);
+	void sslErrors(QNetworkReply * reply, QList<QSslError> const & errors);
+
+private:
 	Initializer<ProfileFactory> mProfileFactory;
 	Initializer<NetworkAccess> mNetworkAccess;
 	Initializer<StorageAccess> mStorageAccess;
 
 	forms::DebugNetworkMessages * mDebugMessages;
+
+	int mLastAuthMethod;
 };
 
 #endif // CORE_APPLICATION_H_

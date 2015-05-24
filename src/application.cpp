@@ -5,6 +5,8 @@
 #include "core/profile_factory.h"
 #include "core/storage_access.h"
 #include "forms/debug_network_messages.h"
+#include "forms/proxy_authentication.h"
+#include "forms/ssl_errors.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -12,11 +14,18 @@
 #include <QSqlQuery>
 #include <QString>
 #include <QTextStream>
-
+#include <QAuthenticator>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QList>
 
 Application::Application(int & argc, char ** argv) : QApplication(argc, argv)
 {
 	mDebugMessages = new forms::DebugNetworkMessages();
+	mLastAuthMethod = 0;
+
+	QObject::connect(NetworkAccess::mNetworkAccessManager, &QNetworkAccessManager::proxyAuthenticationRequired, this, &Application::proxyAuthenticationRequired);
+	QObject::connect(NetworkAccess::mNetworkAccessManager, &QNetworkAccessManager::sslErrors, this, &Application::sslErrors);
 }
 
 Application::~Application()
@@ -68,3 +77,68 @@ void Application::logNetworkError(QString pTag, QString const & pMessage)
 	if (!mDebugMessages->isCapturing()) return;
 	mDebugMessages->addError(pTag, pMessage);
 }
+
+void Application::proxyAuthenticationRequired(QNetworkProxy const & proxy, QAuthenticator * authenticator)
+{
+	switch (++mLastAuthMethod)
+	{
+		case 1:
+			// Attempt stored credentials. I actually dont want to do this.. store a password? No way!
+			if (false)
+			{
+				// Access settings
+				break;
+			}
+
+			++mLastAuthMethod;
+			// no break
+
+		case 2:
+			// Empty username = try the local single signon feature
+			authenticator->setUser(QString());
+			break;
+
+		case 3:
+		{
+			// Popup a dialog to enter credentials
+			forms::ProxyAuthentication * lDialog = new forms::ProxyAuthentication();
+
+			int lResult = lDialog->exec();
+			QString lUsername = lDialog->username();
+			QString lPassword = lDialog->password();
+			lDialog->deleteLater();
+
+			if (lResult == QDialog::Accepted)
+			{
+				authenticator->setUser(lUsername);
+				authenticator->setPassword(lPassword);
+
+				// Try this method again if it failed
+				--mLastAuthMethod;
+			}
+
+			break;
+		}
+
+		case 4:
+			qCritical() << "Ran out of options, failed to authenticate to proxy";
+			break;
+
+		default:
+			break;
+	}
+
+}
+
+void Application::sslErrors(QNetworkReply * reply, QList<QSslError> const & errors)
+{
+	forms::SslErrors * lDialog = new forms::SslErrors();
+	lDialog->setMessages(errors);
+
+	int lResult = lDialog->exec();
+	lDialog->deleteLater();
+
+	if (lResult == QDialog::Accepted)
+		reply->ignoreSslErrors();
+}
+
