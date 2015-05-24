@@ -49,4 +49,9 @@ void CategoryObjectWidget::updateFromObject()
 	ui->lblViewers->setText(tr("%n viewer(s)", 0, mCategory->numViewers()));
 }
 
+void CategoryObjectWidget::on_btnCategory_clicked()
+{
+	emit clicked(mCategory);
+}
+
 } // namespace forms

@@ -11,6 +11,7 @@
 
 #include <QApplication>
 #include <QCloseEvent>
+#include <QDebug>
 #include <QGridLayout>
 #include <QLayoutItem>
 #include <QScrollArea>
@@ -99,6 +100,24 @@ void MainWindow::rollupGames()
 		mRollupGamesOffset += pList.size();
 		mCanRollupGames = (pList.size() == 25);
 	});
+}
+
+void MainWindow::openTabFor(CategoryObject * pCategory)
+{
+	QString lTitle = pCategory->name();
+
+	for (int i = 0; i < ui->tabWidget->count(); ++i)
+	{
+		if (ui->tabWidget->tabText(i) == lTitle)
+		{
+			ui->tabWidget->setCurrentIndex(i);
+			return;
+		}
+	}
+
+	QWidget * lWidget = new QWidget(this);
+	ui->tabWidget->addTab(lWidget, lTitle);
+	ui->tabWidget->setCurrentWidget(lWidget);
 }
 
 void MainWindow::closeEvent(QCloseEvent * event)
@@ -234,6 +253,7 @@ void MainWindow::appendCategoryObjects(QVector<CategoryObject*> const& pList, bo
 	for (int i = 0; i < pList.size(); ++i)
 	{
 		CategoryObjectWidget * lWidget = new CategoryObjectWidget(pList[i], ui->tabGames);
+		connect(lWidget, &CategoryObjectWidget::clicked, this, &MainWindow::openTabFor);
 
 		FlowingLayout * lTarget = lWidget->object()->followed() ? gridFavourite : gridAll;
 		lTarget->addWidget(lWidget);

@@ -27,6 +27,12 @@ public:
 public slots:
 	void updateFromObject();
 
+private slots:
+	void on_btnCategory_clicked();
+
+signals:
+	void clicked(CategoryObject * pCategory);
+
 private:
 	Ui::CategoryObjectWidget * ui;
 	CategoryObject * mCategory;

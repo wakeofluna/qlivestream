@@ -28,6 +28,7 @@ public slots:
 	void rollupFollowing();
 	void refreshGames();
 	void rollupGames();
+	void openTabFor(CategoryObject * pCategory);
 
 signals:
 	void updatedFollowing();
