@@ -18,7 +18,10 @@ ReplyBase::~ReplyBase()
 void ReplyBase::setError(QString pError)
 {
 	if (mLastError.isEmpty())
+	{
+		qWarning() << "Communication error: " << pError;
 		Logger::get()->logNetworkError(tag(), pError);
+	}
 
 	mLastError = pError;
 }
@@ -35,16 +38,29 @@ bool ReplyBase::checkNetworkStatus()
 	switch (lNetworkError)
 	{
 		ERR(ConnectionRefusedError, QT_TRANSLATE_NOOP("NetworkStatus", "Connection refused"));
+		ERR(RemoteHostClosedError, QT_TRANSLATE_NOOP("NetworkStatus", "Remote host closed the connection"));
 		ERR(HostNotFoundError, QT_TRANSLATE_NOOP("NetworkStatus", "Host not found"));
 		ERR(TimeoutError, QT_TRANSLATE_NOOP("NetworkStatus", "Connection timeout"));
+		ERR(OperationCanceledError, QT_TRANSLATE_NOOP("NetworkStatus", "Operation canceled"));
+		ERR(SslHandshakeFailedError, QT_TRANSLATE_NOOP("NetworkStatus", "SSL handshake failed"));
+		ERR(TemporaryNetworkFailureError, QT_TRANSLATE_NOOP("NetworkStatus", "Temporary network failure"));
+		ERR(NetworkSessionFailedError, QT_TRANSLATE_NOOP("NetworkStatus", "Network session failed"));
 
 		ERR(ProxyConnectionRefusedError, QT_TRANSLATE_NOOP("NetworkStatus", "Proxy connection refused"));
+		ERR(ProxyConnectionClosedError, QT_TRANSLATE_NOOP("NetworkStatus", "Proxy closed the connection"));
+		ERR(ProxyNotFoundError, QT_TRANSLATE_NOOP("NetworkStatus", "Proxy not found"));
+		ERR(ProxyTimeoutError, QT_TRANSLATE_NOOP("NetworkStatus", "Proxy timed out"));
+		ERR(ProxyAuthenticationRequiredError, QT_TRANSLATE_NOOP("NetworkStatus", "Proxy authentication required"));
 
 		ERR(ContentAccessDenied, QT_TRANSLATE_NOOP("NetworkStatus", "Access denied"));
+		ERR(ContentOperationNotPermittedError, QT_TRANSLATE_NOOP("NetworkStatus", "Operation not permitted"));
 		ERR(ContentNotFoundError, QT_TRANSLATE_NOOP("NetworkStatus", "Content not found"));
 		ERR(AuthenticationRequiredError, QT_TRANSLATE_NOOP("NetworkStatus", "Authentication required"));
 
+		ERR(ProtocolInvalidOperationError, QT_TRANSLATE_NOOP("NetworkStatus", "Invalid operation"));
+
 		ERR(InternalServerError, QT_TRANSLATE_NOOP("NetworkStatus", "Internal server error"));
+		ERR(OperationNotImplementedError, QT_TRANSLATE_NOOP("NetworkStatus", "Operation not implemented"));
 		ERR(ServiceUnavailableError, QT_TRANSLATE_NOOP("NetworkStatus", "Service unavailable error"));
 
 		default: setError(QString("Network error #%1").arg(lNetworkError)); break;
