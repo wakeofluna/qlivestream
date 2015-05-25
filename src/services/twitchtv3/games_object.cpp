@@ -14,8 +14,8 @@ GamesObject::GamesObject(QVariant const & pValue)
 	QVariantMap lGame = lItem.value("game").toMap();
 	QVariantMap lBox = lGame.value("box").toMap();
 
-	mName = lGame.value("name").toString();
 	mId = lGame.value("_id").toInt();
+	mName = lGame.value("name").toString();
 	mGiantBombId = lGame.value("giantbomb_id").toInt();
 	mLogoUrl = lBox.value("medium").toString();
 

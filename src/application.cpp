@@ -12,6 +12,7 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QSqlQuery>
+#include <QStatusBar>
 #include <QString>
 #include <QTextStream>
 #include <QAuthenticator>
@@ -23,6 +24,7 @@ Application::Application(int & argc, char ** argv) : QApplication(argc, argv)
 {
 	mDebugMessages = new forms::DebugNetworkMessages();
 	mLastAuthMethod = 0;
+	mLastStatusMessage = 0;
 
 	QObject::connect(NetworkAccess::mNetworkAccessManager, &QNetworkAccessManager::proxyAuthenticationRequired, this, &Application::proxyAuthenticationRequired);
 	QObject::connect(NetworkAccess::mNetworkAccessManager, &QNetworkAccessManager::sslErrors, this, &Application::sslErrors);
@@ -76,6 +78,46 @@ void Application::logNetworkError(QString pTag, QString const & pMessage)
 {
 	if (!mDebugMessages->isCapturing()) return;
 	mDebugMessages->addError(pTag, pMessage);
+}
+
+void Application::pushStatusBar(QStatusBar * pStatusBar)
+{
+	if (!mStatusBars.contains(pStatusBar))
+	{
+		mStatusBars.append(pStatusBar);
+		connect(pStatusBar, &QWidget::destroyed, this, &Application::statusBarDestroyed);
+	}
+}
+
+void Application::popStatusBar(QStatusBar * pStatusBar)
+{
+	mStatusBars.removeAll(pStatusBar);
+}
+
+void Application::logStatusUpdate(int & pIdent, QString pMessage)
+{
+	pIdent = ++mLastStatusMessage;
+
+	if (!mStatusBars.empty())
+	{
+		QStatusBar * lBar = mStatusBars.back();
+		lBar->setProperty("last_ident", pIdent);
+		lBar->showMessage(pMessage);
+	}
+}
+
+void Application::logStatusClear(int pIdent)
+{
+	for (QStatusBar * lBar : mStatusBars)
+	{
+		if (lBar->property("last_ident").toInt() == pIdent)
+			lBar->clearMessage();
+	}
+}
+
+void Application::statusBarDestroyed(QObject * pObject)
+{
+	popStatusBar(qobject_cast<QStatusBar*>(pObject));
 }
 
 void Application::proxyAuthenticationRequired(QNetworkProxy const & proxy, QAuthenticator * authenticator)

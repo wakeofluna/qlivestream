@@ -1,5 +1,9 @@
-set (HEADER_FILES
+set (QT_HEADER_FILES
 	category_object.h
+)
+
+set (HEADER_FILES
+	${QT_HEADER_FILES}
 	channel_object.h
 	class_bitset.h
 	config_profile.h

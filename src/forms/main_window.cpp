@@ -3,10 +3,14 @@
 #include "ui_main_window.h"
 #include "core/network_access.h"
 #include "core/profile.h"
+#include "core/category_object.h"
+#include "core/channel_object.h"
 #include "forms/category_object_widget.h"
 #include "forms/debug_network_messages.h"
 #include "forms/flowing_layout.h"
 #include "forms/main_about.h"
+#include "forms/main_window_categories.h"
+#include "forms/main_window_following.h"
 #include "forms/select_profile.h"
 
 #include <QApplication>
@@ -22,30 +26,14 @@ namespace forms
 
 MainWindow::MainWindow(Profile::UPtr && pProfile, QWidget *parent) : QMainWindow(parent, Qt::Window), mProfile(std::move(pProfile))
 {
-	mCanRollupFollowing = false;
-	mCanRollupGames = false;
-	mRollupFollowingOffset = 0;
-	mRollupGamesOffset = 0;
+	mCategories = nullptr;
+	mFollowing = nullptr;
 
 	ui = new Ui::MainWindow();
 	ui->setupUi(this);
-
-	ui->grpFollowingOnline->setLayout(new FlowingLayout(ui->grpFollowingOnline));
-	ui->grpFollowingOffline->setLayout(new FlowingLayout(ui->grpFollowingOffline));
-	ui->grpGamesFavourite->setLayout(new FlowingLayout(ui->grpGamesFavourite));
-	ui->grpGamesAll->setLayout(new FlowingLayout(ui->grpGamesAll));
-
-	connect(ui->scrFollowing->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::checkRollupFollowing);
-	connect(ui->scrGames->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::checkRollupGames);
-
 	ui->txtActiveAccount->setText(mProfile->account());
 
-	// Make backups of the tab titles
-	for (int i = 0; i < ui->tabWidget->count(); ++i)
-	{
-		QWidget * lWidget = ui->tabWidget->widget(i);
-		lWidget->setProperty("title", ui->tabWidget->tabText(i));
-	}
+	Logger::get()->pushStatusBar(ui->statusbar);
 
 	switch (mProfile->level())
 	{
@@ -55,54 +43,26 @@ MainWindow::MainWindow(Profile::UPtr && pProfile, QWidget *parent) : QMainWindow
 
 		case Profile::VIEWER:
 		case Profile::MODERATOR:
-			toggleTabVisible(ui->tabYourChannel);
-			ui->mnuViewChannel->setChecked(false);
-			ui->tabWidget->setCurrentWidget(ui->tabFollowing);
+			ui->mnuViewCategories->trigger();
+			ui->mnuViewFollowing->trigger();
 			break;
 
 		case Profile::STREAMER:
-			ui->tabWidget->setCurrentWidget(ui->tabYourChannel);
+			ui->mnuViewCategories->trigger();
+			ui->mnuViewFollowing->trigger();
+			ui->mnuViewChannel->trigger();
 			break;
 	}
 }
 
 MainWindow::~MainWindow()
 {
+	delete mFollowing;
+	delete mCategories;
 	delete ui;
 }
 
-void MainWindow::refreshFollowing()
-{
-	mRollupFollowingOffset = 0;
-	rollupFollowing();
-}
-
-void MainWindow::rollupFollowing()
-{
-}
-
-void MainWindow::refreshGames()
-{
-	mRollupGamesOffset = 0;
-	rollupGames();
-}
-
-void MainWindow::rollupGames()
-{
-	mCanRollupGames = false;
-
-	ui->statusbar->showMessage(tr("Fetching top category list ..."));
-	mProfile->getTopCategories(mRollupGamesOffset, 25, [this] (QVector<CategoryObject*> const& pList)
-	{
-		appendCategoryObjects(pList, mRollupGamesOffset == 0);
-		ui->statusbar->clearMessage();
-
-		mRollupGamesOffset += pList.size();
-		mCanRollupGames = (pList.size() == 25);
-	});
-}
-
-void MainWindow::openTabFor(CategoryObject * pCategory)
+void MainWindow::openCategoryTab(CategoryObject * pCategory)
 {
 	QString lTitle = pCategory->name();
 
@@ -118,6 +78,11 @@ void MainWindow::openTabFor(CategoryObject * pCategory)
 	QWidget * lWidget = new QWidget(this);
 	ui->tabWidget->addTab(lWidget, lTitle);
 	ui->tabWidget->setCurrentWidget(lWidget);
+}
+
+void MainWindow::openChannelTab(ChannelObject * pChannel)
+{
+
 }
 
 void MainWindow::closeEvent(QCloseEvent * event)
@@ -145,19 +110,38 @@ void MainWindow::on_mnuFileExit_triggered()
 
 void MainWindow::on_mnuViewChannel_triggered()
 {
-	toggleTabVisible(ui->tabYourChannel);
 }
 
 void MainWindow::on_mnuViewFollowing_triggered()
 {
-	if (toggleTabVisible(ui->tabFollowing))
-		refreshFollowing();
+	if (mFollowing == nullptr)
+	{
+		mFollowing = new MainWindowFollowing(*mProfile, this);
+		connect(mFollowing, &MainWindowFollowing::selected, this, &MainWindow::openChannelTab);
+		ui->tabWidget->addTab(mFollowing, mFollowing->windowTitle());
+		ui->tabWidget->setCurrentWidget(mFollowing);
+	}
+	else
+	{
+		delete mFollowing;
+		mFollowing = nullptr;
+	}
 }
 
-void MainWindow::on_mnuViewGames_triggered()
+void MainWindow::on_mnuViewCategories_triggered()
 {
-	if (toggleTabVisible(ui->tabGames))
-		refreshGames();
+	if (mCategories == nullptr)
+	{
+		mCategories = new MainWindowCategories(*mProfile, this);
+		connect(mCategories, &MainWindowCategories::selected, this, &MainWindow::openCategoryTab);
+		ui->tabWidget->addTab(mCategories, mCategories->windowTitle());
+		ui->tabWidget->setCurrentWidget(mCategories);
+	}
+	else
+	{
+		delete mCategories;
+		mCategories = nullptr;
+	}
 }
 
 void MainWindow::on_mnuHelpDebugNetwork_triggered()
@@ -183,94 +167,18 @@ void MainWindow::on_tabWidget_tabCloseRequested(int pIndex)
 	QWidget * pWidget = ui->tabWidget->widget(pIndex);
 	ui->tabWidget->removeTab(pIndex);
 
-	if (pWidget == ui->tabYourChannel)
-		ui->mnuViewChannel->setChecked(false);
-	else if (pWidget == ui->tabFollowing)
+	if (pWidget == mFollowing)
+	{
+		mFollowing = nullptr;
 		ui->mnuViewFollowing->setChecked(false);
-	else if (pWidget == ui->tabGames)
-		ui->mnuViewGames->setChecked(false);
-	else
-		delete pWidget;
-}
-
-void MainWindow::on_btnFollowingRefresh_clicked()
-{
-	refreshFollowing();
-}
-
-void MainWindow::on_btnGamesRefresh_clicked()
-{
-	refreshGames();
-}
-
-bool MainWindow::toggleTabVisible(QWidget * pWidget)
-{
-	int i = ui->tabWidget->indexOf(pWidget);
-	if (i >= 0)
-	{
-		ui->tabWidget->removeTab(i);
-		return false;
 	}
-	else
+	else if (pWidget == mCategories)
 	{
-		ui->tabWidget->addTab(pWidget, pWidget->property("title").toString());
-		ui->tabWidget->setCurrentWidget(pWidget);
-		return true;
-	}
-}
-
-void MainWindow::checkRollupFollowing(int pSliderValue)
-{
-	if (mCanRollupFollowing && checkRollupFor(ui->scrFollowing, pSliderValue))
-		rollupFollowing();
-}
-
-void MainWindow::checkRollupGames(int pSliderValue)
-{
-	if (mCanRollupGames && checkRollupFor(ui->scrGames, pSliderValue))
-		rollupGames();
-}
-
-bool MainWindow::checkRollupFor(QScrollArea * pArea, int pSliderValue)
-{
-	QScrollBar * lBar = pArea->verticalScrollBar();
-	int lMaximum = lBar->maximum();
-
-	return (pSliderValue + 200 >= lMaximum);
-}
-
-void MainWindow::appendCategoryObjects(QVector<CategoryObject*> const& pList, bool pClear)
-{
-	FlowingLayout * gridFavourite = static_cast<FlowingLayout*>(ui->grpGamesFavourite->layout());
-	FlowingLayout * gridAll = static_cast<FlowingLayout*>(ui->grpGamesAll->layout());
-
-	if (pClear)
-	{
-		gridFavourite->clear(true);
-		gridAll->clear(true);
+		mCategories = nullptr;
+		ui->mnuViewCategories->setChecked(false);
 	}
 
-	for (int i = 0; i < pList.size(); ++i)
-	{
-		CategoryObjectWidget * lWidget = new CategoryObjectWidget(pList[i], ui->tabGames);
-		connect(lWidget, &CategoryObjectWidget::clicked, this, &MainWindow::openTabFor);
-
-		FlowingLayout * lTarget = lWidget->object()->followed() ? gridFavourite : gridAll;
-		lTarget->addWidget(lWidget);
-
-		QString lLogoCacheString = lWidget->object()->logoCacheString();
-		accessCache(lLogoCacheString,
-			[this,lWidget] (CacheHitCallback && pCallback)
-			{
-				mProfile->downloadLogo(lWidget->object()->logoUrl(), std::move(pCallback));
-			},
-			[lWidget] (QByteArray const& pData)
-			{
-				lWidget->setLogo(pData);
-			}
-		);
-	}
+	delete pWidget;
 }
-
 
 } // namespace forms

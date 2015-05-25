@@ -3,8 +3,8 @@
 
 #include "server_reply.h"
 
-#include <QVector>
 class CategoryObject;
+template <typename T> class QList;
 
 namespace twitchtv3
 {
@@ -17,7 +17,7 @@ public:
 
 	QString tag() const override;
 
-	QVector<CategoryObject*> createList() const;
+	QList<CategoryObject*> createList() const;
 };
 
 } // namespace twitchtv3

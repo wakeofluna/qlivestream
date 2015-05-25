@@ -20,18 +20,18 @@ public:
 	CategoryObjectWidget(CategoryObject * pObject, QWidget * parent);
 	~CategoryObjectWidget();
 
-	inline CategoryObject const * object() const { return mCategory; }
+	inline CategoryObject * object() const { return mCategory; }
 
 	void setLogo(QByteArray const & pData);
 
 public slots:
 	void updateFromObject();
 
+signals:
+	void clicked(CategoryObject * pCategory = nullptr);
+
 private slots:
 	void on_btnCategory_clicked();
-
-signals:
-	void clicked(CategoryObject * pCategory);
 
 private:
 	Ui::CategoryObjectWidget * ui;

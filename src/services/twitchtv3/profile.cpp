@@ -88,7 +88,7 @@ void Profile::getTopCategories(int pStart, int pLimit, CategoryCallback && pCall
 
 	networkGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
 	{
-		QVector<CategoryObject*> lList;
+		QList<CategoryObject*> lList;
 
 		twitchtv3::Games lGames(pReply);
 		if (lGames.hasError())
@@ -96,7 +96,7 @@ void Profile::getTopCategories(int pStart, int pLimit, CategoryCallback && pCall
 		else
 			lList = lGames.createList();
 
-		pCallback(lList);
+		pCallback(std::move(lList));
 	});
 }
 

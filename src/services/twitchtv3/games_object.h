@@ -17,7 +17,6 @@ public:
 	QString logoCacheString() const override;
 
 private:
-	int mId;
 	int mGiantBombId;
 };
 

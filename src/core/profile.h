@@ -5,7 +5,7 @@
 #include <functional>
 #include <memory>
 #include <QString>
-#include <QVector>
+#include <QList>
 
 class CategoryObject;
 class ChannelObject;
@@ -22,9 +22,9 @@ class Profile : public NetworkAccess
 {
 public:
 	typedef std::function<void ()> DefaultCallback;
-	typedef std::function<void (QByteArray const&)> DataCallback;
-	typedef std::function<void (QVector<CategoryObject*> const&)> CategoryCallback;
-	typedef std::function<void (QVector<ChannelObject*> const&)> ChannelCallback;
+	typedef std::function<void (QByteArray &&)> DataCallback;
+	typedef std::function<void (QList<CategoryObject*> &&)> CategoryCallback;
+	typedef std::function<void (QList<ChannelObject*> &&)> ChannelCallback;
 	typedef std::unique_ptr<Profile> UPtr;
 
 public:

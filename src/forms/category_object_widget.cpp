@@ -21,14 +21,13 @@ CategoryObjectWidget::CategoryObjectWidget(CategoryObject * pObject, QWidget * p
 	ui->btnCategory->setText(lName);
 	ui->btnCategory->setToolTip(mCategory->name());
 
-	//connect(mCategory, &CategoryObject::statsChanged, this, &CategoryObjectWidget::updateFromObject);
+	connect(mCategory, &CategoryObject::statsChanged, this, &CategoryObjectWidget::updateFromObject);
 	updateFromObject();
 }
 
 CategoryObjectWidget::~CategoryObjectWidget()
 {
 	delete ui;
-	delete mCategory;
 }
 
 void CategoryObjectWidget::setLogo(QByteArray const & pData)
@@ -45,8 +44,13 @@ void CategoryObjectWidget::setLogo(QByteArray const & pData)
 
 void CategoryObjectWidget::updateFromObject()
 {
-	ui->lblChannels->setText(tr("%n channel(s)", 0, mCategory->numChannels()));
-	ui->lblViewers->setText(tr("%n viewer(s)", 0, mCategory->numViewers()));
+	int lChannels = mCategory->numChannels();
+	ui->lblChannels->setVisible(lChannels >= 0);
+	ui->lblChannels->setText(tr("%n channel(s)", 0, lChannels));
+
+	int lViewers = mCategory->numViewers();
+	ui->lblViewers->setVisible(lViewers >= 0);
+	ui->lblViewers->setText(tr("%n viewer(s)", 0, lViewers));
 }
 
 void CategoryObjectWidget::on_btnCategory_clicked()

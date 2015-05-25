@@ -19,16 +19,3 @@ Logger * Logger::get()
 {
 	return mInstance;
 }
-
-QWidget * Logger::networkCaptureWindow() const
-{
-	return nullptr;
-}
-
-void Logger::logNetworkMessage(QString pTag, QVariant const & pMessage)
-{
-}
-
-void Logger::logNetworkError(QString pTag, QString const & pMessage)
-{
-}

@@ -3,6 +3,7 @@
 
 #include <QApplication>
 #include "core/initializer.h"
+#include "core/logger.h"
 
 class NetworkAccess;
 class ProfileFactory;
@@ -20,6 +21,8 @@ namespace forms
 
 class Application : public QApplication, public Logger
 {
+Q_OBJECT
+
 public:
 	Application(int & argc, char ** argv);
 	~Application();
@@ -30,7 +33,13 @@ public:
 	void logNetworkMessage(QString pTag, QVariant const & pMessage) override;
 	void logNetworkError(QString pTag, QString const & pMessage) override;
 
+	void pushStatusBar(QStatusBar * pStatusBar) override;
+	void popStatusBar(QStatusBar * pStatusBar) override;
+	void logStatusUpdate(int & pIdent, QString pMessage) override;
+	void logStatusClear(int pIdent) override;
+
 private:
+	void statusBarDestroyed(QObject * pObject);
 	void proxyAuthenticationRequired(QNetworkProxy const & proxy, QAuthenticator * authenticator);
 	void sslErrors(QNetworkReply * reply, QList<QSslError> const & errors);
 
@@ -41,7 +50,9 @@ private:
 
 	forms::DebugNetworkMessages * mDebugMessages;
 
+	QList<QStatusBar*> mStatusBars;
 	int mLastAuthMethod;
+	int mLastStatusMessage;
 };
 
 #endif // CORE_APPLICATION_H_

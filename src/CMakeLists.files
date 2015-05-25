@@ -3,12 +3,15 @@ set (QT_HEADER_FILES
 	forms/debug_network_messages.h
 	forms/edit_profile.h
 	forms/main_about.h
+	forms/main_window_categories.h
+	forms/main_window_following.h
 	forms/main_window.h
 	forms/perform_login_sub.h
 	forms/perform_login.h
 	forms/proxy_authentication.h
 	forms/select_profile.h
 	forms/ssl_errors.h
+	application.h
 )
 
 set (QT_FORMS
@@ -16,6 +19,8 @@ set (QT_FORMS
 	forms/debug_network_messages.ui
 	forms/edit_profile.ui
 	forms/main_about.ui
+	forms/main_window_categories.ui
+	forms/main_window_following.ui
 	forms/main_window.ui
 	forms/perform_login_acquire.ui
 	forms/perform_login_error.ui
@@ -32,7 +37,6 @@ set (QT_RESOURCES
 set (HEADER_FILES
 	${QT_HEADER_FILES}
 	forms/flowing_layout.h
-	application.h
 	config.h
 )
 
@@ -42,6 +46,8 @@ set (SOURCE_FILES
 	forms/flowing_layout.cpp
 	forms/edit_profile.cpp
 	forms/main_about.cpp
+	forms/main_window_categories.cpp
+	forms/main_window_following.cpp
 	forms/main_window.cpp
 	forms/perform_login_sub.cpp
 	forms/perform_login.cpp

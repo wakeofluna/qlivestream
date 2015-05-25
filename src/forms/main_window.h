@@ -5,7 +5,10 @@
 #include "core/storage_access.h"
 
 #include <QMainWindow>
+class CategoryObject;
+class ChannelObject;
 class QScrollArea;
+
 
 namespace Ui
 {
@@ -14,6 +17,9 @@ namespace Ui
 
 namespace forms
 {
+
+class MainWindowCategories;
+class MainWindowFollowing;
 
 class MainWindow : public QMainWindow, public StorageAccess
 {
@@ -24,15 +30,8 @@ public:
 	~MainWindow();
 
 public slots:
-	void refreshFollowing();
-	void rollupFollowing();
-	void refreshGames();
-	void rollupGames();
-	void openTabFor(CategoryObject * pCategory);
-
-signals:
-	void updatedFollowing();
-	void updatedGames();
+	void openCategoryTab(CategoryObject * pCategory);
+	void openChannelTab(ChannelObject * pChannel);
 
 protected:
 	void closeEvent(QCloseEvent * event) override;
@@ -42,30 +41,19 @@ private slots:
 	void on_mnuFileExit_triggered();
 	void on_mnuViewChannel_triggered();
 	void on_mnuViewFollowing_triggered();
-	void on_mnuViewGames_triggered();
+	void on_mnuViewCategories_triggered();
 	void on_mnuHelpDebugNetwork_triggered();
 	void on_mnuHelpAbout_triggered();
 	void on_mnuHelpAboutQt_triggered();
 
 	void on_tabWidget_tabCloseRequested(int pIndex);
-	void on_btnFollowingRefresh_clicked();
-	void on_btnGamesRefresh_clicked();
-
-	void checkRollupFollowing(int pSliderValue);
-	void checkRollupGames(int pSliderValue);
 
 private:
-	bool toggleTabVisible(QWidget * pWidget);
-	bool checkRollupFor(QScrollArea * pArea, int pSliderValue);
-	void appendCategoryObjects(QVector<CategoryObject*> const& pList, bool pClear = false);
-
 	Ui::MainWindow * ui;
 
 	Profile::UPtr mProfile;
-	bool mCanRollupFollowing;
-	bool mCanRollupGames;
-	int mRollupFollowingOffset;
-	int mRollupGamesOffset;
+	forms::MainWindowCategories * mCategories;
+	forms::MainWindowFollowing * mFollowing;
 };
 
 } // namespace forms
