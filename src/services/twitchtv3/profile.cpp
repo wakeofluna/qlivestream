@@ -1,8 +1,9 @@
 #include "config.h"
 #include "profile.h"
 #include "root.h"
-#include "games.h"
-#include "followed_games.h"
+#include "games_top.h"
+#include "user_follows_channels.h"
+#include "user_follows_games.h"
 
 #include <QNetworkReply>
 #include <QNetworkRequest>
@@ -86,7 +87,7 @@ void Profile::getFollowedCategories(int pStart, int pLimit, CategoryCallback && 
 	{
 		QList<CategoryObject*> lList;
 
-		twitchtv3::FollowedGames lFollowed(pReply);
+		twitchtv3::UserFollowsGames lFollowed(pReply);
 		if (lFollowed.hasError())
 			mLastError = lFollowed.lastError();
 		else
@@ -112,7 +113,7 @@ void Profile::getTopCategories(int pStart, int pLimit, CategoryCallback && pCall
 	{
 		QList<CategoryObject*> lList;
 
-		twitchtv3::Games lGames(pReply);
+		twitchtv3::GamesTop lGames(pReply);
 		if (lGames.hasError())
 			mLastError = lGames.lastError();
 		else
@@ -124,8 +125,28 @@ void Profile::getTopCategories(int pStart, int pLimit, CategoryCallback && pCall
 
 void Profile::getFollowedChannels(int pStart, int pLimit, ChannelCallback && pCallback)
 {
-	QList<ChannelObject*> lList;
-	pCallback(std::move(lList));
+	QUrlQuery lUrlQuery;
+	lUrlQuery.addQueryItem("limit", QString::number(pLimit));
+	lUrlQuery.addQueryItem("offset", QString::number(pStart));
+
+	QUrl lUrl = krakenUrl(QString("/users/%1/follows/channels").arg(mAccount));
+	lUrl.setQuery(lUrlQuery);
+
+	QNetworkRequest lRequest = serviceRequest(false);
+	lRequest.setUrl(lUrl);
+
+	networkGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
+	{
+		QList<ChannelObject*> lList;
+
+		twitchtv3::UserFollowsChannels lFollows(pReply);
+		if (lFollows.hasError())
+			mLastError = lFollows.lastError();
+		else
+			lList = lFollows.createList();
+
+		pCallback(std::move(lList));
+	});
 }
 
 void Profile::getCategoryChannels(CategoryObject * pCategory, int pStart, int pLimit, ChannelCallback && pCallback)

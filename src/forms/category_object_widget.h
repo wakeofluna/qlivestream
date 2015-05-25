@@ -1,8 +1,9 @@
 #ifndef FORMS_CATEGORY_OBJECT_WIDGET_H_
 #define FORMS_CATEGORY_OBJECT_WIDGET_H_
 
-#include "core/category_object.h"
 #include <QWidget>
+class CategoryObject;
+class QByteArray;
 
 namespace Ui
 {

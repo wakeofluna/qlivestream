@@ -22,6 +22,7 @@ public:
 	inline bool followed() const { return mFollowed; }
 
 	virtual QString logoCacheString() const;
+	static QString logoCacheString(QString pTag);
 
 	bool isValid() const;
 

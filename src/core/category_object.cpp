@@ -16,7 +16,12 @@ CategoryObject::~CategoryObject()
 
 QString CategoryObject::logoCacheString() const
 {
-	return QCryptographicHash::hash(mName.toUtf8(), QCryptographicHash::Md5).toHex();
+	return logoCacheString(mName);
+}
+
+QString CategoryObject::logoCacheString(QString pTag)
+{
+	return QCryptographicHash::hash(QString("c:%1").arg(pTag).toUtf8(), QCryptographicHash::Md5).toHex();
 }
 
 bool CategoryObject::isValid() const

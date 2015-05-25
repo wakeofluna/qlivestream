@@ -1,7 +1,6 @@
 #include "config.h"
 #include "games_object.h"
 
-#include <QCryptographicHash>
 #include <QVariant>
 #include <QVariantMap>
 
@@ -37,7 +36,7 @@ GamesObject::~GamesObject()
 
 QString GamesObject::logoCacheString() const
 {
-	return QCryptographicHash::hash(QString("twitchtv3:%1").arg(mName).toUtf8(), QCryptographicHash::Md5).toHex();
+	return CategoryObject::logoCacheString(QString("twitchtv3:%1").arg(mName));
 }
 
 } // namespace twitchtv3

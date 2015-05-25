@@ -1,6 +1,7 @@
 #ifndef FORMS_MAIN_WINDOW_FOLLOWING_H_
 #define FORMS_MAIN_WINDOW_FOLLOWING_H_
 
+#include "core/storage_access.h"
 #include <QWidget>
 
 class ChannelObject;
@@ -15,7 +16,9 @@ namespace Ui
 namespace forms
 {
 
-class MainWindowFollowing : public QWidget
+class ChannelObjectWidget;
+
+class MainWindowFollowing : public QWidget, public StorageAccess
 {
 Q_OBJECT
 
@@ -41,6 +44,8 @@ private:
 	Ui::MainWindowFollowing * ui;
 
 	Profile & mProfile;
+	QList<ChannelObject*> mChannels;
+	QList<ChannelObjectWidget*> mWidgets;
 	bool mCanRollup;
 };
 

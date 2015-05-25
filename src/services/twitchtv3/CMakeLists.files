@@ -1,20 +1,24 @@
 set (HEADER_FILES
 	auth_scope.h
-	followed_games.h
+	channels_object.h
 	games_object.h
-	games.h
+	games_top.h
 	profile.h
 	root.h
 	server_reply.h
+	user_follows_channels.h
+	user_follows_games.h
 )
 
 set (SOURCE_FILES
 	auth_scope.cpp
-	followed_games.cpp
+	channels_object.cpp
 	games_object.cpp
-	games.cpp
+	games_top.cpp
+	main.cpp
 	profile.cpp
 	root.cpp
 	server_reply.cpp
-	main.cpp
+	user_follows_channels.cpp
+	user_follows_games.cpp
 )

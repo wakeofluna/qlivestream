@@ -1,5 +1,5 @@
 #include "config.h"
-#include "games.h"
+#include "games_top.h"
 #include "games_object.h"
 
 #include <QList>
@@ -7,23 +7,23 @@
 namespace twitchtv3
 {
 
-Games::Games(QNetworkReply & pReply) : ServerReply(pReply)
+GamesTop::GamesTop(QNetworkReply & pReply) : ServerReply(pReply)
 {
 	if (!parse())
 		return;
 }
 
-Games::~Games()
+GamesTop::~GamesTop()
 {
 
 }
 
-QString Games::tag() const
+QString GamesTop::tag() const
 {
 	return QStringLiteral("TopGames");
 }
 
-QList<CategoryObject*> Games::createList() const
+QList<CategoryObject*> GamesTop::createList() const
 {
 	QVariantList lList = mData.value("top").toList();
 

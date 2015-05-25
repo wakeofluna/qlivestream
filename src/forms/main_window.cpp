@@ -33,17 +33,13 @@ MainWindow::MainWindow(Profile::UPtr && pProfile, QWidget *parent) : QMainWindow
 	{
 		case Profile::ANONYMOUS:
 			ui->mnuViewChannel->setEnabled(false);
-			// no break
+			break;
 
 		case Profile::VIEWER:
 		case Profile::MODERATOR:
-			ui->mnuViewCategories->trigger();
-			ui->mnuViewFollowing->trigger();
 			break;
 
 		case Profile::STREAMER:
-			ui->mnuViewCategories->trigger();
-			ui->mnuViewFollowing->trigger();
 			ui->mnuViewChannel->trigger();
 			break;
 	}

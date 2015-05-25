@@ -1,12 +1,53 @@
 #include "config.h"
 #include "channel_object.h"
 
+#include <QCryptographicHash>
+
 ChannelObject::ChannelObject()
 {
-
+	mNumViews = -1;
+	mNumFollowers = -1;
+	mPartnered = false;
+	mMature = false;
+	mFollowed = false;
 }
 
 ChannelObject::~ChannelObject()
 {
 
+}
+
+QString ChannelObject::logoCacheString() const
+{
+	return logoCacheString(mName);
+}
+
+QString ChannelObject::logoCacheString(QString pTag)
+{
+	return QCryptographicHash::hash(QString("s:%1").arg(pTag).toUtf8(), QCryptographicHash::Md5).toHex();
+}
+
+void ChannelObject::clear()
+{
+}
+
+bool ChannelObject::updateFrom(ChannelObject const & pOther)
+{
+	bool ok = true;
+
+	ok &= pOther.mName == mName;
+	if (ok)
+		setStats(pOther.mNumFollowers, pOther.mNumViews);
+
+	return ok;
+}
+
+void ChannelObject::setStats(int pFollowers, int pViews)
+{
+	if (mNumFollowers != pFollowers || mNumViews != pViews)
+	{
+		mNumViews = pViews;
+		mNumFollowers = pFollowers;
+		emit statsChanged();
+	}
 }

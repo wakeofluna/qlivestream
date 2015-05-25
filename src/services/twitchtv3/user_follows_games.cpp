@@ -1,30 +1,29 @@
 #include "config.h"
-#include "followed_games.h"
+#include "user_follows_games.h"
 #include "games_object.h"
 
 #include <QList>
-#include <QString>
 
 namespace twitchtv3
 {
 
-FollowedGames::FollowedGames(QNetworkReply & pReply) : ServerReply(pReply)
+UserFollowsGames::UserFollowsGames(QNetworkReply & pReply) : ServerReply(pReply)
 {
 	if (!parse())
 		return;
 }
 
-FollowedGames::~FollowedGames()
+UserFollowsGames::~UserFollowsGames()
 {
 
 }
 
-QString FollowedGames::tag() const
+QString UserFollowsGames::tag() const
 {
-	return QStringLiteral("FollowedGames");
+	return QStringLiteral("UserFollowsGames");
 }
 
-QList<CategoryObject*> FollowedGames::createList() const
+QList<CategoryObject*> UserFollowsGames::createList() const
 {
 	QVariantList lList = mData.value("follows").toList();
 

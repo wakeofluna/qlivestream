@@ -1,6 +1,7 @@
 #include "category_object_widget.h"
 #include "config.h"
 #include "ui_category_object_widget.h"
+#include "core/category_object.h"
 
 #include <QByteArray>
 #include <QImage>

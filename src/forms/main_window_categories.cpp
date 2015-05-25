@@ -162,7 +162,6 @@ void MainWindowCategories::addToList(bool pFavourite, CategoryObject * pCategory
 				}
 		);
 	}
-
 }
 
 } // namespace forms

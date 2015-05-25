@@ -1,5 +1,6 @@
 set (QT_HEADER_FILES
 	forms/category_object_widget.h
+	forms/channel_object_widget.h
 	forms/debug_network_messages.h
 	forms/edit_profile.h
 	forms/main_about.h
@@ -16,6 +17,7 @@ set (QT_HEADER_FILES
 
 set (QT_FORMS
 	forms/category_object_widget.ui
+	forms/channel_object_widget.ui
 	forms/debug_network_messages.ui
 	forms/edit_profile.ui
 	forms/main_about.ui
@@ -42,6 +44,7 @@ set (HEADER_FILES
 
 set (SOURCE_FILES
 	forms/category_object_widget.cpp
+	forms/channel_object_widget.cpp
 	forms/debug_network_messages.cpp
 	forms/flowing_layout.cpp
 	forms/edit_profile.cpp
