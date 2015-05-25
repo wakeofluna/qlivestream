@@ -117,7 +117,7 @@ void Application::logStatusClear(int pIdent)
 
 void Application::statusBarDestroyed(QObject * pObject)
 {
-	popStatusBar(qobject_cast<QStatusBar*>(pObject));
+	popStatusBar(static_cast<QStatusBar*>(pObject));
 }
 
 void Application::proxyAuthenticationRequired(QNetworkProxy const & proxy, QAuthenticator * authenticator)
