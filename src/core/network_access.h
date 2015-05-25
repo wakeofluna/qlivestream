@@ -2,7 +2,6 @@
 #define CORE_NETWORK_ACCESS_H_
 
 #include <functional>
-#include <QList>
 
 class Profile;
 class QAuthenticator;
@@ -17,6 +16,7 @@ class QUrl;
 class QVariant;
 
 template <typename T> class Initializer;
+template <typename T> class QList;
 
 namespace forms
 {

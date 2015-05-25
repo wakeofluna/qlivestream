@@ -2,8 +2,8 @@
 #define CORE_LOGGER_H_
 
 #include <QString>
-#include <QVariant>
 class QStatusBar;
+class QVariant;
 class QWidget;
 
 class Logger

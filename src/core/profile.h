@@ -5,13 +5,13 @@
 #include <functional>
 #include <memory>
 #include <QString>
-#include <QList>
 
 class CategoryObject;
 class ChannelObject;
 class ConfigProfile;
 class QByteArray;
 class QUrl;
+template <typename T> class QList;
 
 namespace forms
 {

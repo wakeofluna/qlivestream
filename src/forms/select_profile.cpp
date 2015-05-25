@@ -6,9 +6,6 @@
 #include "main_window.h"
 
 #include <algorithm>
-#include <QComboBox>
-#include <QMessageBox>
-#include <QSettings>
 #include <QString>
 #include <QStringList>
 

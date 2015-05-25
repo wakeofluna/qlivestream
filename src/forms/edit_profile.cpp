@@ -3,10 +3,8 @@
 #include "ui_edit_profile.h"
 #include "core/config_profile.h"
 
-#include <QCheckBox>
 #include <QMessageBox>
 #include <QPushButton>
-#include <QSettings>
 
 namespace forms
 {

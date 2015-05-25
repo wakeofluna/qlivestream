@@ -13,13 +13,7 @@
 #include "forms/main_window_following.h"
 #include "forms/select_profile.h"
 
-#include <QApplication>
 #include <QCloseEvent>
-#include <QDebug>
-#include <QGridLayout>
-#include <QLayoutItem>
-#include <QScrollArea>
-#include <QScrollBar>
 
 namespace forms
 {

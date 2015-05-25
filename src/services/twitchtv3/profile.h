@@ -4,7 +4,6 @@
 #include "core/profile.h"
 #include "auth_scope.h"
 
-class QUrl;
 class QNetworkRequest;
 
 namespace twitchtv3

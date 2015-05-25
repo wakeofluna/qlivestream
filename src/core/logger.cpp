@@ -1,6 +1,8 @@
 #include "config.h"
 #include "logger.h"
 
+#include <QString>
+
 Logger * Logger::mInstance = nullptr;
 
 Logger::Logger()

@@ -2,7 +2,6 @@
 #include "debug_network_messages.h"
 #include "ui_debug_network_messages.h"
 
-#include <QAbstractButton>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QVariantList>
@@ -53,7 +52,7 @@ DebugNetworkMessages::DebugNetworkMessages(QWidget *parent) : QWidget(parent, Qt
 {
 	ui = new Ui::DebugNetworkMessages();
 	ui->setupUi(this);
-	connect(ui->btnClear, &QAbstractButton::clicked, this, &DebugNetworkMessages::clear);
+	connect(ui->btnClear, &QPushButton::clicked, this, &DebugNetworkMessages::clear);
 
 #ifdef DEBUG
 	ui->chkCapture->setChecked(true);

@@ -1,8 +1,8 @@
 #ifndef FORMS_MAIN_WINDOW_CATEGORIES_H_
 #define FORMS_MAIN_WINDOW_CATEGORIES_H_
 
-#include <QWidget>
 #include "core/storage_access.h"
+#include <QWidget>
 
 class CategoryObject;
 class Profile;

@@ -1,9 +1,9 @@
 #include "config.h"
 #include "main_window_following.h"
 #include "ui_main_window_following.h"
-#include "flowing_layout.h"
 #include "core/channel_object.h"
 #include "core/profile.h"
+#include "forms/flowing_layout.h"
 
 #include <QScrollBar>
 

@@ -1,7 +1,10 @@
 #include "config.h"
 #include "profile_factory.h"
 #include "core/config_profile.h"
+
 #include <QLibrary>
+#include <QList>
+#include <QString>
 
 namespace
 {

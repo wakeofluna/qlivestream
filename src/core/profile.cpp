@@ -4,7 +4,7 @@
 #include "core/channel_object.h"
 #include "core/reply_binary.h"
 
-#include <QNetworkReply>
+#include <QList>
 #include <QNetworkRequest>
 #include <QSqlError>
 #include <QSqlQuery>
@@ -30,7 +30,7 @@ void Profile::downloadLogo(QUrl const & pUrl, DataCallback && pCallback)
 	networkGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
 	{
 		ReplyBinary lReply(pReply, "Logo");
-		pCallback(lReply.data());
+		pCallback(std::move(lReply.data()));
 	});
 }
 

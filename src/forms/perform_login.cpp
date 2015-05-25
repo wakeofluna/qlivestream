@@ -3,7 +3,6 @@
 #include "perform_login_sub.h"
 #include "ui_perform_login.h"
 #include "core/profile.h"
-#include <QMessageBox>
 
 namespace forms
 {

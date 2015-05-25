@@ -9,8 +9,8 @@
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QStandardPaths>
+#include <QString>
 #include <QUrl>
-#include <QDebug>
 
 namespace
 {

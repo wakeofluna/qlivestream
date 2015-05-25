@@ -7,8 +7,6 @@
 #include <QMainWindow>
 class CategoryObject;
 class ChannelObject;
-class QScrollArea;
-
 
 namespace Ui
 {

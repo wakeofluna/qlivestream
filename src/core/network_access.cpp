@@ -3,6 +3,7 @@
 #include "core/profile.h"
 
 #include <QAuthenticator>
+#include <QList>
 #include <QMutex>
 #include <QNetworkAccessManager>
 #include <QNetworkProxy>

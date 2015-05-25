@@ -3,7 +3,6 @@
 
 #include "core/profile_factory.h"
 #include <QDialog>
-#include <QVector>
 
 class ConfigProfile;
 class QAbstractButton;

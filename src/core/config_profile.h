@@ -3,9 +3,9 @@
 
 #include "core/profile_factory.h"
 #include <QString>
-#include <QVector>
 
 class QDateTime;
+template <typename T> class QVector;
 
 namespace forms
 {
@@ -44,7 +44,7 @@ private:
 	QString mToken;
 	int     mLevel;
 	QString mService;
-	int mLastAccess;
+	int     mLastAccess;
 };
 
 #endif // CORE_CONFIG_PROFILE_H_

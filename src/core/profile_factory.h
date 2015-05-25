@@ -2,13 +2,12 @@
 #define CORE_PROFILE_FACTORY_H_
 
 #include "core/profile.h"
-#include <memory>
-#include <QList>
 #include <QPair>
-#include <QString>
 
 class ConfigProfile;
+class QString;
 template <typename T> class Initializer;
+template <typename T> class QList;
 
 class ProfileFactory
 {

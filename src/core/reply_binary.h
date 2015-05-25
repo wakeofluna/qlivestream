@@ -12,7 +12,8 @@ public:
 
 	QString tag() const override;
 
-	inline QByteArray data() const { return mData; }
+	inline QByteArray       & data()       { return mData; }
+	inline QByteArray const & data() const { return mData; }
 
 protected:
 	QString mTag;

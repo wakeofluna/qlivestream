@@ -1,9 +1,10 @@
 #include "config.h"
 #include "main_window_categories.h"
 #include "ui_main_window_categories.h"
+#include "core/category_object.h"
+#include "core/profile.h"
 #include "forms/flowing_layout.h"
 #include "forms/category_object_widget.h"
-#include "core/profile.h"
 
 #include <algorithm>
 #include <QScrollBar>

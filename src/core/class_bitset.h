@@ -2,7 +2,6 @@
 #define CORE_CLASS_BITSET_H_
 
 #include <bitset>
-#include <type_traits>
 
 template<typename T>
 class ClassBitset
