@@ -39,6 +39,7 @@ private slots:
 private:
 	void clear();
 	void addData(QList<CategoryObject*> && pCategories);
+	void addToList(bool pFavourite, CategoryObject * pCategory);
 
 private:
 	Ui::MainWindowCategories * ui;

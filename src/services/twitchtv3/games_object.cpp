@@ -8,32 +8,31 @@
 namespace twitchtv3
 {
 
-GamesObject::GamesObject(QVariant const & pValue)
+GamesObject::GamesObject(QVariant const & pValue, bool pFollowing)
 {
 	QVariantMap lItem = pValue.toMap();
-	QVariantMap lGame = lItem.value("game").toMap();
+
+	QVariantMap lGame;
+	if (lItem.contains("game"))
+	{
+		lGame = lItem.value("game").toMap();
+		mNumChannels = lItem.value("channels", -1).toInt();
+		mNumViewers = lItem.value("viewers", -1).toInt();
+	}
+	else
+		lGame = lItem;
+
 	QVariantMap lBox = lGame.value("box").toMap();
 
 	mId = lGame.value("_id").toInt();
 	mName = lGame.value("name").toString();
 	mGiantBombId = lGame.value("giantbomb_id").toInt();
 	mLogoUrl = lBox.value("medium").toString();
-
-	updateFrom(pValue);
+	mFollowed = pFollowing;
 }
 
 GamesObject::~GamesObject()
 {
-}
-
-void GamesObject::updateFrom(QVariant const & pValue)
-{
-	QVariantMap lItem = pValue.toMap();
-
-	int lChannels = lItem.value("channels").toInt();
-	int lViewers = lItem.value("viewers").toInt();
-
-	setStats(lChannels, lViewers);
 }
 
 QString GamesObject::logoCacheString() const

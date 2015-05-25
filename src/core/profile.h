@@ -50,8 +50,10 @@ public:
 
 	virtual QUrl acquireTokenUrl() const = 0;
 	virtual void performLogin(DefaultCallback && pCallback) = 0;
+	virtual void getFollowedCategories(int pStart, int pLimit, CategoryCallback && pCallback) = 0;
 	virtual void getTopCategories(int pStart, int pLimit, CategoryCallback && pCallback) = 0;
-	virtual void getFollowings(int pStart, int pLimit, ChannelCallback && pCallback) = 0;
+	virtual void getFollowedChannels(int pStart, int pLimit, ChannelCallback && pCallback) = 0;
+	virtual void getCategoryChannels(CategoryObject * pCategory, int pStart, int pLimit, ChannelCallback && pCallback) = 0;
 	virtual void downloadLogo(QUrl const & pUrl, DataCallback && pCallback);
 
 protected:

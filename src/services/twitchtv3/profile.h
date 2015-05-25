@@ -4,6 +4,9 @@
 #include "core/profile.h"
 #include "auth_scope.h"
 
+#include <QList>
+class CategoryObject;
+class QUrl;
 class QNetworkRequest;
 
 namespace twitchtv3
@@ -17,12 +20,15 @@ public:
 
 	QUrl acquireTokenUrl() const override;
 	void performLogin(DefaultCallback && pCallback) override;
+	void getFollowedCategories(int pStart, int pLimit, CategoryCallback && pCallback) override;
 	void getTopCategories(int pStart, int pLimit, CategoryCallback && pCallback) override;
-	void getFollowings(int pStart, int pLimit, ChannelCallback && pCallback) override;
+	void getFollowedChannels(int pStart, int pLimit, ChannelCallback && pCallback) override;
+	void getCategoryChannels(CategoryObject * pCategory, int pStart, int pLimit, ChannelCallback && pCallback) override;
 
 private:
-	QUrl serviceUrl(QString pAppend = QString()) const;
-	QNetworkRequest serviceRequest() const;
+	QUrl apiUrl(QString pAppend) const;
+	QUrl krakenUrl(QString pAppend = QString()) const;
+	QNetworkRequest serviceRequest(bool pAuthed = true) const;
 
 	AuthScopes mScopes;
 };

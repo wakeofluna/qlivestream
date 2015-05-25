@@ -1,5 +1,6 @@
 set (HEADER_FILES
 	auth_scope.h
+	followed_games.h
 	games_object.h
 	games.h
 	profile.h
@@ -9,6 +10,7 @@ set (HEADER_FILES
 
 set (SOURCE_FILES
 	auth_scope.cpp
+	followed_games.cpp
 	games_object.cpp
 	games.cpp
 	profile.cpp

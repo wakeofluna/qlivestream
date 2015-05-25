@@ -24,6 +24,12 @@ MainWindowCategories::MainWindowCategories(Profile & pProfile, QWidget * parent)
 	connect(ui->scrArea->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindowCategories::checkRollup);
 
 	mCanRollup = false;
+
+	Logger::StatusMessage lMessage("Fetching followed categories list ..");
+	mProfile.getFollowedCategories(0, 100, [this, lMessage] (QList<CategoryObject*> && pList)
+	{
+		addData(std::move(pList));
+	});
 }
 
 MainWindowCategories::~MainWindowCategories()
@@ -100,34 +106,63 @@ void MainWindowCategories::addData(QList<CategoryObject*> && pCategories)
 
 	pCategories.clear();
 
+	std::sort(mCategories.begin(), mCategories.end(), [] (CategoryObject const * lhs, CategoryObject const * rhs) -> bool
+	{
+		if (lhs->numViewers() != rhs->numViewers())
+			return lhs->numViewers() > rhs->numViewers();
+		if (lhs->numChannels() != rhs->numChannels())
+			return lhs->numChannels() > rhs->numChannels();
+		return lhs->name() < rhs->name();
+	});
+
 	for (CategoryObject * lObject : mCategories)
 	{
-		bool lFound = false;
-		for (CategoryObjectWidget * lWidget : mTop)
-			lFound |= lWidget->object() == lObject;
+		if (!lObject->followed())
+			continue;
 
-		if (!lFound)
-		{
-			CategoryObjectWidget * lWidget = new CategoryObjectWidget(lObject, this);
-			mTop.append(lWidget);
-
-			connect(lWidget, &CategoryObjectWidget::clicked, this, &MainWindowCategories::selected);
-			ui->grpAll->layout()->addWidget(lWidget);
-
-			accessCache
-			(
-					lWidget->object()->logoCacheString(),
-					[this,lWidget] (CacheHitCallback && pCallback)
-					{
-						mProfile.downloadLogo(lWidget->object()->logoUrl(), std::move(pCallback));
-					},
-					[lWidget] (QByteArray const & pData)
-					{
-						lWidget->setLogo(pData);
-					}
-			);
-		}
+		addToList(true, lObject);
 	}
+
+	for (CategoryObject * lObject : mCategories)
+	{
+		if (!lObject->isValid())
+			continue;
+
+		addToList(false, lObject);
+	}
+}
+
+void MainWindowCategories::addToList(bool pFavourite, CategoryObject * pCategory)
+{
+	auto & lList = (pFavourite ? mFavourite : mTop);
+	auto * lLayout = (pFavourite ? ui->grpFavourite->layout() : ui->grpAll->layout());
+
+	bool lFound = false;
+	for (CategoryObjectWidget * lWidget : lList)
+		lFound |= lWidget->object() == pCategory;
+
+	if (!lFound)
+	{
+		CategoryObjectWidget * lWidget = new CategoryObjectWidget(pCategory, this);
+		lList.append(lWidget);
+
+		connect(lWidget, &CategoryObjectWidget::clicked, this, &MainWindowCategories::selected);
+		lLayout->addWidget(lWidget);
+
+		accessCache
+		(
+				lWidget->object()->logoCacheString(),
+				[this,lWidget] (CacheHitCallback && pCallback)
+				{
+					mProfile.downloadLogo(lWidget->object()->logoUrl(), std::move(pCallback));
+				},
+				[lWidget] (QByteArray const & pData)
+				{
+					lWidget->setLogo(pData);
+				}
+		);
+	}
+
 }
 
 } // namespace forms

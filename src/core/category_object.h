@@ -23,6 +23,8 @@ public:
 
 	virtual QString logoCacheString() const;
 
+	bool isValid() const;
+
 	void clear();
 	bool updateFrom(CategoryObject const & pOther);
 

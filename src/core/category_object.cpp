@@ -19,6 +19,11 @@ QString CategoryObject::logoCacheString() const
 	return QCryptographicHash::hash(mName.toUtf8(), QCryptographicHash::Md5).toHex();
 }
 
+bool CategoryObject::isValid() const
+{
+	return mNumChannels != -1 && mNumViewers != -1;
+}
+
 void CategoryObject::clear()
 {
 	setStats(-1, -1);

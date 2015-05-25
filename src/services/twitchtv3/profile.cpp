@@ -2,6 +2,7 @@
 #include "profile.h"
 #include "root.h"
 #include "games.h"
+#include "followed_games.h"
 
 #include <QNetworkReply>
 #include <QNetworkRequest>
@@ -52,7 +53,7 @@ QUrl Profile::acquireTokenUrl() const
 
 void Profile::performLogin(DefaultCallback && pCallback)
 {
-	QUrl lUrl = serviceUrl();
+	QUrl lUrl = krakenUrl();
 
 	QNetworkRequest lRequest = serviceRequest();
 	lRequest.setUrl(lUrl);
@@ -74,16 +75,37 @@ void Profile::performLogin(DefaultCallback && pCallback)
 	});
 }
 
+void Profile::getFollowedCategories(int pStart, int pLimit, CategoryCallback && pCallback)
+{
+	QUrl lUrl = apiUrl(QString("/users/%1/follows/games").arg(account()));
+
+	QNetworkRequest lRequest = serviceRequest(false);
+	lRequest.setUrl(lUrl);
+
+	networkGet(lRequest, [this, pStart, pLimit, CAPTURE(pCallback)] (QNetworkReply & pReply)
+	{
+		QList<CategoryObject*> lList;
+
+		twitchtv3::FollowedGames lFollowed(pReply);
+		if (lFollowed.hasError())
+			mLastError = lFollowed.lastError();
+		else
+			lList = lFollowed.createList();
+
+		pCallback(std::move(lList));
+	});
+}
+
 void Profile::getTopCategories(int pStart, int pLimit, CategoryCallback && pCallback)
 {
 	QUrlQuery lUrlQuery;
 	lUrlQuery.addQueryItem("limit", QString::number(pLimit));
 	lUrlQuery.addQueryItem("offset", QString::number(pStart));
 
-	QUrl lUrl = serviceUrl("/games/top");
+	QUrl lUrl = krakenUrl("/games/top");
 	lUrl.setQuery(lUrlQuery);
 
-	QNetworkRequest lRequest = serviceRequest();
+	QNetworkRequest lRequest = serviceRequest(false);
 	lRequest.setUrl(lUrl);
 
 	networkGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
@@ -100,11 +122,28 @@ void Profile::getTopCategories(int pStart, int pLimit, CategoryCallback && pCall
 	});
 }
 
-void Profile::getFollowings(int pStart, int pLimit, ChannelCallback && pCallback)
+void Profile::getFollowedChannels(int pStart, int pLimit, ChannelCallback && pCallback)
 {
+	QList<ChannelObject*> lList;
+	pCallback(std::move(lList));
 }
 
-QUrl Profile::serviceUrl(QString pAppend) const
+void Profile::getCategoryChannels(CategoryObject * pCategory, int pStart, int pLimit, ChannelCallback && pCallback)
+{
+	QList<ChannelObject*> lList;
+	pCallback(std::move(lList));
+}
+
+QUrl Profile::apiUrl(QString pAppend) const
+{
+	QUrl lUrl;
+	lUrl.setScheme("https");
+	lUrl.setHost("api.twitch.tv");
+	lUrl.setPath(QString("/api%1").arg(pAppend));
+	return lUrl;
+}
+
+QUrl Profile::krakenUrl(QString pAppend) const
 {
 	QUrl lUrl;
 	lUrl.setScheme("https");
@@ -113,14 +152,14 @@ QUrl Profile::serviceUrl(QString pAppend) const
 	return lUrl;
 }
 
-QNetworkRequest Profile::serviceRequest() const
+QNetworkRequest Profile::serviceRequest(bool pAuthed) const
 {
 	QNetworkRequest lRequest;
 	lRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
 	lRequest.setHeader(QNetworkRequest::UserAgentHeader, APP_NAME);
 	lRequest.setRawHeader("Accept", "application/vnd.twitchtv3+json");
 
-	if (level() != ANONYMOUS && !token().isEmpty())
+	if (level() != ANONYMOUS && !token().isEmpty() && pAuthed)
 	{
 		QString lAuth = QString("OAuth %1").arg(token());
 		lRequest.setRawHeader("Authorization", lAuth.toUtf8());

@@ -57,6 +57,7 @@ bool ReplyBase::checkNetworkStatus()
 		ERR(ContentNotFoundError, QT_TRANSLATE_NOOP("NetworkStatus", "Content not found"));
 		ERR(AuthenticationRequiredError, QT_TRANSLATE_NOOP("NetworkStatus", "Authentication required"));
 
+		ERR(ProtocolUnknownError, QT_TRANSLATE_NOOP("NetworkStatus", "Protocol unknown"));
 		ERR(ProtocolInvalidOperationError, QT_TRANSLATE_NOOP("NetworkStatus", "Invalid operation"));
 
 		ERR(InternalServerError, QT_TRANSLATE_NOOP("NetworkStatus", "Internal server error"));

@@ -10,10 +10,9 @@ namespace twitchtv3
 class GamesObject : public CategoryObject
 {
 public:
-	GamesObject(QVariant const & pValue);
+	GamesObject(QVariant const & pValue, bool pFollowing = false);
 	~GamesObject();
 
-	void updateFrom(QVariant const & pValue);
 	QString logoCacheString() const override;
 
 private:
