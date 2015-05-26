@@ -1,8 +1,16 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
+#include <qcompilerdetection.h>
+
 #define APP_NAME "Qlivestream"
 #define APP_NAME_LC "qlivestream"
+
+#ifdef core_EXPORTS
+#define COREDLL Q_DECL_EXPORT
+#else
+#define COREDLL Q_DECL_IMPORT
+#endif
 
 // Helper for lambda captures
 #if defined(CDT_PARSER) || __cplusplus < 201402L

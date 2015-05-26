@@ -1,12 +1,13 @@
 #ifndef CORE_CATEGORY_OBJECT_H_
 #define CORE_CATEGORY_OBJECT_H_
 
+#include "config.h"
 #include <QObject>
 #include <QString>
 #include <QUrl>
 #include <QVariant>
 
-class CategoryObject : public QObject
+class COREDLL CategoryObject : public QObject
 {
 Q_OBJECT
 

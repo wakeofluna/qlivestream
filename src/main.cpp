@@ -27,7 +27,7 @@ int main(int argc, char **argv)
 	{
 		qCritical() << "MAIN :" << e.title() << ':' << e.description();
 	}
-	catch (QException & e)
+	catch (QException & /*e*/)
 	{
 		qCritical() << "MAIN : Uncaught Qt exception!";
 	}

@@ -1,12 +1,13 @@
 #ifndef CORE_LOGGER_H_
 #define CORE_LOGGER_H_
 
+#include "config.h"
 #include <QString>
 class QStatusBar;
 class QVariant;
 class QWidget;
 
-class Logger
+class COREDLL Logger
 {
 public:
 	struct StatusMessage

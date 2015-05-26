@@ -1,13 +1,14 @@
 #ifndef REPLIES_REPLY_BASE_H_
 #define REPLIES_REPLY_BASE_H_
 
+#include "config.h"
 #include <QString>
 #include <QVariantMap>
 class QByteArray;
 class QNetworkReply;
 
 
-class ReplyBase
+class COREDLL ReplyBase
 {
 public:
 	virtual ~ReplyBase();

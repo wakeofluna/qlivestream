@@ -1,6 +1,7 @@
 #ifndef CORE_STORAGE_ACCESS_H_
 #define CORE_STORAGE_ACCESS_H_
 
+#include "config.h"
 #include <functional>
 class QByteArray;
 class QDir;
@@ -9,7 +10,7 @@ class QUrl;
 
 template <typename T> class Initializer;
 
-class StorageAccess
+class COREDLL StorageAccess
 {
 public:
 	typedef std::function<void (QByteArray const&)> CacheHitCallback;

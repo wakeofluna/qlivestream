@@ -1,6 +1,7 @@
 #ifndef CORE_CONFIG_PROFILE_H_
 #define CORE_CONFIG_PROFILE_H_
 
+#include "config.h"
 #include "core/profile_factory.h"
 #include <QString>
 
@@ -12,7 +13,7 @@ namespace forms
 	class EditProfile;
 }
 
-class ConfigProfile : public ProfileFactory
+class COREDLL ConfigProfile : public ProfileFactory
 {
 public:
 	typedef QVector<ConfigProfile> List;

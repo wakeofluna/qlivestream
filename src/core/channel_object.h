@@ -1,12 +1,13 @@
 #ifndef CORE_CHANNEL_OBJECT_H_
 #define CORE_CHANNEL_OBJECT_H_
 
+#include "config.h"
 #include <QObject>
 #include <QString>
 #include <QUrl>
 #include <QVariant>
 
-class ChannelObject : public QObject
+class COREDLL ChannelObject : public QObject
 {
 Q_OBJECT
 

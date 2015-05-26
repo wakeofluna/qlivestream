@@ -1,6 +1,7 @@
 #ifndef CORE_PROFILE_FACTORY_H_
 #define CORE_PROFILE_FACTORY_H_
 
+#include "config.h"
 #include "core/profile.h"
 #include <QPair>
 
@@ -9,7 +10,7 @@ class QString;
 template <typename T> class Initializer;
 template <typename T> class QList;
 
-class ProfileFactory
+class COREDLL ProfileFactory
 {
 public:
 	typedef const char * (*NameFunc)();

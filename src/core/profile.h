@@ -1,6 +1,7 @@
 #ifndef CORE_PROFILE_H_
 #define CORE_PROFILE_H_
 
+#include "config.h"
 #include "core/network_access.h"
 #include <functional>
 #include <memory>
@@ -18,7 +19,7 @@ namespace forms
 	class PerformLogin;
 }
 
-class Profile : public NetworkAccess
+class COREDLL Profile : public NetworkAccess
 {
 public:
 	typedef std::function<void ()> DefaultCallback;

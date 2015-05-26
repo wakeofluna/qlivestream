@@ -1,10 +1,11 @@
 #ifndef SERVICES_REPLY_BINARY_H_
 #define SERVICES_REPLY_BINARY_H_
 
+#include "config.h"
 #include "reply_base.h"
 #include <QByteArray>
 
-class ReplyBinary : public ReplyBase
+class COREDLL ReplyBinary : public ReplyBase
 {
 public:
 	ReplyBinary(QNetworkReply & pReply, QString pTag);

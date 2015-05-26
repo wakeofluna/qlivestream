@@ -1,10 +1,11 @@
 #ifndef CORE_EXCEPTION_H_
 #define CORE_EXCEPTION_H_
 
+#include "config.h"
 #include <QException>
 #include <QString>
 
-class Exception : public QException
+class COREDLL Exception : public QException
 {
 public:
 	Exception(QString pTitle, QString pDescription = QString());

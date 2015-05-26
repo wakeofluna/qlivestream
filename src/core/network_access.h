@@ -1,6 +1,7 @@
 #ifndef CORE_NETWORK_ACCESS_H_
 #define CORE_NETWORK_ACCESS_H_
 
+#include "config.h"
 #include <functional>
 
 class Profile;
@@ -23,7 +24,7 @@ namespace forms
 	class DebugNetworkMessages;
 }
 
-class NetworkAccess
+class COREDLL NetworkAccess
 {
 public:
 	typedef std::function<void (QNetworkReply &)> Receiver;
