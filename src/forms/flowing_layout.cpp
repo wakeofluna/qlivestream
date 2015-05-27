@@ -75,11 +75,14 @@ void FlowingLayout::setGeometry(const QRect & r)
 
 QSize FlowingLayout::sizeHint() const
 {
-	QSize lItemSize;
+	QSize lItemSize(0, 0);
 	for (QLayoutItem * lItem : mItems)
 		lItemSize = lItemSize.expandedTo(lItem->sizeHint());
 
-	return lItemSize;
+	int left, top, right, bottom;
+	getContentsMargins(&left, &top, &right, &bottom);
+
+	return lItemSize + QSize(left + right, top + bottom);
 }
 
 int FlowingLayout::horizontalSpacing() const
