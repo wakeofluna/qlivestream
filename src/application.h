@@ -27,6 +27,8 @@ public:
 	Application(int & argc, char ** argv);
 	~Application();
 
+	QString username() const;
+
 	bool notify(QObject * receiver, QEvent * e) override;
 
 	QWidget * networkCaptureWindow() const override;
@@ -39,6 +41,7 @@ public:
 	void logStatusClear(int pIdent) override;
 
 private:
+	static QString determineUsername();
 	void statusBarDestroyed(QObject * pObject);
 	void proxyAuthenticationRequired(QNetworkProxy const & proxy, QAuthenticator * authenticator);
 	void sslErrors(QNetworkReply * reply, QList<QSslError> const & errors);
@@ -49,6 +52,9 @@ private:
 	Initializer<StorageAccess> mStorageAccess;
 
 	forms::DebugNetworkMessages * mDebugMessages;
+
+	QString mUsername;
+	bool mGotUsername;
 
 	QList<QStatusBar*> mStatusBars;
 	int mLastAuthMethod;

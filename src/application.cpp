@@ -20,8 +20,19 @@
 #include <QNetworkReply>
 #include <QList>
 
+#ifdef Q_OS_WIN
+#include <QLibrary>
+// https://msdn.microsoft.com/en-gb/library/windows/desktop/ms724435%28v=vs.85%29.aspx
+#define WIN32_LEAN_AND_MEAN
+#define SECURITY_WIN32
+#include <windows.h>
+#include <security.h>
+#include <secext.h>
+#endif
+
 Application::Application(int & argc, char ** argv) : QApplication(argc, argv)
 {
+	mGotUsername = false;
 	mDebugMessages = new forms::DebugNetworkMessages();
 	mLastAuthMethod = 0;
 	mLastStatusMessage = 0;
@@ -33,6 +44,18 @@ Application::Application(int & argc, char ** argv) : QApplication(argc, argv)
 Application::~Application()
 {
 	delete mDebugMessages;
+}
+
+QString Application::username() const
+{
+	if (!mGotUsername)
+	{
+		const_cast<Application*>(this)->mUsername = determineUsername();
+		const_cast<Application*>(this)->mGotUsername = true;
+		qDebug() << "Desktop username:" << mUsername;
+	}
+
+	return mUsername;
 }
 
 bool Application::notify(QObject * receiver, QEvent * e)
@@ -115,6 +138,32 @@ void Application::logStatusClear(int pIdent)
 	}
 }
 
+QString Application::determineUsername()
+{
+	QString lUsername;
+
+#ifdef Q_OS_WIN
+	typedef BOOLEAN (*f_GetUserNameExW)(EXTENDED_NAME_FORMAT,LPWSTR,PULONG);
+
+	QLibrary lSecur32("secur32.dll");
+	f_GetUserNameExW lGetUserNameExW = (f_GetUserNameExW) lSecur32.resolve("GetUserNameExW");
+	if (lGetUserNameExW)
+	{
+		WCHAR lBuffer[256];
+		ULONG lSize = sizeof(lBuffer) / sizeof(TCHAR);
+		if ((*lGetUserNameExW)(NameSamCompatible, lBuffer, &lSize) != 0)
+			lUsername = QString::fromUtf16((const ushort*)lBuffer, lSize);
+	}
+#endif
+
+	if (lUsername.isEmpty())
+		lUsername = qgetenv("USER");
+	if (lUsername.isEmpty())
+		lUsername = qgetenv("USERNAME");
+
+	return lUsername;
+}
+
 void Application::statusBarDestroyed(QObject * pObject)
 {
 	popStatusBar(static_cast<QStatusBar*>(pObject));
@@ -122,54 +171,69 @@ void Application::statusBarDestroyed(QObject * pObject)
 
 void Application::proxyAuthenticationRequired(QNetworkProxy const & proxy, QAuthenticator * authenticator)
 {
-	switch (++mLastAuthMethod)
+	while (true)
 	{
-		case 1:
-			// Attempt stored credentials. I actually dont want to do this.. store a password? No way!
-			if (false)
+		switch (++mLastAuthMethod)
+		{
+			case 1:
+				// Attempt stored credentials. I actually dont want to do this.. store a password? No way!
+				if (false)
+				{
+					// Access settings
+					return;
+				}
+				break;
+
+			case 2:
+				// Empty username = try the local single signon feature
+				authenticator->setUser(QString());
+				return;
+
+			case 3:
 			{
-				// Access settings
+				// Try just a username and no password
+				QString lUsername = username();
+				if (!lUsername.isEmpty())
+				{
+					authenticator->setUser(lUsername);
+					return;
+				}
+
 				break;
 			}
 
-			++mLastAuthMethod;
-			// no break
-
-		case 2:
-			// Empty username = try the local single signon feature
-			authenticator->setUser(QString());
-			break;
-
-		case 3:
-		{
-			// Popup a dialog to enter credentials
-			forms::ProxyAuthentication * lDialog = new forms::ProxyAuthentication();
-
-			int lResult = lDialog->exec();
-			QString lUsername = lDialog->username();
-			QString lPassword = lDialog->password();
-			lDialog->deleteLater();
-
-			if (lResult == QDialog::Accepted)
+			case 4:
 			{
-				authenticator->setUser(lUsername);
-				authenticator->setPassword(lPassword);
+				// Popup a dialog to enter credentials
+				forms::ProxyAuthentication * lDialog = new forms::ProxyAuthentication();
+				lDialog->setUsername(username());
 
-				// Try this method again if it failed
-				--mLastAuthMethod;
+				int lResult = lDialog->exec();
+				QString lUsername = lDialog->username();
+				QString lPassword = lDialog->password();
+				lDialog->deleteLater();
+
+				if (lResult == QDialog::Accepted)
+				{
+					authenticator->setUser(lUsername);
+					authenticator->setPassword(lPassword);
+
+					// Try this method again if it failed
+					--mLastAuthMethod;
+					return;
+				}
+
+				break;
 			}
 
-			break;
+			case 5:
+				qCritical() << "Ran out of options, failed to authenticate to proxy";
+				break;
+
+			default:
+				return;
 		}
-
-		case 4:
-			qCritical() << "Ran out of options, failed to authenticate to proxy";
-			break;
-
-		default:
-			break;
 	}
-
 }
 
 void Application::sslErrors(QNetworkReply * reply, QList<QSslError> const & errors)

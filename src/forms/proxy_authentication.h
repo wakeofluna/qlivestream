@@ -19,6 +19,7 @@ public:
 	explicit ProxyAuthentication(QWidget * parent = 0);
 	~ProxyAuthentication();
 
+	void setUsername(QString pUsername);
 	QString username() const;
 	QString password() const;
 

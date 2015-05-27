@@ -18,6 +18,13 @@ ProxyAuthentication::~ProxyAuthentication()
 	delete ui;
 }
 
+void ProxyAuthentication::setUsername(QString pUsername)
+{
+	ui->txtUsername->setText(pUsername);
+	if (!pUsername.isEmpty())
+		ui->txtPassword->setFocus();
+}
+
 QString ProxyAuthentication::username() const
 {
 	return ui->txtUsername->text();
