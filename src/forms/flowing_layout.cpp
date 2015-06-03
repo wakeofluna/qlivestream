@@ -14,6 +14,7 @@ FlowingLayout::FlowingLayout(QWidget * parent) : QLayout(parent)
 	mCurrentColumns = 0;
 	mLayedoutItems = 0;
 	mAnimationGroup = nullptr;
+	mAnimated = true; // XXX default from settings
 
 	setSizeConstraint(SetMinimumSize);
 }
@@ -121,6 +122,16 @@ int FlowingLayout::currentColumns() const
 	return mCurrentColumns;
 }
 
+bool FlowingLayout::isAnimated() const
+{
+	return mAnimated;
+}
+
+void FlowingLayout::setAnimated(bool pAnimated)
+{
+	mAnimated = pAnimated;
+}
+
 void FlowingLayout::clear(bool pDeleteWidgets)
 {
 	if (mAnimationGroup != nullptr)
@@ -202,7 +213,7 @@ QSize FlowingLayout::doLayout(QRect const & pRect, bool pApply)
 
 			QWidget * lWidget = mItems[i]->widget();
 
-			if (true) // XXX if animated from settings
+			if (mAnimated)
 			{
 				if (mAnimationGroup == nullptr)
 					mAnimationGroup = new QParallelAnimationGroup();

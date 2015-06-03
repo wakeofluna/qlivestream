@@ -34,6 +34,9 @@ public:
     int currentRows() const;
     int currentColumns() const;
 
+    bool isAnimated() const;
+    void setAnimated(bool pAnimated);
+
 	void clear(bool pDeleteWidgets = false);
 
 protected:
@@ -49,6 +52,7 @@ protected:
 	int mLayedoutItems;
 
 	QAnimationGroup * mAnimationGroup;
+	bool mAnimated;
 };
 
 #endif // CORE_FLOWING_LAYOUT_H_
