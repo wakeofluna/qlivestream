@@ -5,6 +5,7 @@
 #include "core/profile.h"
 #include "forms/flowing_layout.h"
 #include "forms/category_object_widget.h"
+#include "misc.h"
 
 #include <algorithm>
 #include <QScrollBar>
@@ -24,12 +25,7 @@ MainWindowCategories::MainWindowCategories(Profile & pProfile, QWidget * parent)
 	connect(ui->scrArea->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindowCategories::checkRollup);
 
 	mCanRollup = false;
-
-	Logger::StatusMessage lMessage("Fetching followed categories list ..");
-	mProfile.getFollowedCategories(0, 100, [this, lMessage] (QList<CategoryObject*> && pList)
-	{
-		addData(std::move(pList));
-	});
+	refresh();
 }
 
 MainWindowCategories::~MainWindowCategories()
@@ -43,7 +39,13 @@ MainWindowCategories::~MainWindowCategories()
 void MainWindowCategories::refresh()
 {
 	clear();
-	rollup();
+
+	Logger::StatusMessage lMessage("Fetching followed categories list ..");
+	mProfile.getFollowedCategories(0, 50, [this, lMessage] (QList<CategoryObject*> && pList)
+	{
+		addData(std::move(pList));
+		rollup();
+	});
 }
 
 void MainWindowCategories::rollup()
@@ -106,30 +108,21 @@ void MainWindowCategories::addData(QList<CategoryObject*> && pCategories)
 
 	pCategories.clear();
 
-	std::sort(mCategories.begin(), mCategories.end(), [] (CategoryObject const * lhs, CategoryObject const * rhs) -> bool
-	{
-		if (lhs->numViewers() != rhs->numViewers())
-			return lhs->numViewers() > rhs->numViewers();
-		if (lhs->numChannels() != rhs->numChannels())
-			return lhs->numChannels() > rhs->numChannels();
-		return lhs->name() < rhs->name();
-	});
+	for (CategoryObject * lObject : mCategories)
+		if (lObject->followed())
+			addToList(true, lObject);
 
 	for (CategoryObject * lObject : mCategories)
-	{
-		if (!lObject->followed())
-			continue;
-
-		addToList(true, lObject);
-	}
-
-	for (CategoryObject * lObject : mCategories)
-	{
-		if (!lObject->isValid())
-			continue;
-
 		addToList(false, lObject);
-	}
+
+	FlowingLayout * lLayout;
+	lLayout = qobject_cast<FlowingLayout*>(ui->grpFavourite->layout());
+	if (lLayout != nullptr)
+		lLayout->sort(qobject_less<QWidget, CategoryObjectWidget>());
+
+	lLayout = qobject_cast<FlowingLayout*>(ui->grpAll->layout());
+	if (lLayout != nullptr)
+		lLayout->sort(qobject_less<QWidget, CategoryObjectWidget>());
 }
 
 void MainWindowCategories::addToList(bool pFavourite, CategoryObject * pCategory)

@@ -43,6 +43,11 @@ void CategoryObjectWidget::setLogo(QByteArray const & pData)
 	}
 }
 
+bool CategoryObjectWidget::operator< (CategoryObjectWidget const & pOther) const
+{
+	return *mCategory < *pOther.mCategory;
+}
+
 void CategoryObjectWidget::updateFromObject()
 {
 	int lChannels = mCategory->numChannels();

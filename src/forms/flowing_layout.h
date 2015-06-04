@@ -1,12 +1,18 @@
 #ifndef CORE_FLOWING_LAYOUT_H_
 #define CORE_FLOWING_LAYOUT_H_
 
+#include <functional>
 #include <QLayout>
 #include <QStyle>
 class QAnimationGroup;
 
 class FlowingLayout : public QLayout
 {
+Q_OBJECT
+
+public:
+	typedef std::function<bool (QWidget const * lhs, QWidget const * rhs)> Sorter;
+
 public:
 	explicit FlowingLayout(QWidget * parent);
 	~FlowingLayout();
@@ -38,6 +44,7 @@ public:
     void setAnimated(bool pAnimated);
 
 	void clear(bool pDeleteWidgets = false);
+	void sort(Sorter const & pSorter);
 
 protected:
 	int calcSpacing(QStyle::PixelMetric pMetric) const;

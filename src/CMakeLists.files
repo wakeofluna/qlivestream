@@ -3,6 +3,7 @@ set (QT_HEADER_FILES
 	forms/channel_object_widget.h
 	forms/debug_network_messages.h
 	forms/edit_profile.h
+	forms/flowing_layout.h
 	forms/main_about.h
 	forms/main_window_categories.h
 	forms/main_window_following.h
@@ -38,8 +39,8 @@ set (QT_RESOURCES
 
 set (HEADER_FILES
 	${QT_HEADER_FILES}
-	forms/flowing_layout.h
 	config.h
+	misc.h
 )
 
 set (SOURCE_FILES

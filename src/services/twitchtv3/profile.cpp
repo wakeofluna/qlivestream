@@ -78,7 +78,7 @@ void Profile::performLogin(DefaultCallback && pCallback)
 
 void Profile::getFollowedCategories(int pStart, int pLimit, CategoryCallback && pCallback)
 {
-	QUrl lUrl = apiUrl(QString("/users/%1/follows/games").arg(account()));
+	QUrl lUrl = apiUrl(QString("/users/%1/follows/games/live").arg(account()));
 
 	QNetworkRequest lRequest = serviceRequest(false);
 	lRequest.setUrl(lUrl);

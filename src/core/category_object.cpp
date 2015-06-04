@@ -45,6 +45,15 @@ bool CategoryObject::updateFrom(CategoryObject const & pOther)
 	return ok;
 }
 
+bool CategoryObject::operator< (CategoryObject const & pOther) const
+{
+	if (mNumViewers != pOther.mNumViewers)
+		return mNumViewers > pOther.mNumViewers;
+	if (mNumChannels != pOther.mNumChannels)
+		return mNumChannels > pOther.mNumChannels;
+	return mName < pOther.mName;
+}
+
 void CategoryObject::setStats(int pChannels, int pViewers)
 {
 	if (pChannels != mNumChannels || pViewers != mNumViewers)

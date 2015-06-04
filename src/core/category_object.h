@@ -29,6 +29,7 @@ public:
 
 	void clear();
 	bool updateFrom(CategoryObject const & pOther);
+	bool operator< (CategoryObject const & pOther) const;
 
 signals:
 	void statsChanged();

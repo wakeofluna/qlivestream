@@ -24,6 +24,7 @@ public:
 	inline CategoryObject * object() const { return mCategory; }
 
 	void setLogo(QByteArray const & pData);
+	bool operator< (CategoryObjectWidget const & pOther) const;
 
 public slots:
 	void updateFromObject();

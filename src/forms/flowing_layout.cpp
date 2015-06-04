@@ -153,6 +153,19 @@ void FlowingLayout::clear(bool pDeleteWidgets)
 	mCurrentColumns = 0;
 }
 
+void FlowingLayout::sort(Sorter const & pSorter)
+{
+	if (pSorter && mItems.count() > 1)
+	{
+		std::sort(mItems.begin(), mItems.end(), [&pSorter] (QLayoutItem * lhs, QLayoutItem * rhs) -> bool
+		{
+			return pSorter(lhs->widget(), rhs->widget());
+		});
+
+		this->invalidate();
+	}
+}
+
 int FlowingLayout::calcSpacing(QStyle::PixelMetric pMetric) const
 {
     QObject * lParent = this->parent();
