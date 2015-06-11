@@ -142,18 +142,19 @@ void MainWindowCategories::addToList(bool pFavourite, CategoryObject * pCategory
 		connect(lWidget, &CategoryObjectWidget::clicked, this, &MainWindowCategories::selected);
 		lLayout->addWidget(lWidget);
 
-		accessCache
-		(
-				lWidget->object()->logoCacheString(),
-				[this,lWidget] (CacheHitCallback && pCallback)
-				{
-					mProfile.downloadLogo(lWidget->object()->logoUrl(), std::move(pCallback));
-				},
-				[lWidget] (QByteArray const & pData)
-				{
-					lWidget->setLogo(pData);
-				}
-		);
+		if (lWidget->object()->logoUrl().isValid())
+			accessCache
+			(
+					lWidget->object()->logoCacheString(),
+					[this,lWidget] (CacheHitCallback && pCallback)
+					{
+						mProfile.downloadLogo(lWidget->object()->logoUrl(), std::move(pCallback));
+					},
+					[lWidget] (QByteArray const & pData)
+					{
+						lWidget->setLogo(pData);
+					}
+			);
 	}
 }
 

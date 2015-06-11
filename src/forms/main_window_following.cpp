@@ -102,18 +102,19 @@ void MainWindowFollowing::addData(QList<ChannelObject*> && pChannels)
 			connect(lWidget, &ChannelObjectWidget::clicked, this, &MainWindowFollowing::selected);
 			lLayout->addWidget(lWidget);
 
-			accessCache
-			(
-					lWidget->object()->logoCacheString(),
-					[this,lWidget] (CacheHitCallback && pCallback)
-					{
-						mProfile.downloadLogo(lWidget->object()->logoUrl(), std::move(pCallback));
-					},
-					[lWidget] (QByteArray const & pData)
-					{
-						lWidget->setLogo(pData);
-					}
-			);
+			if (lWidget->object()->logoUrl().isValid())
+				accessCache
+				(
+						lWidget->object()->logoCacheString(),
+						[this,lWidget] (CacheHitCallback && pCallback)
+						{
+							mProfile.downloadLogo(lWidget->object()->logoUrl(), std::move(pCallback));
+						},
+						[lWidget] (QByteArray const & pData)
+						{
+							lWidget->setLogo(pData);
+						}
+				);
 		}
 	}
 }
