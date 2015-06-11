@@ -1,8 +1,7 @@
 #include "config.h"
 #include "user_follows_channels.h"
-#include "channels_object.h"
-
 #include <QList>
+#include "channel.h"
 
 namespace twitchtv3
 {
@@ -31,7 +30,7 @@ QList<ChannelObject*> UserFollowsChannels::createList() const
 	lData.reserve(lList.size());
 
 	for (int i = 0; i < lList.size(); ++i)
-		lData.push_back(new ChannelsObject(lList[i]));
+		lData.push_back(new Channel(lList[i]));
 
 	return lData;
 }

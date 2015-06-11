@@ -1,7 +1,6 @@
 #include "config.h"
 #include "games_top.h"
-#include "games_object.h"
-
+#include "game.h"
 #include <QList>
 
 namespace twitchtv3
@@ -31,7 +30,7 @@ QList<CategoryObject*> GamesTop::createList() const
 	lData.reserve(lList.size());
 
 	for (int i = 0; i < lList.size(); ++i)
-		lData.push_back(new GamesObject(lList[i]));
+		lData.push_back(new Game(lList[i]));
 
 	return lData;
 }

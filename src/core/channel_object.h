@@ -7,6 +7,7 @@
 #include <QUrl>
 #include <QVariant>
 
+class ChannelChat;
 class COREDLL ChannelObject : public QObject
 {
 Q_OBJECT
@@ -30,6 +31,8 @@ public:
 
 	virtual QString logoCacheString() const;
 	static QString logoCacheString(QString pTag);
+
+	virtual ChannelChat * chat() = 0;
 
 	void clear();
 	bool updateFrom(ChannelObject const & pOther);

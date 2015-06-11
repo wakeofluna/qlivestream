@@ -1,7 +1,12 @@
+set (QT_HEADER_FILES
+	chat_server.h
+)
+
 set (HEADER_FILES
+	${QT_HEADER_FILES}
 	auth_scope.h
-	channels_object.h
-	games_object.h
+	channel.h
+	game.h
 	games_top.h
 	profile.h
 	root.h
@@ -12,8 +17,9 @@ set (HEADER_FILES
 
 set (SOURCE_FILES
 	auth_scope.cpp
-	channels_object.cpp
-	games_object.cpp
+	channel.cpp
+	chat_server.cpp
+	game.cpp
 	games_top.cpp
 	main.cpp
 	profile.cpp

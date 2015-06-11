@@ -1,13 +1,13 @@
-#include "config.h"
-#include "channels_object.h"
+#include "channel.h"
 
+#include "config.h"
 #include <QVariant>
 #include <QVariantMap>
 
 namespace twitchtv3
 {
 
-ChannelsObject::ChannelsObject(QVariant const & pValue, bool pFollowing)
+Channel::Channel(QVariant const & pValue, bool pFollowing)
 {
 	QVariantMap lItem = pValue.toMap();
 
@@ -29,14 +29,19 @@ ChannelsObject::ChannelsObject(QVariant const & pValue, bool pFollowing)
 	mFollowed = pFollowing;
 }
 
-ChannelsObject::~ChannelsObject()
+Channel::~Channel()
 {
 
 }
 
-QString ChannelsObject::logoCacheString() const
+QString Channel::logoCacheString() const
 {
 	return ChannelObject::logoCacheString(QString("twitchtv3:%1").arg(mName));
+}
+
+ChannelChat * Channel::chat()
+{
+	return nullptr;
 }
 
 } // namespace twitchtv3

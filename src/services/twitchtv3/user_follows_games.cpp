@@ -1,8 +1,7 @@
 #include "config.h"
 #include "user_follows_games.h"
-#include "games_object.h"
-
 #include <QList>
+#include "game.h"
 
 namespace twitchtv3
 {
@@ -31,7 +30,7 @@ QList<CategoryObject*> UserFollowsGames::createList() const
 	lData.reserve(lList.size());
 
 	for (int i = 0; i < lList.size(); ++i)
-		lData.push_back(new GamesObject(lList[i], true));
+		lData.push_back(new Game(lList[i], true));
 
 	return lData;
 }

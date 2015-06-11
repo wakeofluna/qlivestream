@@ -1,10 +1,12 @@
 set (QT_HEADER_FILES
 	category_object.h
+	channel_chat.h
 	channel_object.h
 )
 
 set (HEADER_FILES
 	${QT_HEADER_FILES}
+	channel_chatter.h
 	class_bitset.h
 	config_profile.h
 	exception.h
@@ -21,6 +23,8 @@ set (HEADER_FILES
 
 set (SOURCE_FILES
 	category_object.cpp
+	channel_chat.cpp
+	channel_chatter.cpp
 	channel_object.cpp
 	config_profile.cpp
 	exception.cpp
