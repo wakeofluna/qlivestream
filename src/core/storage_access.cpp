@@ -4,13 +4,11 @@
 
 #include <QByteArray>
 #include <QDir>
-#include <QFileInfo>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QStandardPaths>
 #include <QString>
-#include <QUrl>
 
 namespace
 {
@@ -100,7 +98,6 @@ void StorageAccess::finalize()
 	mStorageDatabase = QSqlDatabase();
 }
 
-#define SQLERR Exception("Error creating database", q.lastError().text())
 void StorageAccess::checkDatabaseStructure()
 {
 	QStringList lTables = mStorageDatabase.tables();
@@ -108,7 +105,7 @@ void StorageAccess::checkDatabaseStructure()
 	QSqlQuery q;
 	if (!lTables.contains("profile"))
 	{
-		q.prepare(
+		SQL_PREPARE(q,
 				"create table profile ("
 				"id INTEGER PRIMARY KEY AUTOINCREMENT,"
 				"service VARCHAR(16),"
@@ -119,7 +116,6 @@ void StorageAccess::checkDatabaseStructure()
 				"UNIQUE (service,name)"
 				")"
 		);
-		if (!q.exec()) throw SQLERR;
+		SQL_EXEC(q);
 	}
 }
-#undef SQLERR

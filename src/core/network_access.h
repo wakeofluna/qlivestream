@@ -4,17 +4,12 @@
 #include "config.h"
 #include <functional>
 
-class Profile;
 class QAuthenticator;
 class QNetworkAccessManager;
 class QNetworkProxy;
 class QNetworkReply;
 class QNetworkRequest;
-class QObject;
 class QSslError;
-class QString;
-class QUrl;
-class QVariant;
 
 template <typename T> class Initializer;
 template <typename T> class QList;

@@ -22,7 +22,7 @@ ConfigProfile::List ConfigProfile::listProfiles()
 	List lProfiles;
 
 	QSqlQuery q;
-	q.prepare("select id,service,name,level,token,last_access from profile order by name");
+	SQL_PREPARE(q, "select id,service,name,level,token,last_access from profile order by name");
 	SQL_EXEC(q);
 
 	lProfiles.reserve(q.size() == -1 ? 8 : q.size());
@@ -71,7 +71,7 @@ Profile::UPtr ConfigProfile::load() const
 	int lLastAccess = QDateTime::currentDateTimeUtc().toTime_t();
 
 	QSqlQuery q;
-	q.prepare("update profile set last_access=? where id=?");
+	SQL_PREPARE(q, "update profile set last_access=? where id=?");
 	q.bindValue(0, lLastAccess);
 	q.bindValue(1, mId);
 	SQL_EXEC(q);
@@ -97,7 +97,7 @@ void ConfigProfile::setLevel(int pLevel)
 void ConfigProfile::erase() const
 {
 	QSqlQuery q;
-	q.prepare("delete from profile where id=?");
+	SQL_PREPARE(q, "delete from profile where id=?");
 	q.bindValue(0, mId);
 	SQL_EXEC(q);
 }
@@ -107,7 +107,7 @@ void ConfigProfile::save()
 	QSqlQuery q;
 	if (mId == -1)
 	{
-		q.prepare("insert into profile (service,name,level) values (?,?,?)");
+		SQL_PREPARE(q, "insert into profile (service,name,level) values (?,?,?)");
 		q.bindValue(0, mService);
 		q.bindValue(1, mAccount);
 		q.bindValue(2, mLevel);
@@ -116,7 +116,7 @@ void ConfigProfile::save()
 	}
 	else
 	{
-		q.prepare("update profile set name=?, level=? where id=?");
+		SQL_PREPARE(q, "update profile set name=?, level=? where id=?");
 		q.bindValue(0, mAccount);
 		q.bindValue(1, mLevel);
 		q.bindValue(2, mId);

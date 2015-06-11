@@ -4,6 +4,7 @@
 #include "config.h"
 #include <QString>
 #include <QVariantMap>
+
 class QByteArray;
 class QNetworkReply;
 

@@ -4,9 +4,7 @@
 #include "config.h"
 #include <functional>
 class QByteArray;
-class QDir;
 class QString;
-class QUrl;
 
 template <typename T> class Initializer;
 

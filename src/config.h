@@ -19,6 +19,7 @@
 #define CAPTURE(x) x = std::move(x)
 #endif
 
+#define SQL_PREPARE(q,stmt) do { if (!q.prepare(stmt)) throw q; } while (0)
 #define SQL_EXEC(q) do { if (!q.exec()) throw q; } while (0)
 
 #include "core/exception.h"

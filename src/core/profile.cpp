@@ -1,14 +1,9 @@
 #include "config.h"
 #include "profile.h"
-#include "core/category_object.h"
-#include "core/channel_object.h"
 #include "core/reply_binary.h"
 
-#include <QList>
 #include <QNetworkRequest>
-#include <QSqlError>
 #include <QSqlQuery>
-#include <QVariant>
 
 Profile::Profile()
 {
@@ -37,7 +32,7 @@ void Profile::downloadLogo(QUrl const & pUrl, DataCallback && pCallback)
 void Profile::updateToken(QString pToken)
 {
 	QSqlQuery q;
-	q.prepare("update profile set token=? where id=?");
+	SQL_PREPARE(q, "update profile set token=? where id=?");
 	q.bindValue(0, pToken);
 	q.bindValue(1, mId);
 	SQL_EXEC(q);

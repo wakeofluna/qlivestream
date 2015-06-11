@@ -4,7 +4,6 @@
 
 #include <QAuthenticator>
 #include <QList>
-#include <QMutex>
 #include <QNetworkAccessManager>
 #include <QNetworkProxy>
 #include <QNetworkProxyFactory>
@@ -24,9 +23,8 @@ void NetworkAccess::networkGet(QNetworkRequest const & pRequest, Receiver && pRe
 
 	QSignalMapper * lMapper = new QSignalMapper(lReply);
 	lMapper->setMapping(lReply, lReply);
-	QObject::connect(lReply, SIGNAL(finished()), lMapper, SLOT(map()));
-
-	QObject::connect(lMapper, static_cast<void (QSignalMapper::*)(QObject*)>(&QSignalMapper::mapped), [this,pRequestUrl,CAPTURE(pReceiver),pRedirection] (QObject * o) mutable
+	QObject::connect(lReply, &QNetworkReply::finished, lMapper, (void (QSignalMapper::*) ()) &QSignalMapper::map);
+	QObject::connect(lMapper, (void (QSignalMapper::*)(QObject*)) &QSignalMapper::mapped, [this,pRequestUrl,CAPTURE(pReceiver),pRedirection] (QObject * o) mutable
 	{
 		QNetworkReply * lReply = qobject_cast<QNetworkReply*>(o);
 		lReply->deleteLater();
