@@ -7,18 +7,28 @@
 
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QTimer>
 #include <QUrl>
 #include <QUrlQuery>
+
+static constexpr int MaxPending = 4;
+static constexpr int PendingDelay = 1200;
 
 namespace twitchtv3
 {
 
 Profile::Profile()
 {
+	mPendingPoints = MaxPending;
+	mPendingTimer = new QTimer();
+	mPendingTimer->setInterval(PendingDelay);
+	QObject::connect(mPendingTimer, &QTimer::timeout, [this] { throttlePing(); });
 }
 
 Profile::~Profile()
 {
+	delete mPendingTimer;
+	qDeleteAll(mPendingRequests);
 }
 
 QUrl Profile::acquireTokenUrl() const
@@ -59,7 +69,7 @@ void Profile::performLogin(DefaultCallback && pCallback)
 	QNetworkRequest lRequest = serviceRequest();
 	lRequest.setUrl(lUrl);
 
-	networkGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
+	throttledGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
 	{
 		mLastError.clear();
 
@@ -83,7 +93,7 @@ void Profile::getFollowedCategories(int pStart, int pLimit, CategoryCallback && 
 	QNetworkRequest lRequest = serviceRequest(false);
 	lRequest.setUrl(lUrl);
 
-	networkGet(lRequest, [this, pStart, pLimit, CAPTURE(pCallback)] (QNetworkReply & pReply)
+	throttledGet(lRequest, [this, pStart, pLimit, CAPTURE(pCallback)] (QNetworkReply & pReply)
 	{
 		QList<CategoryObject*> lList;
 
@@ -109,7 +119,7 @@ void Profile::getTopCategories(int pStart, int pLimit, CategoryCallback && pCall
 	QNetworkRequest lRequest = serviceRequest(false);
 	lRequest.setUrl(lUrl);
 
-	networkGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
+	throttledGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
 	{
 		QList<CategoryObject*> lList;
 
@@ -135,7 +145,7 @@ void Profile::getFollowedChannels(int pStart, int pLimit, ChannelCallback && pCa
 	QNetworkRequest lRequest = serviceRequest(false);
 	lRequest.setUrl(lUrl);
 
-	networkGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
+	throttledGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
 	{
 		QList<ChannelObject*> lList;
 
@@ -189,5 +199,40 @@ QNetworkRequest Profile::serviceRequest(bool pAuthed) const
 	return lRequest;
 }
 
+void Profile::throttledGet(QNetworkRequest const& pRequest, Receiver && pReceiver)
+{
+	QMutexLocker lGuard(&mPendingMutex);
+
+	if (mPendingPoints > 0)
+	{
+		--mPendingPoints;
+		networkGet(pRequest, std::move(pReceiver));
+	}
+	else
+	{
+		QScopedPointer<PendingRequest> lPending(new PendingRequest(pRequest, std::move(pReceiver)));
+		mPendingRequests.enqueue(lPending.take());
+	}
+
+	if (!mPendingTimer->isActive())
+		mPendingTimer->start();
+}
+
+void Profile::throttlePing()
+{
+	QMutexLocker lGuard(&mPendingMutex);
+
+	if (mPendingRequests.empty())
+	{
+		++mPendingPoints;
+		if (mPendingPoints >= MaxPending)
+			mPendingTimer->stop();
+	}
+	else
+	{
+		QScopedPointer<PendingRequest> lPending(mPendingRequests.dequeue());
+		networkGet(lPending->mRequest, std::move(lPending->mCallback));
+	}
+}
 
 } // namespace twitchtv3

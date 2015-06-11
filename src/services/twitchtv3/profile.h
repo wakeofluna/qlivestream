@@ -4,16 +4,26 @@
 #include "core/profile.h"
 #include "auth_scope.h"
 
-#include <QList>
+#include <QMutex>
+#include <QNetworkRequest>
+#include <QQueue>
 class CategoryObject;
+class QTimer;
 class QUrl;
-class QNetworkRequest;
 
 namespace twitchtv3
 {
 
 class Profile : public ::Profile
 {
+private:
+	struct PendingRequest
+	{
+		inline PendingRequest(QNetworkRequest const& pRequest, Receiver && pReceiver) : mRequest(pRequest), mCallback(std::move(pReceiver)) {}
+		QNetworkRequest mRequest;
+		Receiver mCallback;
+	};
+
 public:
 	Profile();
 	~Profile();
@@ -29,8 +39,15 @@ private:
 	QUrl apiUrl(QString pAppend) const;
 	QUrl krakenUrl(QString pAppend = QString()) const;
 	QNetworkRequest serviceRequest(bool pAuthed = true) const;
+	void throttledGet(QNetworkRequest const & pRequest, Receiver && pReceiver);
+	void throttlePing();
 
 	AuthScopes mScopes;
+
+	QQueue<PendingRequest*> mPendingRequests;
+	QTimer * mPendingTimer;
+	QMutex mPendingMutex;
+	int mPendingPoints;
 };
 
 } // namespace twitchtv3
