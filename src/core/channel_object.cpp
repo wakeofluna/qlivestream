@@ -7,6 +7,9 @@ ChannelObject::ChannelObject()
 {
 	mNumViews = -1;
 	mNumFollowers = -1;
+	mDelay = -1;
+	mSelf = false;
+	mEditor = false;
 	mPartnered = false;
 	mMature = false;
 	mFollowed = false;

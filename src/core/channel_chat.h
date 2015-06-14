@@ -17,10 +17,11 @@ public:
 	~ChannelChat();
 
 	inline QString name() const { return mName; }
+	inline bool isConnected() const { return mIsConnected; }
 
 public slots:
-	void connectToChat();
-	void disconnectFromChat();
+	virtual void connectToChat() = 0;
+	virtual void disconnectFromChat() = 0;
 
 signals:
 	void chatConnected();
@@ -33,6 +34,7 @@ signals:
 
 private:
 	QString mName;
+	bool mIsConnected;
 	QList<ChannelChatter*> mChatters;
 };
 

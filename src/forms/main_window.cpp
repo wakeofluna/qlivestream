@@ -124,6 +124,7 @@ void MainWindow::on_mnuViewChannel_triggered()
 		if (lChannel != nullptr)
 		{
 			mYourChannel = new ChannelInfo(*lChannel, this);
+			mYourChannel->requestUpdateChannel();
 			ui->tabWidget->addTab(mYourChannel, mYourChannel->windowTitle());
 			ui->tabWidget->setCurrentWidget(mYourChannel);
 		}

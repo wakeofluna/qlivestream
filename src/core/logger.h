@@ -23,7 +23,7 @@ public:
 
 	virtual QWidget * networkCaptureWindow() const = 0;
 	virtual void logNetworkMessage(QString pTag, QVariant const & pMessage) = 0;
-	virtual void logNetworkError(QString pTag, QString const & pMessage) = 0;
+	virtual void logNetworkError(QString pTag, QString const & pError, QVariant const & pMessage) = 0;
 
 	virtual void pushStatusBar(QStatusBar * pStatusBar) = 0;
 	virtual void popStatusBar(QStatusBar * pStatusBar) = 0;

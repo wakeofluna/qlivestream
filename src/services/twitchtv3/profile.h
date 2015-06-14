@@ -14,14 +14,24 @@ class QUrl;
 namespace twitchtv3
 {
 
+class Channel;
 class Profile : public ::Profile
 {
 private:
 	struct PendingRequest
 	{
-		inline PendingRequest(QNetworkRequest const& pRequest, Receiver && pReceiver) : mRequest(pRequest), mCallback(std::move(pReceiver)) {}
+		enum Type
+		{
+			GET,
+			POST,
+			PUT
+		};
+		inline PendingRequest(QNetworkRequest const& pRequest, Receiver && pReceiver, Type pType = GET) : mRequest(pRequest), mCallback(std::move(pReceiver)), mType(pType) {}
+		inline PendingRequest(QNetworkRequest const& pRequest, QByteArray pData, Receiver && pReceiver, Type pType) : mRequest(pRequest), mData(pData), mCallback(std::move(pReceiver)), mType(pType) {}
 		QNetworkRequest mRequest;
+		QByteArray mData;
 		Receiver mCallback;
+		Type mType;
 	};
 
 public:
@@ -36,11 +46,16 @@ public:
 	void getCategoryChannels(CategoryObject * pCategory, int pStart, int pLimit, ChannelCallback && pCallback) override;
 	ChannelObject * getChannelFor(QString pName) override;
 
-private:
+	// Networking
 	QUrl apiUrl(QString pAppend) const;
 	QUrl krakenUrl(QString pAppend = QString()) const;
 	QNetworkRequest serviceRequest(bool pAuthed = true) const;
+
 	void throttledGet(QNetworkRequest const & pRequest, Receiver && pReceiver);
+	void throttledPost(QNetworkRequest const & pRequest, QByteArray const& pData, Receiver && pReceiver);
+	void throttledPut(QNetworkRequest const & pRequest, QByteArray const& pData, Receiver && pReceiver);
+
+private:
 	void throttlePing();
 
 	AuthScopes mScopes;

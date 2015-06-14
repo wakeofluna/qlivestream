@@ -24,11 +24,15 @@ class COREDLL NetworkAccess
 public:
 	typedef std::function<void (QNetworkReply &)> Receiver;
 
-protected:
-	inline NetworkAccess() {}
+public:
 	inline ~NetworkAccess() {}
 
 	void networkGet(QNetworkRequest const & pRequest, Receiver && pReceiver, int pRedirection = 0) const;
+	void networkPost(QNetworkRequest const & pRequest, QByteArray const & pBytes, Receiver && pReceiver) const;
+	void networkPut(QNetworkRequest const & pRequest, QByteArray const & pBytes, Receiver && pReceiver) const;
+
+protected:
+	inline NetworkAccess() {}
 
 private:
 	static void proxyAuthenticationRequired(QNetworkProxy const & proxy, QAuthenticator * authenticator);

@@ -33,7 +33,7 @@ public:
 
 	QWidget * networkCaptureWindow() const override;
 	void logNetworkMessage(QString pTag, QVariant const & pMessage) override;
-	void logNetworkError(QString pTag, QString const & pMessage) override;
+	void logNetworkError(QString pTag, QString const & pError, QVariant const & pMessage = QVariant()) override;
 
 	void pushStatusBar(QStatusBar * pStatusBar) override;
 	void popStatusBar(QStatusBar * pStatusBar) override;

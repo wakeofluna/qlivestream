@@ -18,10 +18,7 @@ ReplyBase::~ReplyBase()
 void ReplyBase::setError(QString pError)
 {
 	if (mLastError.isEmpty())
-	{
 		qWarning() << "Communication error: " << pError;
-		Logger::get()->logNetworkError(tag(), pError);
-	}
 
 	mLastError = pError;
 }
@@ -82,18 +79,10 @@ QVariantMap ReplyBase::parseJsonReply()
 	if (lError.error != QJsonParseError::NoError)
 		setError(lError.errorString());
 
-	if (!hasError())
-		Logger::get()->logNetworkMessage(tag(), lResponse);
-
 	return lResponse;
 }
 
 QByteArray ReplyBase::readByteArray()
 {
-	QByteArray lBytes = mReply.readAll();
-
-	if (!hasError())
-		Logger::get()->logNetworkMessage(tag(), QString("(%1 bytes)").arg(lBytes.size()));
-
-	return lBytes;
+	return mReply.readAll();
 }

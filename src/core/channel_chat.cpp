@@ -3,16 +3,9 @@
 
 ChannelChat::ChannelChat(QObject * parent) : QObject(parent)
 {
+	mIsConnected = false;
 }
 
 ChannelChat::~ChannelChat()
-{
-}
-
-void ChannelChat::connectToChat()
-{
-}
-
-void ChannelChat::disconnectFromChat()
 {
 }

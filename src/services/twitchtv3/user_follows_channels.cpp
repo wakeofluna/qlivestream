@@ -6,7 +6,7 @@
 namespace twitchtv3
 {
 
-UserFollowsChannels::UserFollowsChannels(QNetworkReply & pReply) : ServerReply(pReply)
+UserFollowsChannels::UserFollowsChannels(Profile & pProfile, QNetworkReply & pReply) : ServerReply(pReply), mProfile(pProfile)
 {
 	if (!parse())
 		return;
@@ -30,7 +30,7 @@ QList<ChannelObject*> UserFollowsChannels::createList() const
 	lData.reserve(lList.size());
 
 	for (int i = 0; i < lList.size(); ++i)
-		lData.push_back(new Channel(lList[i]));
+		lData.push_back(new Channel(mProfile, lList[i]));
 
 	return lData;
 }

@@ -14,9 +14,22 @@ public:
 	virtual ~ServerReply();
 
 protected:
-	bool parse();
+	virtual void log() const override;
 
+	bool parse();
 	QVariantMap mData;
+};
+
+class ServerReplySimple : public ServerReply
+{
+public:
+	ServerReplySimple(QNetworkReply & pReply, QString pTag = QString());
+
+	inline QString tag() const override { return mTag; }
+	inline QVariantMap const & data() const { return mData; }
+
+protected:
+	QString mTag;
 };
 
 } // namespace twitchtv3

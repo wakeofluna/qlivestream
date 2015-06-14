@@ -13,6 +13,14 @@ class COREDLL ChannelObject : public QObject
 Q_OBJECT
 
 public:
+	enum UrlType
+	{
+		URL_CHANNEL = 0,
+		URL_STREAM_WEBSITE,
+		URL_STREAM_DIRECT,
+	};
+
+public:
 	ChannelObject();
 	virtual ~ChannelObject();
 
@@ -23,6 +31,9 @@ public:
 	inline QUrl logoUrl() const { return mLogoUrl; }
 	inline int numViews() const { return mNumViews; }
 	inline int numFollowers() const { return mNumFollowers; }
+	inline int delay() const { return mDelay; }
+	inline bool isSelf() const { return mSelf; }
+	inline bool isEditor() const { return mEditor; }
 	inline bool isMature() const { return mMature; }
 	inline bool isPartnered() const { return mPartnered; }
 	inline bool isFollowed() const { return mFollowed; }
@@ -37,6 +48,11 @@ public:
 	void clear();
 	bool updateFrom(ChannelObject const & pOther);
 
+public slots:
+	virtual void requestUpdate() = 0;
+	virtual void updateStreamSettings(QString pTitle, QString pCategory, bool pMature, int pDelay) = 0;
+	virtual QUrl getStreamUrl(UrlType pType) = 0;
+
 signals:
 	void statsChanged();
 
@@ -50,6 +66,9 @@ protected:
 	QUrl     mLogoUrl;
 	int      mNumViews;
 	int      mNumFollowers;
+	int      mDelay;
+	bool     mSelf;
+	bool     mEditor;
 	bool     mPartnered;
 	bool     mMature;
 	bool     mFollowed;

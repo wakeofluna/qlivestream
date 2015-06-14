@@ -19,7 +19,7 @@ namespace forms
 	class PerformLogin;
 }
 
-class COREDLL Profile : public NetworkAccess
+class COREDLL Profile : protected NetworkAccess
 {
 public:
 	typedef std::function<void ()> DefaultCallback;

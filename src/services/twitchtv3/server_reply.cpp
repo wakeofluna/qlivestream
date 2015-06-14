@@ -17,24 +17,38 @@ ServerReply::~ServerReply()
 
 }
 
+void ServerReply::log() const
+{
+	if (hasError())
+		Logger::get()->logNetworkError(tag(), lastError(), mData);
+	else
+		Logger::get()->logNetworkMessage(tag(), mData);
+}
+
 bool ServerReply::parse()
 {
-	if (!checkNetworkStatus())
-		return false;
+	bool lOk = true;
+
+	lOk &= checkNetworkStatus();
 
 	QByteArray lApi = mReply.rawHeader("X-API-Version");
 	if (lApi != "3")
 	{
 		setError("Invalid/unknown API version");
-		return false;
+		lOk = false;
+	}
+	else
+	{
+		mData = parseJsonReply();
 	}
 
-	QVariantMap lResponse = parseJsonReply();
-	if (lResponse.isEmpty())
-		return false;
+	log();
+	return lOk;
+}
 
-	mData = lResponse;
-	return true;
+ServerReplySimple::ServerReplySimple(QNetworkReply & pReply, QString pTag) : ServerReply(pReply), mTag(pTag)
+{
+	parse();
 }
 
 } // namespace twitchtv3

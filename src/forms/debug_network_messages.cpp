@@ -80,28 +80,12 @@ void DebugNetworkMessages::setCapturing(bool pCapture)
 
 void DebugNetworkMessages::addMessage(QString pTag, QVariant const & pMessage)
 {
-	QTreeWidgetItem * lRoot = new QTreeWidgetItem(ui->treeMessages);
-	lRoot->setText(0, pTag);
-	lRoot->setText(1, "OK");
-
-	if (pMessage.type() == QVariant::Map)
-		recursiveAdd(lRoot, pMessage);
-	else
-	{
-		QTreeWidgetItem * lItem = new QTreeWidgetItem(lRoot);
-		lItem->setText(0, "Reply");
-		recursiveAdd(lItem, pMessage);
-	}
-
-	ui->btnClear->setEnabled(true);
+	addEntry(pTag, "OK", pMessage);
 }
 
-void DebugNetworkMessages::addError(QString pTag, QString const & pMessage)
+void DebugNetworkMessages::addError(QString pTag, QString const & pError, QVariant const & pMessage)
 {
-	QTreeWidgetItem * lRoot = new QTreeWidgetItem(ui->treeMessages);
-	lRoot->setText(0, pTag);
-	lRoot->setText(1, QString("Error: %1").arg(pMessage));
-	ui->btnClear->setEnabled(true);
+	addEntry(pTag, QString("Error: %1").arg(pError), pMessage);
 }
 
 void DebugNetworkMessages::clear()
@@ -109,6 +93,24 @@ void DebugNetworkMessages::clear()
 	ui->treeMessages->clear();
 	ui->btnClear->setEnabled(false);
 	emit cleared();
+}
+
+void DebugNetworkMessages::addEntry(QString pTag, QString const & pStatus, QVariant const & pMessage)
+{
+	QTreeWidgetItem * lRoot = new QTreeWidgetItem(ui->treeMessages);
+	lRoot->setText(0, pTag);
+	lRoot->setText(1, pStatus);
+
+	if (pMessage.type() == QVariant::Map)
+		recursiveAdd(lRoot, pMessage);
+	else if (!pMessage.isNull())
+	{
+		QTreeWidgetItem * lItem = new QTreeWidgetItem(lRoot);
+		lItem->setText(0, "Reply");
+		recursiveAdd(lItem, pMessage);
+	}
+
+	ui->btnClear->setEnabled(true);
 }
 
 } // namespace forms

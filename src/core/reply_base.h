@@ -23,6 +23,8 @@ public:
 protected:
 	ReplyBase(QNetworkReply & pReply);
 
+	virtual void log() const = 0;
+
 	void setError(QString pError);
 	bool checkNetworkStatus();
 	QVariantMap parseJsonReply();

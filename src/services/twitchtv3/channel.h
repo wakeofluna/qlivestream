@@ -6,17 +6,24 @@
 namespace twitchtv3
 {
 
+class Profile;
 class Channel : public ChannelObject
 {
 public:
-	Channel(QString pName);
-	Channel(QVariant const & pValue, bool pFollowing = false);
+	Channel(Profile & pProfile, QString pName);
+	Channel(Profile & pProfile, QVariant const & pValue, bool pFollowing = false);
 	~Channel();
 
 	QString logoCacheString() const override;
 	ChannelChat * chat() override;
+	void requestUpdate() override;
+	void updateStreamSettings(QString pTitle, QString pCategory, bool pMature, int pDelay) override;
+	QUrl getStreamUrl(UrlType pType) override;
 
 	void updateFromVariant(QVariant const & pValue);
+
+private:
+	Profile & mProfile;
 };
 
 } // namespace twitchtv3

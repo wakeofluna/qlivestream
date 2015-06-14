@@ -150,7 +150,7 @@ void Profile::getFollowedChannels(int pStart, int pLimit, ChannelCallback && pCa
 	{
 		QList<ChannelObject*> lList;
 
-		twitchtv3::UserFollowsChannels lFollows(pReply);
+		twitchtv3::UserFollowsChannels lFollows(*this, pReply);
 		if (lFollows.hasError())
 			mLastError = lFollows.lastError();
 		else
@@ -168,7 +168,7 @@ void Profile::getCategoryChannels(CategoryObject * pCategory, int pStart, int pL
 
 ChannelObject * Profile::getChannelFor(QString pName)
 {
-	Channel * lChannel = new Channel(pName);
+	Channel * lChannel = new Channel(*this, pName);
 	return lChannel;
 }
 
@@ -195,7 +195,7 @@ QNetworkRequest Profile::serviceRequest(bool pAuthed) const
 	QNetworkRequest lRequest;
 	lRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
 	lRequest.setHeader(QNetworkRequest::UserAgentHeader, APP_NAME);
-	lRequest.setRawHeader("Accept", "application/vnd.twitchtv3+json");
+	lRequest.setRawHeader("Accept", "application/vnd.twitchtv.v3+json");
 
 	if (level() != ANONYMOUS && !token().isEmpty() && pAuthed)
 	{
@@ -225,6 +225,44 @@ void Profile::throttledGet(QNetworkRequest const& pRequest, Receiver && pReceive
 		mPendingTimer->start();
 }
 
+void Profile::throttledPost(const QNetworkRequest& pRequest, const QByteArray& pData, Receiver&& pReceiver)
+{
+	QMutexLocker lGuard(&mPendingMutex);
+
+	if (mPendingPoints > 0)
+	{
+		--mPendingPoints;
+		networkPost(pRequest, pData, std::move(pReceiver));
+	}
+	else
+	{
+		QScopedPointer<PendingRequest> lPending(new PendingRequest(pRequest, pData, std::move(pReceiver), PendingRequest::POST));
+		mPendingRequests.enqueue(lPending.take());
+	}
+
+	if (!mPendingTimer->isActive())
+		mPendingTimer->start();
+}
+
+void Profile::throttledPut(const QNetworkRequest& pRequest, QByteArray const & pData, Receiver && pReceiver)
+{
+	QMutexLocker lGuard(&mPendingMutex);
+
+	if (mPendingPoints > 0)
+	{
+		--mPendingPoints;
+		networkPut(pRequest, pData, std::move(pReceiver));
+	}
+	else
+	{
+		QScopedPointer<PendingRequest> lPending(new PendingRequest(pRequest, pData, std::move(pReceiver), PendingRequest::PUT));
+		mPendingRequests.enqueue(lPending.take());
+	}
+
+	if (!mPendingTimer->isActive())
+		mPendingTimer->start();
+}
+
 void Profile::throttlePing()
 {
 	QMutexLocker lGuard(&mPendingMutex);
@@ -238,7 +276,18 @@ void Profile::throttlePing()
 	else
 	{
 		QScopedPointer<PendingRequest> lPending(mPendingRequests.dequeue());
-		networkGet(lPending->mRequest, std::move(lPending->mCallback));
+		switch (lPending->mType)
+		{
+			case PendingRequest::GET:
+				networkGet(lPending->mRequest, std::move(lPending->mCallback));
+				break;
+			case PendingRequest::POST:
+				networkPost(lPending->mRequest, lPending->mData, std::move(lPending->mCallback));
+				break;
+			case PendingRequest::PUT:
+				networkPut(lPending->mRequest, lPending->mData, std::move(lPending->mCallback));
+				break;
+		}
 	}
 }
 

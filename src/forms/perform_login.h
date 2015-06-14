@@ -14,7 +14,7 @@ namespace Ui
 namespace forms
 {
 
-class PerformLogin : public QDialog, public NetworkAccess
+class PerformLogin : public QDialog, protected NetworkAccess
 {
 Q_OBJECT
 

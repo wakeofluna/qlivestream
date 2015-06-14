@@ -97,10 +97,10 @@ void Application::logNetworkMessage(QString pTag, QVariant const & pMessage)
 	mDebugMessages->addMessage(pTag, pMessage);
 }
 
-void Application::logNetworkError(QString pTag, QString const & pMessage)
+void Application::logNetworkError(QString pTag, QString const & pError, QVariant const & pMessage)
 {
 	if (!mDebugMessages->isCapturing()) return;
-	mDebugMessages->addError(pTag, pMessage);
+	mDebugMessages->addError(pTag, pError, pMessage);
 }
 
 void Application::pushStatusBar(QStatusBar * pStatusBar)

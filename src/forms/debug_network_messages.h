@@ -3,6 +3,7 @@
 
 #include <QWidget>
 class QTreeWidgetItem;
+class QVariant;
 
 namespace Ui
 {
@@ -24,7 +25,7 @@ public:
 	void setCapturing(bool pCapture);
 
 	void addMessage(QString pTag, QVariant const & pMessage);
-	void addError(QString pTag, QString const & pMessage);
+	void addError(QString pTag, QString const & pError, QVariant const & pMessage);
 
 public slots:
 	void clear();
@@ -35,6 +36,7 @@ signals:
 	void cleared();
 
 private:
+	void addEntry(QString pTag, QString const & pStatus, QVariant const & pMessage);
 	Ui::DebugNetworkMessages * ui;
 };
 

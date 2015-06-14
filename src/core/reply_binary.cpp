@@ -1,5 +1,6 @@
 #include "config.h"
 #include "reply_binary.h"
+#include "logger.h"
 
 ReplyBinary::ReplyBinary(QNetworkReply & pReply, QString pTag) : ReplyBase(pReply), mTag(pTag)
 {
@@ -17,4 +18,12 @@ ReplyBinary::~ReplyBinary()
 QString ReplyBinary::tag() const
 {
 	return mTag;
+}
+
+void ReplyBinary::log() const
+{
+	if (!hasError())
+		Logger::get()->logNetworkMessage(tag(), QString("(%1 bytes)").arg(mData.size()));
+	else
+		Logger::get()->logNetworkError(tag(), lastError(), QVariant());
 }

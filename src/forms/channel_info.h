@@ -21,10 +21,28 @@ public:
 	explicit ChannelInfo(ChannelObject & pChannel, QWidget * parent);
 	~ChannelInfo();
 
+public slots:
+	void requestUpdateChannel();
+
 protected slots:
-	void updateFromChannel();
+	void on_chkPartner_clicked();
+	void on_chkMature_clicked();
+	void on_txtTitle_textEdited(QString pText);
+	void on_txtPlaying_textEdited(QString pText);
+	void on_sliDelay_actionTriggered(int pAction);
+	void on_sliDelay_valueChanged(int pValue);
+	void on_btnUpdate_clicked();
+	void on_btnOpenStream_clicked();
+	void on_btnOpenChat_clicked();
+
+private slots:
+	void chatConnected();
+	void chatError(QString pMessage);
+	void chatDisconnected();
 
 private:
+	void updateFromChannel();
+
 	Ui::ChannelInfo * ui;
 	ChannelObject & mChannel;
 };

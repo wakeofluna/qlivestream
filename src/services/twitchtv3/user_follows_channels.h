@@ -9,15 +9,19 @@ template <typename T> class QList;
 namespace twitchtv3
 {
 
+class Profile;
 class UserFollowsChannels : public ServerReply
 {
 public:
-	UserFollowsChannels(QNetworkReply & pReply);
+	UserFollowsChannels(Profile & pProfile, QNetworkReply & pReply);
 	~UserFollowsChannels();
 
 	QString tag() const override;
 
 	QList<ChannelObject*> createList() const;
+
+private:
+	Profile & mProfile;
 };
 
 } // namespace twitchtv3

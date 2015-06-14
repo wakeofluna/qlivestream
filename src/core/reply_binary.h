@@ -17,6 +17,8 @@ public:
 	inline QByteArray const & data() const { return mData; }
 
 protected:
+	void log() const override;
+
 	QString mTag;
 	QByteArray mData;
 };
