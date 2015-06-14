@@ -34,6 +34,7 @@ public:
 	void getTopCategories(int pStart, int pLimit, CategoryCallback && pCallback) override;
 	void getFollowedChannels(int pStart, int pLimit, ChannelCallback && pCallback) override;
 	void getCategoryChannels(CategoryObject * pCategory, int pStart, int pLimit, ChannelCallback && pCallback) override;
+	ChannelObject * getChannelFor(QString pName) override;
 
 private:
 	QUrl apiUrl(QString pAppend) const;

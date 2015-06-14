@@ -1,6 +1,7 @@
 #include "config.h"
 #include "profile.h"
 #include "root.h"
+#include "channel.h"
 #include "games_top.h"
 #include "user_follows_channels.h"
 #include "user_follows_games.h"
@@ -163,6 +164,12 @@ void Profile::getCategoryChannels(CategoryObject * pCategory, int pStart, int pL
 {
 	QList<ChannelObject*> lList;
 	pCallback(std::move(lList));
+}
+
+ChannelObject * Profile::getChannelFor(QString pName)
+{
+	Channel * lChannel = new Channel(pName);
+	return lChannel;
 }
 
 QUrl Profile::apiUrl(QString pAppend) const

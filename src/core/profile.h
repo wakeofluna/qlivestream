@@ -55,6 +55,7 @@ public:
 	virtual void getTopCategories(int pStart, int pLimit, CategoryCallback && pCallback) = 0;
 	virtual void getFollowedChannels(int pStart, int pLimit, ChannelCallback && pCallback) = 0;
 	virtual void getCategoryChannels(CategoryObject * pCategory, int pStart, int pLimit, ChannelCallback && pCallback) = 0;
+	virtual ChannelObject * getChannelFor(QString pName) = 0;
 	virtual void downloadLogo(QUrl const & pUrl, DataCallback && pCallback);
 
 protected:
@@ -62,6 +63,7 @@ protected:
 	friend class forms::PerformLogin;
 	Profile();
 
+	void setLastError(QString pError);
 	void updateToken(QString pToken);
 
 	int        mId;

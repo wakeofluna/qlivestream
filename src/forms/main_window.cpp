@@ -6,6 +6,7 @@
 #include "core/category_object.h"
 #include "core/channel_object.h"
 #include "forms/category_object_widget.h"
+#include "forms/channel_info.h"
 #include "forms/debug_network_messages.h"
 #include "forms/flowing_layout.h"
 #include "forms/main_about.h"
@@ -14,6 +15,7 @@
 #include "forms/select_profile.h"
 
 #include <QCloseEvent>
+#include <QMessageBox>
 
 namespace forms
 {
@@ -22,6 +24,7 @@ MainWindow::MainWindow(Profile::UPtr && pProfile, QWidget *parent) : QMainWindow
 {
 	mCategories = nullptr;
 	mFollowing = nullptr;
+	mYourChannel = nullptr;
 
 	ui = new Ui::MainWindow();
 	ui->setupUi(this);
@@ -47,6 +50,8 @@ MainWindow::MainWindow(Profile::UPtr && pProfile, QWidget *parent) : QMainWindow
 
 MainWindow::~MainWindow()
 {
+	qDeleteAll(mChannels);
+	delete mYourChannel;
 	delete mFollowing;
 	delete mCategories;
 	delete ui;
@@ -72,7 +77,20 @@ void MainWindow::openCategoryTab(CategoryObject * pCategory)
 
 void MainWindow::openChannelTab(ChannelObject * pChannel)
 {
+	QString lTitle = pChannel->name();
 
+	for (int i = 0; i < ui->tabWidget->count(); ++i)
+	{
+		if (ui->tabWidget->tabText(i) == lTitle)
+		{
+			ui->tabWidget->setCurrentIndex(i);
+			return;
+		}
+	}
+
+	QWidget * lWidget = new ChannelInfo(*pChannel, this);
+	ui->tabWidget->addTab(lWidget, lWidget->windowTitle());
+	ui->tabWidget->setCurrentWidget(lWidget);
 }
 
 void MainWindow::closeEvent(QCloseEvent * event)
@@ -100,6 +118,26 @@ void MainWindow::on_mnuFileExit_triggered()
 
 void MainWindow::on_mnuViewChannel_triggered()
 {
+	if (mYourChannel == nullptr)
+	{
+		ChannelObject * lChannel = mProfile->getChannelFor(mProfile->account());
+		if (lChannel != nullptr)
+		{
+			mYourChannel = new ChannelInfo(*lChannel, this);
+			ui->tabWidget->addTab(mYourChannel, mYourChannel->windowTitle());
+			ui->tabWidget->setCurrentWidget(mYourChannel);
+		}
+		else
+		{
+			ui->mnuViewChannel->setChecked(false);
+			QMessageBox::critical(this, "Open channel", QString("Unable to open channel: %1").arg(mProfile->lastError()));
+		}
+	}
+	else
+	{
+		delete mYourChannel;
+		mYourChannel = nullptr;
+	}
 }
 
 void MainWindow::on_mnuViewFollowing_triggered()
@@ -166,6 +204,11 @@ void MainWindow::on_tabWidget_tabCloseRequested(int pIndex)
 	{
 		mCategories = nullptr;
 		ui->mnuViewCategories->setChecked(false);
+	}
+	else if (pWidget == mYourChannel)
+	{
+		mYourChannel = nullptr;
+		ui->mnuViewChannel->setChecked(false);
 	}
 
 	delete pWidget;

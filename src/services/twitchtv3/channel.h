@@ -9,11 +9,14 @@ namespace twitchtv3
 class Channel : public ChannelObject
 {
 public:
+	Channel(QString pName);
 	Channel(QVariant const & pValue, bool pFollowing = false);
 	~Channel();
 
 	QString logoCacheString() const override;
 	ChannelChat * chat() override;
+
+	void updateFromVariant(QVariant const & pValue);
 };
 
 } // namespace twitchtv3

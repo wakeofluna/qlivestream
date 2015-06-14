@@ -6,11 +6,126 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>558</width>
-    <height>173</height>
+    <width>628</width>
+    <height>469</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <property name="windowTitle">
+   <string>Channel Info</string>
+  </property>
+  <layout class="QFormLayout" name="formLayout_2">
+   <item row="0" column="0">
+    <widget class="QLabel" name="lblChannel">
+     <property name="text">
+      <string>Channel:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="txtChannel">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="lblChannelStats">
+     <property name="text">
+      <string>Statistics:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <layout class="QHBoxLayout" name="layChannelStats">
+     <item>
+      <widget class="QLabel" name="lblNumSubscribers">
+       <property name="styleSheet">
+        <string notr="true">color: rgb(0, 0, 127)</string>
+       </property>
+       <property name="text">
+        <string>-1</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lblSubscribers">
+       <property name="text">
+        <string>subscribers</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lblNumFollowers">
+       <property name="styleSheet">
+        <string notr="true">color: rgb(0, 0, 127)</string>
+       </property>
+       <property name="text">
+        <string>-1</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lblFollowers">
+       <property name="text">
+        <string>followers</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lblNumViewers">
+       <property name="styleSheet">
+        <string notr="true">color: rgb(0, 0, 127)</string>
+       </property>
+       <property name="text">
+        <string>-1</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lblViewers">
+       <property name="text">
+        <string>viewers</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lblNumViews">
+       <property name="styleSheet">
+        <string notr="true">color: rgb(0, 0, 127)</string>
+       </property>
+       <property name="text">
+        <string>-1</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>views</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="lblTitle">
+     <property name="text">
+      <string>Broadcast title:</string>
+     </property>
+    </widget>
+   </item>
    <item row="2" column="1">
     <widget class="QLineEdit" name="txtTitle"/>
    </item>
@@ -20,57 +135,6 @@
       <string>Now playing:</string>
      </property>
     </widget>
-   </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="lblGameStats">
-     <property name="text">
-      <string>Game statistics:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="lblNumGameChannels">
-       <property name="styleSheet">
-        <string notr="true">color: rgb(0, 0, 127)</string>
-       </property>
-       <property name="text">
-        <string>0</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="lblGameChannels">
-       <property name="text">
-        <string>total channels</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="lblNumGameViewers">
-       <property name="styleSheet">
-        <string notr="true">color: rgb(0, 0, 127)</string>
-       </property>
-       <property name="text">
-        <string>0</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="lblGameViewers">
-       <property name="text">
-        <string>total viewers</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
    </item>
    <item row="3" column="1">
     <widget class="QComboBox" name="cbbPlaying">
@@ -91,15 +155,22 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <layout class="QHBoxLayout" name="layChannelStats">
+   <item row="4" column="0">
+    <widget class="QLabel" name="lblGameStats">
+     <property name="text">
+      <string>Game statistics:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="lblNumSubscribers">
+      <widget class="QLabel" name="lblNumGameChannels">
        <property name="styleSheet">
         <string notr="true">color: rgb(0, 0, 127)</string>
        </property>
        <property name="text">
-        <string>0</string>
+        <string>-1</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -107,19 +178,19 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="lblSubscribers">
+      <widget class="QLabel" name="lblGameChannels">
        <property name="text">
-        <string>subscribers</string>
+        <string>total channels</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="lblNumFollowers">
+      <widget class="QLabel" name="lblNumGameViewers">
        <property name="styleSheet">
         <string notr="true">color: rgb(0, 0, 127)</string>
        </property>
        <property name="text">
-        <string>0</string>
+        <string>-1</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -127,64 +198,199 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="lblFollowers">
+      <widget class="QLabel" name="lblGameViewers">
        <property name="text">
-        <string>followers</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="lblNumViewers">
-       <property name="styleSheet">
-        <string notr="true">color: rgb(0, 0, 127)</string>
-       </property>
-       <property name="text">
-        <string>0</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="lblViewers">
-       <property name="text">
-        <string>viewers</string>
+        <string>total viewers</string>
        </property>
       </widget>
      </item>
     </layout>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="lblTitle">
+   <item row="5" column="0">
+    <widget class="QLabel" name="lblDelay">
      <property name="text">
-      <string>Broadcast title:</string>
+      <string>Stream delay:</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="txtChannel">
-     <property name="readOnly">
-      <bool>true</bool>
+   <item row="5" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QSlider" name="sliDelay">
+       <property name="maximum">
+        <number>120</number>
+       </property>
+       <property name="pageStep">
+        <number>15</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="tickPosition">
+        <enum>QSlider::TicksAbove</enum>
+       </property>
+       <property name="tickInterval">
+        <number>15</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lblNumDelay">
+       <property name="minimumSize">
+        <size>
+         <width>40</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: rgb(0, 0, 127)</string>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lblDelaySeconds">
+       <property name="text">
+        <string>seconds</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="6" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnUpdate">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Update channel settings</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnOpenChat">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Connect to chat</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="8" column="1">
+    <widget class="QTextEdit" name="txtChat">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="lblChannelStats">
-     <property name="text">
-      <string>Statistics:</string>
-     </property>
-    </widget>
+   <item row="10" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QLineEdit" name="editChat">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnChat">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Send</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="lblChannel">
+   <item row="8" column="0">
+    <widget class="QLabel" name="lblChat">
      <property name="text">
-      <string>Channel:</string>
+      <string>Chat:</string>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>editChat</sender>
+   <signal>returnPressed()</signal>
+   <receiver>btnChat</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>482</x>
+     <y>550</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>522</x>
+     <y>550</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

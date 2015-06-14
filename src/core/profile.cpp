@@ -29,6 +29,11 @@ void Profile::downloadLogo(QUrl const & pUrl, DataCallback && pCallback)
 	});
 }
 
+void Profile::setLastError(QString pError)
+{
+	mLastError = pError;
+}
+
 void Profile::updateToken(QString pToken)
 {
 	QSqlQuery q;
