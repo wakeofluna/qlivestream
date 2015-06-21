@@ -8,7 +8,7 @@
 class COREDLL ReplyBinary : public ReplyBase
 {
 public:
-	ReplyBinary(QNetworkReply & pReply, QString pTag);
+	ReplyBinary(Profile & pProfile, QNetworkReply & pReply, QString pTag);
 	~ReplyBinary();
 
 	QString tag() const override;

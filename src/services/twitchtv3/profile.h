@@ -3,10 +3,12 @@
 
 #include "core/profile.h"
 #include "auth_scope.h"
+#include "chat_server.h"
 
 #include <QMutex>
 #include <QNetworkRequest>
 #include <QQueue>
+#include <QSharedData>
 class CategoryObject;
 class QTimer;
 class QUrl;
@@ -17,7 +19,11 @@ namespace twitchtv3
 class Channel;
 class Profile : public ::Profile
 {
+Q_OBJECT
+
 private:
+	typedef ChatServer::Ptr ChatServerPtr;
+
 	struct PendingRequest
 	{
 		enum Type
@@ -55,10 +61,14 @@ public:
 	void throttledPost(QNetworkRequest const & pRequest, QByteArray const& pData, Receiver && pReceiver);
 	void throttledPut(QNetworkRequest const & pRequest, QByteArray const& pData, Receiver && pReceiver);
 
+	inline ChatServerPtr chatServer() const { return mChatServer; }
+
 private:
 	void throttlePing();
 
 	AuthScopes mScopes;
+
+	ChatServerPtr mChatServer;
 
 	QQueue<PendingRequest*> mPendingRequests;
 	QTimer * mPendingTimer;

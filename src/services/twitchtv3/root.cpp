@@ -6,7 +6,7 @@
 namespace twitchtv3
 {
 
-Root::Root(QNetworkReply & pReply) : ServerReply(pReply)
+Root::Root(Profile & pProfile, QNetworkReply & pReply) : ServerReply(pProfile, pReply)
 {
 	if (!parse())
 		return;

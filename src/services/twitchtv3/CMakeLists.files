@@ -1,14 +1,16 @@
 set (QT_HEADER_FILES
+	chat_channel.h
 	chat_server.h
+	profile.h
 )
 
 set (HEADER_FILES
 	${QT_HEADER_FILES}
 	auth_scope.h
 	channel.h
+	chat_message.h
 	game.h
 	games_top.h
-	profile.h
 	root.h
 	server_reply.h
 	user_follows_channels.h
@@ -18,6 +20,8 @@ set (HEADER_FILES
 set (SOURCE_FILES
 	auth_scope.cpp
 	channel.cpp
+	chat_channel.cpp
+	chat_message.cpp
 	chat_server.cpp
 	game.cpp
 	games_top.cpp

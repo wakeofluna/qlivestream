@@ -5,6 +5,7 @@
 #include <QString>
 #include <QVariantMap>
 
+class Profile;
 class QByteArray;
 class QNetworkReply;
 
@@ -20,8 +21,10 @@ public:
 	inline QString lastError() const { return mLastError; }
 	inline int networkError() const { return mNetworkError; }
 
+	inline Profile & profile() const { return mProfile; }
+
 protected:
-	ReplyBase(QNetworkReply & pReply);
+	ReplyBase(Profile & pProfile, QNetworkReply & pReply);
 
 	virtual void log() const = 0;
 
@@ -30,6 +33,7 @@ protected:
 	QVariantMap parseJsonReply();
 	QByteArray readByteArray();
 
+	Profile & mProfile;
 	QNetworkReply & mReply;
 
 private:

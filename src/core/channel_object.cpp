@@ -1,9 +1,10 @@
 #include "config.h"
 #include "channel_object.h"
+#include "profile.h"
 
 #include <QCryptographicHash>
 
-ChannelObject::ChannelObject()
+ChannelObject::ChannelObject(Profile & pProfile) : QObject(&pProfile), mProfile(pProfile)
 {
 	mNumViews = -1;
 	mNumFollowers = -1;

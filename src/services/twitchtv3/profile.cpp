@@ -2,6 +2,7 @@
 #include "profile.h"
 #include "root.h"
 #include "channel.h"
+#include "chat_server.h"
 #include "games_top.h"
 #include "user_follows_channels.h"
 #include "user_follows_games.h"
@@ -20,10 +21,11 @@ namespace twitchtv3
 
 Profile::Profile()
 {
+	mChatServer = new ChatServer();
 	mPendingPoints = MaxPending;
 	mPendingTimer = new QTimer();
 	mPendingTimer->setInterval(PendingDelay);
-	QObject::connect(mPendingTimer, &QTimer::timeout, [this] { throttlePing(); });
+	QObject::connect(mPendingTimer, &QTimer::timeout, this, &Profile::throttlePing);
 }
 
 Profile::~Profile()
@@ -74,13 +76,16 @@ void Profile::performLogin(DefaultCallback && pCallback)
 	{
 		mLastError.clear();
 
-		twitchtv3::Root lReply(pReply);
+		twitchtv3::Root lReply(*this, pReply);
 		if (lReply.hasError())
 			mLastError = lReply.lastError();
 		else if (lReply.valid() && lReply.username() == account())
 		{
 			mLoggedIn = true;
 			mScopes = lReply.scopes();
+
+			if (mScopes.test(AuthScope::chat_login))
+				mChatServer->setLogin(account(), token());
 		}
 
 		pCallback();
@@ -98,7 +103,7 @@ void Profile::getFollowedCategories(int pStart, int pLimit, CategoryCallback && 
 	{
 		QList<CategoryObject*> lList;
 
-		twitchtv3::UserFollowsGames lFollowed(pReply);
+		twitchtv3::UserFollowsGames lFollowed(*this, pReply);
 		if (lFollowed.hasError())
 			mLastError = lFollowed.lastError();
 		else
@@ -124,7 +129,7 @@ void Profile::getTopCategories(int pStart, int pLimit, CategoryCallback && pCall
 	{
 		QList<CategoryObject*> lList;
 
-		twitchtv3::GamesTop lGames(pReply);
+		twitchtv3::GamesTop lGames(*this, pReply);
 		if (lGames.hasError())
 			mLastError = lGames.lastError();
 		else

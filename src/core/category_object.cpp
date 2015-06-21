@@ -1,9 +1,10 @@
 #include "config.h"
 #include "category_object.h"
+#include "profile.h"
 
 #include <QCryptographicHash>
 
-CategoryObject::CategoryObject()
+CategoryObject::CategoryObject(Profile & pProfile) : QObject(&pProfile), mProfile(pProfile)
 {
 	mNumChannels = -1;
 	mNumViewers = -1;

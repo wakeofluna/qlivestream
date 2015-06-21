@@ -10,7 +10,7 @@ namespace twitchtv3
 class Root : public ServerReply
 {
 public:
-	Root(QNetworkReply & pReply);
+	Root(Profile & pProfile, QNetworkReply & pReply);
 	~Root();
 
 	QString tag() const override;

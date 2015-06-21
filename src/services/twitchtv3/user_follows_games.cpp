@@ -6,7 +6,7 @@
 namespace twitchtv3
 {
 
-UserFollowsGames::UserFollowsGames(QNetworkReply & pReply) : ServerReply(pReply)
+UserFollowsGames::UserFollowsGames(Profile & pProfile, QNetworkReply & pReply) : ServerReply(pProfile, pReply)
 {
 	if (!parse())
 		return;
@@ -30,7 +30,7 @@ QList<CategoryObject*> UserFollowsGames::createList() const
 	lData.reserve(lList.size());
 
 	for (int i = 0; i < lList.size(); ++i)
-		lData.push_back(new Game(lList[i], true));
+		lData.push_back(new Game(*profile(), lList[i], true));
 
 	return lData;
 }

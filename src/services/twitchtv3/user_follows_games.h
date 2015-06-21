@@ -9,10 +9,11 @@ template <typename T> class QList;
 namespace twitchtv3
 {
 
+class Profile;
 class UserFollowsGames : public ServerReply
 {
 public:
-	UserFollowsGames(QNetworkReply & pReply);
+	UserFollowsGames(Profile & pProfile, QNetworkReply & pReply);
 	~UserFollowsGames();
 
 	QString tag() const override;

@@ -6,6 +6,7 @@
 #include <QString>
 
 class ChannelChatter;
+class ChannelObject;
 template <typename T> class QList;
 
 class COREDLL ChannelChat : public QObject
@@ -13,28 +14,41 @@ class COREDLL ChannelChat : public QObject
 Q_OBJECT
 
 public:
-	explicit ChannelChat(QObject * parent);
+	enum State
+	{
+		NONE,
+		JOINING,
+		JOINED,
+		LEAVING
+	};
+
+public:
+	explicit ChannelChat(ChannelObject & pChannel);
 	~ChannelChat();
 
-	inline QString name() const { return mName; }
-	inline bool isConnected() const { return mIsConnected; }
+	QString name() const;
+	inline ChannelObject & channel() const { return mChannel; }
+
+	virtual inline State state() const { return mState; }
 
 public slots:
 	virtual void connectToChat() = 0;
-	virtual void disconnectFromChat() = 0;
+	virtual void disconnectFromChat(QString pMessage = QString()) = 0;
+	virtual void sendMessage(QString pMessage) = 0;
 
 signals:
-	void chatConnected();
+	void chatStateChanged();
 	void chatError(QString pMessage);
-	void chatDisconnected();
 
 	void newChatter(ChannelChatter & pChatter);
 	void newMessage(ChannelChatter & pChatter, QString pMessage);
 	void lostChatter(ChannelChatter & pChatter);
 
-private:
-	QString mName;
-	bool mIsConnected;
+protected:
+	void setState(State pNewState);
+
+	ChannelObject & mChannel;
+	State mState;
 	QList<ChannelChatter*> mChatters;
 };
 

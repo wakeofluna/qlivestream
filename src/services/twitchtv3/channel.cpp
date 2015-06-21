@@ -1,5 +1,7 @@
 #include "config.h"
 #include "channel.h"
+#include "chat_channel.h"
+#include "chat_server.h"
 #include "profile.h"
 #include "server_reply.h"
 
@@ -13,20 +15,27 @@
 namespace twitchtv3
 {
 
-Channel::Channel(Profile & pProfile, QString pName) : mProfile(pProfile)
+Channel::Channel(Profile & pProfile, QString pName) : ChannelObject(pProfile)
 {
 	mName = pName;
+	mChat = new ChatChannel(*this, pProfile.chatServer());
 }
 
-Channel::Channel(Profile & pProfile, QVariant const & pValue, bool pFollowing) : mProfile(pProfile)
+Channel::Channel(Profile & pProfile, QVariant const & pValue, bool pFollowing) : ChannelObject(pProfile)
 {
 	updateFromVariant(pValue);
+	mChat = new ChatChannel(*this, pProfile.chatServer());
 	mFollowed = pFollowing;
 }
 
 Channel::~Channel()
 {
+	delete mChat;
+}
 
+Profile * Channel::profile() const
+{
+	return static_cast<Profile*>(&mProfile);
 }
 
 QString Channel::logoCacheString() const
@@ -36,17 +45,17 @@ QString Channel::logoCacheString() const
 
 ChannelChat * Channel::chat()
 {
-	return nullptr;
+	return mChat;
 }
 
 void Channel::requestUpdate()
 {
-	QNetworkRequest lRequest = mProfile.serviceRequest(true);
-	lRequest.setUrl(mProfile.krakenUrl(QString("/channels/%1").arg(mName)));
+	QNetworkRequest lRequest = profile()->serviceRequest(true);
+	lRequest.setUrl(profile()->krakenUrl(QString("/channels/%1").arg(mName)));
 
-	mProfile.throttledGet(lRequest, [this] (QNetworkReply & pReply)
+	profile()->throttledGet(lRequest, [this] (QNetworkReply & pReply)
 	{
-		ServerReplySimple lReply(pReply, "GetChannel");
+		ServerReplySimple lReply(*profile(), pReply, "GetChannel");
 		if (!lReply.hasError())
 			updateFromVariant(lReply.data());
 	});
@@ -54,8 +63,8 @@ void Channel::requestUpdate()
 
 void Channel::updateStreamSettings(QString pTitle, QString pCategory, bool pMature, int pDelay)
 {
-	QNetworkRequest lRequest = mProfile.serviceRequest(true);
-	lRequest.setUrl(mProfile.krakenUrl(QString("/channels/%1/").arg(mName)));
+	QNetworkRequest lRequest = profile()->serviceRequest(true);
+	lRequest.setUrl(profile()->krakenUrl(QString("/channels/%1/").arg(mName)));
 	lRequest.setHeader(lRequest.ContentTypeHeader, "application/json");
 
 	QVariantMap lChannel;
@@ -69,9 +78,9 @@ void Channel::updateStreamSettings(QString pTitle, QString pCategory, bool pMatu
 
 	QJsonDocument lJson = QJsonDocument::fromVariant(lData);
 
-	mProfile.throttledPut(lRequest, lJson.toJson(QJsonDocument::Compact), [this] (QNetworkReply & pReply)
+	profile()->throttledPut(lRequest, lJson.toJson(QJsonDocument::Compact), [this] (QNetworkReply & pReply)
 	{
-		ServerReplySimple lReply(pReply, "UpdateChannel");
+		ServerReplySimple lReply(*profile(), pReply, "UpdateChannel");
 		if (!lReply.hasError())
 			updateFromVariant(lReply.data());
 	});

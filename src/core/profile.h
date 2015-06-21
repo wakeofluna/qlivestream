@@ -5,6 +5,7 @@
 #include "core/network_access.h"
 #include <functional>
 #include <memory>
+#include <QObject>
 #include <QString>
 
 class CategoryObject;
@@ -19,8 +20,10 @@ namespace forms
 	class PerformLogin;
 }
 
-class COREDLL Profile : protected NetworkAccess
+class COREDLL Profile : public QObject, protected NetworkAccess
 {
+Q_OBJECT
+
 public:
 	typedef std::function<void ()> DefaultCallback;
 	typedef std::function<void (QByteArray &&)> DataCallback;

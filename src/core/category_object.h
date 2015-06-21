@@ -7,12 +7,14 @@
 #include <QUrl>
 #include <QVariant>
 
+class Profile;
+
 class COREDLL CategoryObject : public QObject
 {
 Q_OBJECT
 
 public:
-	CategoryObject();
+	explicit CategoryObject(Profile & pProfile);
 	virtual ~CategoryObject();
 
 	inline QVariant id() const { return mId; }
@@ -37,6 +39,7 @@ signals:
 protected:
 	void setStats(int pChannels, int pViewers);
 
+	Profile & mProfile;
 	QVariant mId;
 	QString  mName;
 	QUrl     mLogoUrl;

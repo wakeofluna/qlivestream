@@ -8,6 +8,8 @@
 #include <QVariant>
 
 class ChannelChat;
+class Profile;
+
 class COREDLL ChannelObject : public QObject
 {
 Q_OBJECT
@@ -21,7 +23,7 @@ public:
 	};
 
 public:
-	ChannelObject();
+	explicit ChannelObject(Profile & pProfile);
 	virtual ~ChannelObject();
 
 	inline QVariant id() const { return mId; }
@@ -59,6 +61,7 @@ signals:
 protected:
 	void setStats(int pFollowers, int pViews);
 
+	Profile & mProfile;
 	QVariant mId;
 	QString  mName;
 	QString  mDisplayName;

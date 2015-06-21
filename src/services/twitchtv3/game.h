@@ -7,11 +7,14 @@ class QVariant;
 namespace twitchtv3
 {
 
+class Profile;
 class Game : public CategoryObject
 {
 public:
-	Game(QVariant const & pValue, bool pFollowing = false);
+	explicit Game(Profile & pProfile, QVariant const & pValue, bool pFollowing);
 	~Game();
+
+	Profile * profile() const;
 
 	QString logoCacheString() const override;
 

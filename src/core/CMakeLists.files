@@ -2,6 +2,7 @@ set (QT_HEADER_FILES
 	category_object.h
 	channel_chat.h
 	channel_object.h
+	profile.h
 )
 
 set (HEADER_FILES
@@ -15,7 +16,6 @@ set (HEADER_FILES
 	logger.h
 	network_access.h
 	profile_factory.h
-	profile.h
 	reply_base.h
 	reply_binary.h
 	storage_access.h

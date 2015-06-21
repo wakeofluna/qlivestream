@@ -7,7 +7,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-ReplyBase::ReplyBase(QNetworkReply & pReply) : mReply(pReply), mNetworkError(0)
+ReplyBase::ReplyBase(Profile & pProfile, QNetworkReply & pReply) : mProfile(pProfile), mReply(pReply), mNetworkError(0)
 {
 }
 

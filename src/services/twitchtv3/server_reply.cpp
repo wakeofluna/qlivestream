@@ -1,5 +1,6 @@
 #include "config.h"
 #include "server_reply.h"
+#include "profile.h"
 
 #include <QByteArray>
 #include <QNetworkReply>
@@ -7,7 +8,7 @@
 namespace twitchtv3
 {
 
-ServerReply::ServerReply(QNetworkReply & pReply) : ReplyBase(pReply)
+ServerReply::ServerReply(Profile & pProfile, QNetworkReply & pReply) : ReplyBase(pProfile, pReply)
 {
 
 }
@@ -15,6 +16,11 @@ ServerReply::ServerReply(QNetworkReply & pReply) : ReplyBase(pReply)
 ServerReply::~ServerReply()
 {
 
+}
+
+Profile * ServerReply::profile() const
+{
+	return static_cast<Profile*>(&mProfile);
 }
 
 void ServerReply::log() const
@@ -46,7 +52,7 @@ bool ServerReply::parse()
 	return lOk;
 }
 
-ServerReplySimple::ServerReplySimple(QNetworkReply & pReply, QString pTag) : ServerReply(pReply), mTag(pTag)
+ServerReplySimple::ServerReplySimple(Profile & pProfile, QNetworkReply & pReply, QString pTag) : ServerReply(pProfile, pReply), mTag(pTag)
 {
 	parse();
 }

@@ -2,16 +2,20 @@
 #define SERVICES_TWITCHTV3_SERVER_REPLY_H_
 
 #include "core/reply_base.h"
+#include "profile.h"
 #include <QVariantMap>
 
 namespace twitchtv3
 {
 
+class Profile;
 class ServerReply : public ReplyBase
 {
 public:
-	ServerReply(QNetworkReply & pReply);
+	ServerReply(Profile & pProfile, QNetworkReply & pReply);
 	virtual ~ServerReply();
+
+	Profile * profile() const;
 
 protected:
 	virtual void log() const override;
@@ -23,7 +27,7 @@ protected:
 class ServerReplySimple : public ServerReply
 {
 public:
-	ServerReplySimple(QNetworkReply & pReply, QString pTag = QString());
+	ServerReplySimple(Profile & pProfile, QNetworkReply & pReply, QString pTag = QString());
 
 	inline QString tag() const override { return mTag; }
 	inline QVariantMap const & data() const { return mData; }

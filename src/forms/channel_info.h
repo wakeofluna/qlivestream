@@ -34,11 +34,11 @@ protected slots:
 	void on_btnUpdate_clicked();
 	void on_btnOpenStream_clicked();
 	void on_btnOpenChat_clicked();
+	void on_btnCloseChat_clicked();
 
 private slots:
-	void chatConnected();
+	void chatStateChanged();
 	void chatError(QString pMessage);
-	void chatDisconnected();
 
 private:
 	void updateFromChannel();

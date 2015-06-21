@@ -1,13 +1,14 @@
-#include "game.h"
-
 #include "config.h"
+#include "game.h"
+#include "profile.h"
+
 #include <QVariant>
 #include <QVariantMap>
 
 namespace twitchtv3
 {
 
-Game::Game(QVariant const & pValue, bool pFollowing)
+Game::Game(Profile & pProfile, QVariant const & pValue, bool pFollowing) : CategoryObject(pProfile)
 {
 	QVariantMap lItem = pValue.toMap();
 
@@ -32,6 +33,11 @@ Game::Game(QVariant const & pValue, bool pFollowing)
 
 Game::~Game()
 {
+}
+
+Profile * Game::profile() const
+{
+	return static_cast<Profile*>(&mProfile);
 }
 
 QString Game::logoCacheString() const

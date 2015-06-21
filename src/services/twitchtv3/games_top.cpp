@@ -6,7 +6,7 @@
 namespace twitchtv3
 {
 
-GamesTop::GamesTop(QNetworkReply & pReply) : ServerReply(pReply)
+GamesTop::GamesTop(Profile & pProfile, QNetworkReply & pReply) : ServerReply(pProfile, pReply)
 {
 	if (!parse())
 		return;
@@ -30,7 +30,7 @@ QList<CategoryObject*> GamesTop::createList() const
 	lData.reserve(lList.size());
 
 	for (int i = 0; i < lList.size(); ++i)
-		lData.push_back(new Game(lList[i]));
+		lData.push_back(new Game(*profile(), lList[i], false));
 
 	return lData;
 }

@@ -22,15 +22,14 @@ ChannelInfo::ChannelInfo(ChannelObject & pChannel, QWidget * parent) : QWidget(p
 	{
 		ui->btnOpenChat->setEnabled(false);
 		ui->btnOpenChat->setToolTip(tr("Chat option not supported"));
+		ui->btnCloseChat->setVisible(false);
 	}
 	else
 	{
-		connect(lChat, &ChannelChat::chatConnected, this, &ChannelInfo::chatConnected);
+		connect(lChat, &ChannelChat::chatStateChanged, this, &ChannelInfo::chatStateChanged);
 		connect(lChat, &ChannelChat::chatError, this, &ChannelInfo::chatError);
-		connect(lChat, &ChannelChat::chatDisconnected, this, &ChannelInfo::chatDisconnected);
-
-		if (lChat->isConnected())
-			chatConnected();
+		chatStateChanged();
+		ui->txtChat->clear();
 	}
 
 	connect(&mChannel, &ChannelObject::statsChanged, this, &ChannelInfo::updateFromChannel);
@@ -47,15 +46,44 @@ void ChannelInfo::requestUpdateChannel()
 	mChannel.requestUpdate();
 }
 
-void ChannelInfo::chatConnected()
+void ChannelInfo::chatStateChanged()
 {
-	ui->txtChat->setEnabled(true);
-	ui->txtMessage->setEnabled(true);
-	ui->btnChat->setEnabled(true);
+	ChannelChat * lChat = mChannel.chat();
+	Q_ASSERT(lChat != nullptr);
+
+	switch (lChat->state())
+	{
+		case ChannelChat::NONE:
+			ui->btnOpenChat->setVisible(true);
+			ui->btnCloseChat->setVisible(false);
+			ui->txtChat->append("Disconnected!");
+			break;
+
+		case ChannelChat::JOINING:
+			ui->btnOpenChat->setVisible(false);
+			ui->btnCloseChat->setVisible(true);
+			ui->txtChat->append("Connecting to chat...");
+			break;
+
+		case ChannelChat::JOINED:
+			ui->txtChat->setEnabled(true);
+			ui->txtMessage->setEnabled(true);
+			ui->btnChat->setEnabled(true);
+			ui->btnCloseChat->setEnabled(true);
+			ui->txtChat->append("Connected!");
+			break;
+
+		case ChannelChat::LEAVING:
+			ui->btnCloseChat->setEnabled(false);
+			ui->btnChat->setEnabled(false);
+			ui->txtChat->append("Disconnecting...");
+			break;
+	}
 }
 
 void ChannelInfo::chatError(QString pMessage)
 {
+	ui->txtChat->append(pMessage);
 }
 
 void ChannelInfo::on_btnOpenChat_clicked()
@@ -65,9 +93,11 @@ void ChannelInfo::on_btnOpenChat_clicked()
 	lChat->connectToChat();
 }
 
-void ChannelInfo::chatDisconnected()
+void ChannelInfo::on_btnCloseChat_clicked()
 {
-	ui->btnChat->setEnabled(false);
+	ChannelChat * lChat = mChannel.chat();
+	Q_ASSERT(lChat != nullptr);
+	lChat->disconnectFromChat();
 }
 
 void ChannelInfo::on_chkPartner_clicked()

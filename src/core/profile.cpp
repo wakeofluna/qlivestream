@@ -24,7 +24,7 @@ void Profile::downloadLogo(QUrl const & pUrl, DataCallback && pCallback)
 
 	networkGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
 	{
-		ReplyBinary lReply(pReply, "Logo");
+		ReplyBinary lReply(*this, pReply, "Logo");
 		pCallback(std::move(lReply.data()));
 	});
 }

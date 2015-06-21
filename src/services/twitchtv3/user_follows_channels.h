@@ -19,9 +19,6 @@ public:
 	QString tag() const override;
 
 	QList<ChannelObject*> createList() const;
-
-private:
-	Profile & mProfile;
 };
 
 } // namespace twitchtv3
