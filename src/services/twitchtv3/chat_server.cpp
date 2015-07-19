@@ -416,12 +416,12 @@ void ChatServer::handleMessage(RawMessage const & pMessage)
 			sendRaw(QString("QUIT :Bye"));
 		}
 		else
-			sendRaw(QString("PONG %1").arg(pMessage.parameters.value(0)));
+			sendRaw(QString("PONG :%1").arg(pMessage.parameters.join(' ')));
 
 		return;
 	}
 
-	if (pMessage.command == QStringLiteral("001"))
+	else if (pMessage.command == QStringLiteral("001"))
 	{
 		mNickname = pMessage.parameters.value(0);
 		setState(CONNECTED);
@@ -434,7 +434,7 @@ void ChatServer::handleMessage(RawMessage const & pMessage)
 			sendRaw(QString("JOIN #%1").arg(lChannel->name()));
 	}
 
-	if (pMessage.command == QStringLiteral("JOIN"))
+	else if (pMessage.command == QStringLiteral("JOIN"))
 	{
 		bool lSelf = (pMessage.username() == mNickname);
 
@@ -446,24 +446,55 @@ void ChatServer::handleMessage(RawMessage const & pMessage)
 				if (lChannel->state() == ChatChannel::LEAVING)
 					sendRaw(QString("PART #%1").arg(lChannel->name()));
 				else
+				{
 					lChannel->setState(ChatChannel::JOINED);
+					lChannel->onJoin(pMessage.source);
+				}
 			}
+			else
+				lChannel->onJoin(pMessage.source);
 		}
 	}
 
-	if (pMessage.command == QStringLiteral("PART"))
+	else if (pMessage.command == QStringLiteral("PART"))
 	{
 		bool lSelf = (pMessage.username() == mNickname);
 
 		ChatChannel * lChannel = findChannel(pMessage.parameters.value(0));
 		if (lChannel != nullptr)
 		{
+			lChannel->onPart(pMessage.source, pMessage.parameters.value(1));
 			if (lSelf)
 			{
 				mChannels.removeAll(lChannel);
 				lChannel->setState(ChatChannel::NONE);
 			}
 		}
+	}
+
+	else if (pMessage.command == QStringLiteral("PRIVMSG"))
+	{
+		QString lTarget = pMessage.parameters.value(0);
+		if (lTarget.startsWith('#'))
+		{
+			ChatChannel * lChannel = findChannel(pMessage.parameters.value(0));
+			if (lChannel != nullptr)
+				lChannel->onPrivmsg(pMessage.source, pMessage.tags, pMessage.parameters.value(1));
+		}
+	}
+
+	else if (pMessage.command == QStringLiteral("USERSTATE"))
+	{
+		ChatChannel * lChannel = findChannel(pMessage.parameters.value(0));
+		if (lChannel != nullptr)
+			lChannel->onUserstate(pMessage.tags);
+	}
+
+	else if (pMessage.command == QStringLiteral("ROOMSTATE"))
+	{
+		ChatChannel * lChannel = findChannel(pMessage.parameters.value(0));
+		if (lChannel != nullptr)
+			lChannel->onRoomstate(pMessage.tags);
 	}
 
 	emit newMessage(pMessage);

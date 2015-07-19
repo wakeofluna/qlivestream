@@ -6,6 +6,7 @@ ChannelChatter::ChannelChatter(ChannelChat & pChannel, QString pName) : mChannel
 	mIsSelf = false;
 	mIsFollower = false;
 	mIsSubscriber = false;
+	mIsVeteran = false;
 	mIsModerator = false;
 	mIsOwner = false;
 }
@@ -27,6 +28,7 @@ bool ChannelChatter::sortStatus(ChannelChatter const& lhs, ChannelChatter const&
 		return false
 
 	TEST(isOwner());
+	TEST(isSelf());
 	TEST(isModerator());
 	TEST(isSubscriber());
 	TEST(isFollower());

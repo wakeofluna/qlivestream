@@ -3,6 +3,7 @@
 #include "ui_channel_info.h"
 #include "core/channel_chat.h"
 #include "core/channel_object.h"
+#include "core/channel_chatter.h"
 
 #include <QDesktopServices>
 
@@ -28,6 +29,10 @@ ChannelInfo::ChannelInfo(ChannelObject & pChannel, QWidget * parent) : QWidget(p
 	{
 		connect(lChat, &ChannelChat::chatStateChanged, this, &ChannelInfo::chatStateChanged);
 		connect(lChat, &ChannelChat::chatError, this, &ChannelInfo::chatError);
+		connect(lChat, &ChannelChat::chatterNew, this, &ChannelInfo::chatterNew);
+		connect(lChat, &ChannelChat::chatterChanged, this, &ChannelInfo::chatterChanged);
+		connect(lChat, &ChannelChat::chatterLost, this, &ChannelInfo::chatterLost);
+		connect(lChat, &ChannelChat::chatMessage, this, &ChannelInfo::chatMessage);
 		chatStateChanged();
 		ui->txtChat->clear();
 	}
@@ -86,6 +91,26 @@ void ChannelInfo::chatError(QString pMessage)
 	ui->txtChat->append(pMessage);
 }
 
+void ChannelInfo::chatterNew(ChannelChatter & pChatter)
+{
+	ui->txtChat->append(QString("(%1 joined)").arg(pChatter.displayName()));
+}
+
+void ChannelInfo::chatterChanged(ChannelChatter & pChatter)
+{
+
+}
+
+void ChannelInfo::chatterLost(ChannelChatter & pChatter)
+{
+	ui->txtChat->append(QString("(%1 left)").arg(pChatter.displayName()));
+}
+
+void ChannelInfo::chatMessage(ChannelChatter & pChatter, QString pMessage)
+{
+	ui->txtChat->append(QString("%1: %2").arg(pChatter.displayName()).arg(pMessage));
+}
+
 void ChannelInfo::on_btnOpenChat_clicked()
 {
 	ChannelChat * lChat = mChannel.chat();
@@ -98,6 +123,17 @@ void ChannelInfo::on_btnCloseChat_clicked()
 	ChannelChat * lChat = mChannel.chat();
 	Q_ASSERT(lChat != nullptr);
 	lChat->disconnectFromChat();
+}
+
+void ChannelInfo::on_btnChat_clicked()
+{
+	ChannelChat * lChat = mChannel.chat();
+	Q_ASSERT(lChat != nullptr);
+
+	QString lText = ui->txtMessage->text();
+	ui->txtMessage->clear();
+
+	lChat->sendMessage(lText);
 }
 
 void ChannelInfo::on_chkPartner_clicked()

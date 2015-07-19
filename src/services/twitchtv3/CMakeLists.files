@@ -7,6 +7,7 @@ set (QT_HEADER_FILES
 set (HEADER_FILES
 	${QT_HEADER_FILES}
 	auth_scope.h
+	channel_chatter.h
 	channel.h
 	chat_message.h
 	game.h
@@ -19,6 +20,7 @@ set (HEADER_FILES
 
 set (SOURCE_FILES
 	auth_scope.cpp
+	channel_chatter.cpp
 	channel.cpp
 	chat_channel.cpp
 	chat_message.cpp

@@ -28,8 +28,7 @@ public:
 
 	QString name() const;
 	inline ChannelObject & channel() const { return mChannel; }
-
-	virtual inline State state() const { return mState; }
+	inline State state() const { return mState; }
 
 public slots:
 	virtual void connectToChat() = 0;
@@ -40,16 +39,19 @@ signals:
 	void chatStateChanged();
 	void chatError(QString pMessage);
 
-	void newChatter(ChannelChatter & pChatter);
-	void newMessage(ChannelChatter & pChatter, QString pMessage);
-	void lostChatter(ChannelChatter & pChatter);
+	void chatterNew(ChannelChatter & pChatter);
+	void chatterChanged(ChannelChatter & pChatter);
+	void chatterLost(ChannelChatter & pChatter);
+	void chatMessage(ChannelChatter & pChatter, QString pMessage);
 
 protected:
 	void setState(State pNewState);
 
 	ChannelObject & mChannel;
 	State mState;
+	ChannelChatter * mSelf;
 	QList<ChannelChatter*> mChatters;
+	QList<ChannelChatter*> mChattersLeft;
 };
 
 #endif // CORE_CHANNEL_CHAT_H_

@@ -8,7 +8,7 @@ namespace twitchtv3
 {
 
 class Channel;
-class ChatServer;
+class ChannelChatter;
 class ChatChannel : public ::ChannelChat
 {
 Q_OBJECT
@@ -23,10 +23,33 @@ public:
 	void disconnectFromChat(QString pMessage) override;
 	void sendMessage(QString pMessage) override;
 
+	ChannelChatter * findChatter(QStringRef pUsername, bool pOld = false) const;
+
 private:
 	friend class ChatServer;
+	void onUserstate(ChatServer::Tags const & pTags);
+	void onRoomstate(ChatServer::Tags const & pTags);
+	void onJoin(QString pSource, ChatServer::Tags const * pTags = nullptr);
+	void onPart(QString pSource, QString pMessage);
+	void onPrivmsg(QString pSource, ChatServer::Tags const & pTags, QString pMessage);
+
+	static QStringRef usernameFrom(QString pSource);
 
 	ChatServer::Ptr mServer;
+
+	// USERSTATE
+	QString mUserColor;
+	QString mUserDisplayName;
+	QVector<int> mUserEmoteSets;
+	bool mUserSub;
+	bool mUserTurbo;
+	QString mUserType;
+
+	// ROOMSTATE
+	QString mRoomLanguage;
+	bool mRoomR9K;
+	bool mRoomSlow;
+	bool mRoomSubsOnly;
 };
 
 } // namespace twitchtv3

@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QString>
+class ChannelChatter;
 class ChannelObject;
 
 namespace Ui
@@ -35,10 +36,15 @@ protected slots:
 	void on_btnOpenStream_clicked();
 	void on_btnOpenChat_clicked();
 	void on_btnCloseChat_clicked();
+	void on_btnChat_clicked();
 
 private slots:
 	void chatStateChanged();
 	void chatError(QString pMessage);
+	void chatterNew(ChannelChatter & pChatter);
+	void chatterChanged(ChannelChatter & pChatter);
+	void chatterLost(ChannelChatter & pChatter);
+	void chatMessage(ChannelChatter & pChatter, QString pMessage);
 
 private:
 	void updateFromChannel();

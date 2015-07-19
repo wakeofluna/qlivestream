@@ -23,6 +23,7 @@ Q_OBJECT
 
 public:
 	typedef QExplicitlySharedDataPointer<ChatServer> Ptr;
+	typedef QMap<QString,QString> Tags;
 
 	enum State
 	{
@@ -35,7 +36,7 @@ public:
 
 	struct RawMessage
 	{
-		QMap<QString,QString> tags;
+		Tags tags;
 		QString source;
 		QString command;
 		QStringList parameters;
@@ -48,6 +49,8 @@ public:
 	virtual ~ChatServer();
 
 	inline QString lastError() const { return mLastError; }
+
+	inline QString nickname() const { return mNickname; }
 
 	bool isAnonymous() const;
 	bool isConnected() const;
