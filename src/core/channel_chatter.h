@@ -8,12 +8,25 @@ class ChannelChat;
 class COREDLL ChannelChatter
 {
 public:
+	union Color
+	{
+		inline Color() : v(0) {}
+		inline bool isValid() const { return a != 0; }
+		inline bool operator== (Color const& c) const { return v == c.v; }
+		inline bool operator!= (Color const& c) const { return v != c.v; }
+
+		struct { quint8 b, g, r, a; };
+		quint32 v;
+	};
+
+public:
 	ChannelChatter(ChannelChat & pChannel, QString pName);
 	virtual ~ChannelChatter();
 
 	inline ChannelChat & channel() const { return mChannel; }
 	inline QString name() const { return mName; }
 	inline QString displayName() const { return !mDisplayName.isEmpty() ? mDisplayName : mName; }
+	inline Color color() const { return mColor; }
 
 	inline bool isSelf() const { return mIsSelf; }
 	inline bool isFollower() const { return mIsFollower; }
@@ -31,6 +44,7 @@ protected:
 	ChannelChat & mChannel;
 	QString mName;
 	QString mDisplayName;
+	Color mColor;
 	bool mIsSelf;
 	bool mIsFollower;
 	bool mIsSubscriber;

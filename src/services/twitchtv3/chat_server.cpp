@@ -310,6 +310,8 @@ void ChatServer::socketReady()
 		// Parse tags
 		if (lLine.startsWith('@'))
 		{
+			lLine = lLine.mid(1);
+
 			QStringRef lData = lLine.left(lLine.indexOf(' '));
 			lLine = lLine.mid(lData.length() + 1).trimmed();
 

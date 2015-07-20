@@ -8,6 +8,7 @@
 class ChannelChatter;
 class ChannelObject;
 template <typename T> class QList;
+template <typename T> class QVector;
 
 class COREDLL ChannelChat : public QObject
 {
@@ -21,6 +22,14 @@ public:
 		JOINED,
 		LEAVING
 	};
+
+	struct SmileyInfo
+	{
+		int from;
+		int to;
+		QString id;
+	};
+	typedef QVector<SmileyInfo> SmileyList;
 
 public:
 	explicit ChannelChat(ChannelObject & pChannel);
@@ -42,7 +51,7 @@ signals:
 	void chatterNew(ChannelChatter & pChatter);
 	void chatterChanged(ChannelChatter & pChatter);
 	void chatterLost(ChannelChatter & pChatter);
-	void chatMessage(ChannelChatter & pChatter, QString pMessage);
+	void chatMessage(ChannelChatter & pChatter, QString pMessage, SmileyList const & pSmilies);
 
 protected:
 	void setState(State pNewState);

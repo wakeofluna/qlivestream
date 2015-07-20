@@ -43,7 +43,8 @@ void ChatChannel::sendMessage(QString pMessage)
 
 	Q_ASSERT(mSelf != nullptr);
 
-	emit chatMessage(*mSelf, pMessage);
+	SmileyList lSmilies;
+	emit chatMessage(*mSelf, pMessage, lSmilies);
 }
 
 ChannelChatter * ChatChannel::findChatter(QStringRef pUsername, bool pOld) const
@@ -149,7 +150,8 @@ void ChatChannel::onPrivmsg(QString pSource, ChatServer::Tags const & pTags, QSt
 	else if (lChatter->updateFromTags(pTags))
 		emit chatterChanged(*lChatter);
 
-	emit chatMessage(*lChatter, pMessage);
+	SmileyList lSmilies;
+	emit chatMessage(*lChatter, pMessage, lSmilies);
 }
 
 QStringRef ChatChannel::usernameFrom(QString pSource)

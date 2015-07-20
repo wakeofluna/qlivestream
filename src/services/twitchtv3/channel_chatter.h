@@ -21,6 +21,7 @@ private:
 
 	inline void setSelf(bool pValue) { mIsSelf = pValue; }
 	inline void setOwner(bool pValue) { mIsOwner = pValue; }
+	static Color parseColor(QString pInput);
 
 	QString mUserType;
 };

@@ -3,6 +3,7 @@
 
 ChannelChatter::ChannelChatter(ChannelChat & pChannel, QString pName) : mChannel(pChannel), mName(pName)
 {
+	mColor.v = 0;
 	mIsSelf = false;
 	mIsFollower = false;
 	mIsSubscriber = false;

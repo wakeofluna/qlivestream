@@ -43,6 +43,10 @@ ChannelInfo::ChannelInfo(ChannelObject & pChannel, QWidget * parent) : QWidget(p
 
 ChannelInfo::~ChannelInfo()
 {
+	ChannelChat * lChat = mChannel.chat();
+	if (lChat != nullptr)
+		lChat->disconnectFromChat();
+
 	delete ui;
 }
 
@@ -93,7 +97,7 @@ void ChannelInfo::chatError(QString pMessage)
 
 void ChannelInfo::chatterNew(ChannelChatter & pChatter)
 {
-	ui->txtChat->append(QString("(%1 joined)").arg(pChatter.displayName()));
+	//ui->txtChat->append(QString("(%1 joined)").arg(pChatter.displayName()));
 }
 
 void ChannelInfo::chatterChanged(ChannelChatter & pChatter)
@@ -103,12 +107,16 @@ void ChannelInfo::chatterChanged(ChannelChatter & pChatter)
 
 void ChannelInfo::chatterLost(ChannelChatter & pChatter)
 {
-	ui->txtChat->append(QString("(%1 left)").arg(pChatter.displayName()));
+	//ui->txtChat->append(QString("(%1 left)").arg(pChatter.displayName()));
 }
 
-void ChannelInfo::chatMessage(ChannelChatter & pChatter, QString pMessage)
+void ChannelInfo::chatMessage(ChannelChatter & pChatter, QString pMessage, ChannelChat::SmileyList const & pSmilies)
 {
-	ui->txtChat->append(QString("%1: %2").arg(pChatter.displayName()).arg(pMessage));
+	ChannelChatter::Color lColor = pChatter.color();
+	QString lMessage = pMessage.replace('<', "&lt;").replace('>', "&gt;");
+
+	QString lText = QString("<font color='%1'><b>%2</b></font>: %3").arg(QColor(lColor.r, lColor.g, lColor.b).name()).arg(pChatter.displayName()).arg(lMessage);
+	ui->txtChat->append(lText);
 }
 
 void ChannelInfo::on_btnOpenChat_clicked()

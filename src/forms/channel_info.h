@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QString>
+#include "core/channel_chat.h"
 class ChannelChatter;
 class ChannelObject;
 
@@ -44,7 +45,7 @@ private slots:
 	void chatterNew(ChannelChatter & pChatter);
 	void chatterChanged(ChannelChatter & pChatter);
 	void chatterLost(ChannelChatter & pChatter);
-	void chatMessage(ChannelChatter & pChatter, QString pMessage);
+	void chatMessage(ChannelChatter & pChatter, QString pMessage, ChannelChat::SmileyList const & pSmilies);
 
 private:
 	void updateFromChannel();
