@@ -26,6 +26,8 @@ public:
 	explicit ChannelObject(Profile & pProfile);
 	virtual ~ChannelObject();
 
+	inline Profile & profile() const { return mProfile; }
+
 	inline QVariant id() const { return mId; }
 	inline QString name() const { return mName; }
 	inline QString displayName() const { return mDisplayName; }

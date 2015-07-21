@@ -4,6 +4,7 @@
 #include "core/channel_chat.h"
 #include "core/channel_object.h"
 #include "core/channel_chatter.h"
+#include "core/profile.h"
 
 #include <QDesktopServices>
 
@@ -17,6 +18,12 @@ ChannelInfo::ChannelInfo(ChannelObject & pChannel, QWidget * parent) : QWidget(p
 
 	setWindowTitle(mChannel.name());
 	ui->txtChannel->setText(mChannel.name());
+
+	if (mChannel.profile().level() == Profile::ANONYMOUS)
+	{
+		ui->txtMessage->setVisible(false);
+		ui->btnChat->setVisible(false);
+	}
 
 	ChannelChat * lChat = mChannel.chat();
 	if (lChat == nullptr)
@@ -77,6 +84,7 @@ void ChannelInfo::chatStateChanged()
 		case ChannelChat::JOINED:
 			ui->txtChat->setEnabled(true);
 			ui->txtMessage->setEnabled(true);
+			ui->lstChatUsers->setEnabled(true);
 			ui->btnChat->setEnabled(true);
 			ui->btnCloseChat->setEnabled(true);
 			ui->txtChat->append("Connected!");
@@ -85,6 +93,7 @@ void ChannelInfo::chatStateChanged()
 		case ChannelChat::LEAVING:
 			ui->btnCloseChat->setEnabled(false);
 			ui->btnChat->setEnabled(false);
+			ui->lstChatUsers->setEnabled(false);
 			ui->txtChat->append("Disconnecting...");
 			break;
 	}
