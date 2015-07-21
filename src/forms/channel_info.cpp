@@ -7,6 +7,7 @@
 #include "core/profile.h"
 
 #include <QDesktopServices>
+#include <QTime>
 
 namespace forms
 {
@@ -121,10 +122,16 @@ void ChannelInfo::chatterLost(ChannelChatter & pChatter)
 
 void ChannelInfo::chatMessage(ChannelChatter & pChatter, QString pMessage, ChannelChat::SmileyList const & pSmilies)
 {
+	QTime lNow = QTime::currentTime();
+
 	ChannelChatter::Color lColor = pChatter.color();
 	QString lMessage = pMessage.replace('<', "&lt;").replace('>', "&gt;");
 
-	QString lText = QString("<font color='%1'><b>%2</b></font>: %3").arg(QColor(lColor.r, lColor.g, lColor.b).name()).arg(pChatter.displayName()).arg(lMessage);
+	QString lText = QString("<font color='#666666'>[%1]</font> <font color='%2'><b>%3</b></font>: %4")
+			.arg(lNow.toString(Qt::SystemLocaleShortDate))
+			.arg(QColor(lColor.r, lColor.g, lColor.b).name())
+			.arg(pChatter.displayName())
+			.arg(lMessage);
 	ui->txtChat->append(lText);
 }
 
