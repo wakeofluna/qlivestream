@@ -52,7 +52,7 @@ ChannelInfo::ChannelInfo(ChannelObject & pChannel, QWidget * parent) : QWidget(p
 	if (!mChannel.isPartnered() || !mChannel.isEditor())
 		ui->frmSubscribers->hide();
 
-	mUpdateCounter = 0;
+	mUpdateCounter = -1;
 	mUpdateTimer = new QTimer(this);
 	mUpdateTimer->setInterval(10000);
 	mUpdateTimer->start();
@@ -148,6 +148,9 @@ void ChannelInfo::chatMessage(ChannelChatter & pChatter, QString pMessage, Chann
 
 void ChannelInfo::onUpdateTimer()
 {
+	if (++mUpdateCounter == 3)
+		mUpdateCounter = 0;
+
 	switch (mUpdateCounter)
 	{
 		case 0:
@@ -155,16 +158,19 @@ void ChannelInfo::onUpdateTimer()
 			break;
 
 		case 1:
-			mChannel.profile().getChannelFollowers(mChannel);
+			if ((mChannel.isOnline() && mChannel.isEditor()) || mChannel.numFollowers() == -1)
+			{
+				mChannel.profile().getChannelFollowers(mChannel);
+			}
 			break;
 
 		case 2:
-			mChannel.profile().getChannelSubscribers(mChannel);
-			mUpdateCounter = -1;
+			if ((mChannel.isOnline() && mChannel.isEditor()) || mChannel.numSubscribers() == -1)
+			{
+				mChannel.profile().getChannelSubscribers(mChannel);
+			}
 			break;
 	}
-
-	++mUpdateCounter;
 }
 
 void ChannelInfo::on_btnOpenChat_clicked()

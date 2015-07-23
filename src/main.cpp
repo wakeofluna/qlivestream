@@ -2,6 +2,8 @@
 #include "application.h"
 #include "forms/select_profile.h"
 #include <QDebug>
+#include <QSqlQuery>
+#include <QSqlError>
 
 namespace
 {
@@ -26,6 +28,11 @@ int main(int argc, char **argv)
 	catch (Exception & e)
 	{
 		qCritical() << "MAIN :" << e.title() << ':' << e.description();
+	}
+	catch (QSqlQuery & q)
+	{
+		qCritical() << "MAIN : Sql error on:" << q.lastQuery();
+		qCritical() << "Error:" << q.lastError().databaseText();
 	}
 	catch (QException & /*e*/)
 	{

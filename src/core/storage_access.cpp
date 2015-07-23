@@ -118,4 +118,91 @@ void StorageAccess::checkDatabaseStructure()
 		);
 		SQL_EXEC(q);
 	}
+
+	if (!lTables.contains("sessions"))
+	{
+		SQL_PREPARE(q,
+				"create table sessions ("
+				"id INTEGER PRIMARY KEY AUTOINCREMENT,"
+				"profile_id INTEGER REFERENCES profile (id) ON DELETE CASCADE ON UPDATE CASCADE,"
+				"started INTEGER,"
+				"finished INTEGER,"
+				"stream_title VARCHAR(200),"
+				"UNIQUE (profile_id, started)"
+				")"
+		);
+		SQL_EXEC(q);
+	}
+
+	if (!lTables.contains("statistics"))
+	{
+		SQL_PREPARE(q,
+				"create table statistics ("
+				"session_id INTEGER REFERENCES sessions (id) ON DELETE CASCADE ON UPDATE CASCADE,"
+				"current_time INTEGER,"
+				"total_subscribers INTEGER,"
+				"total_followers INTEGER,"
+				"total_viewers INTEGER,"
+				"total_chatters INTEGER,"
+				"num_lines_chatted INTEGER,"
+				"num_words_chatted INTEGER,"
+				"PRIMARY KEY (session_id, current_time)"
+				")"
+		);
+		SQL_EXEC(q);
+	}
+
+	if (!lTables.contains("followers"))
+	{
+		SQL_PREPARE(q,
+				"create table followers ("
+				"profile_id INTEGER REFERENCES profile (id) ON DELETE CASCADE ON UPDATE CASCADE,"
+				"created INTEGER,"
+				"name VARCHAR(32)"
+				")"
+		);
+		SQL_EXEC(q);
+
+		SQL_PREPARE(q, "create index followers_idx1 on followers (profile_id, created)");
+		SQL_EXEC(q);
+
+		SQL_PREPARE(q, "create index followers_idx2 on followers (profile_id, name, created)");
+		SQL_EXEC(q);
+	}
+
+	if (!lTables.contains("subscribers"))
+	{
+		SQL_PREPARE(q,
+				"create table subscribers ("
+				"profile_id INTEGER REFERENCES profile (id) ON DELETE CASCADE ON UPDATE CASCADE,"
+				"created INTEGER,"
+				"name VARCHAR(32)"
+				")"
+		);
+		SQL_EXEC(q);
+
+		SQL_PREPARE(q, "create index subscribers_idx1 on subscribers (profile_id, created)");
+		SQL_EXEC(q);
+
+		SQL_PREPARE(q, "create index subscribers_idx2 on subscribers (profile_id, name, created)");
+		SQL_EXEC(q);
+	}
+
+	if (!lTables.contains("chatters"))
+	{
+		SQL_PREPARE(q,
+				"create table chatters ("
+				"session_id INTEGER REFERENCES sessions (id) ON DELETE CASCADE ON UPDATE CASCADE,"
+				"name VARCHAR(32),"
+				"joined INTEGER,"
+				"parted INTEGER,"
+				"num_lines INTEGER,"
+				"num_highlights INTEGER"
+				")"
+		);
+		SQL_EXEC(q);
+
+		SQL_PREPARE(q, "create index chatters_idx1 on chatters (session_id, name, joined)");
+		SQL_EXEC(q);
+	}
 }

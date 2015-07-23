@@ -180,15 +180,12 @@ void Profile::getChannelStream(ChannelObject & pChannel)
 
 	throttledGet(lRequest, [this] (QNetworkReply & pReply)
 	{
-		twitchtv3::ServerReplySimple lReply(*this, pReply, "StreamInfo");
+		twitchtv3::ServerReplySimple lReply(*this, pReply, "ChannelStream");
 	});
 }
 
 void Profile::getChannelFollowers(ChannelObject & pChannel)
 {
-	if (!pChannel.isOnline())
-		return;
-
 	QUrl lUrl = krakenUrl(QString("/channels/%1/follows").arg(pChannel.name()));
 
 	QNetworkRequest lRequest = serviceRequest(false);
@@ -203,9 +200,6 @@ void Profile::getChannelFollowers(ChannelObject & pChannel)
 void Profile::getChannelSubscribers(ChannelObject & pChannel)
 {
 	if (!pChannel.isEditor() || !pChannel.isPartnered())
-		return;
-
-	if (!pChannel.isOnline() && pChannel.numSubscribers() != -1)
 		return;
 
 	QUrl lUrl = krakenUrl(QString("/channels/%1/subscriptions").arg(pChannel.name()));
