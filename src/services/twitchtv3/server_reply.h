@@ -27,7 +27,7 @@ protected:
 class ServerReplySimple : public ServerReply
 {
 public:
-	ServerReplySimple(Profile & pProfile, QNetworkReply & pReply, QString pTag = QString());
+	ServerReplySimple(Profile & pProfile, QNetworkReply & pReply, QString pTag);
 
 	inline QString tag() const override { return mTag; }
 	inline QVariantMap const & data() const { return mData; }

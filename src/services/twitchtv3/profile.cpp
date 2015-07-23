@@ -171,6 +171,56 @@ void Profile::getCategoryChannels(CategoryObject * pCategory, int pStart, int pL
 	pCallback(std::move(lList));
 }
 
+void Profile::getChannelStream(ChannelObject & pChannel)
+{
+	QUrl lUrl = krakenUrl(QString("/streams/%1").arg(pChannel.name()));
+
+	QNetworkRequest lRequest = serviceRequest(false);
+	lRequest.setUrl(lUrl);
+
+	throttledGet(lRequest, [this] (QNetworkReply & pReply)
+	{
+		twitchtv3::ServerReplySimple lReply(*this, pReply, "StreamInfo");
+	});
+}
+
+void Profile::getChannelFollowers(ChannelObject & pChannel)
+{
+	if (!pChannel.isOnline())
+		return;
+
+	QUrl lUrl = krakenUrl(QString("/channels/%1/follows").arg(pChannel.name()));
+
+	QNetworkRequest lRequest = serviceRequest(false);
+	lRequest.setUrl(lUrl);
+
+	throttledGet(lRequest, [this] (QNetworkReply & pReply)
+	{
+		twitchtv3::ServerReplySimple lReply(*this, pReply, "ChannelFollows");
+	});
+}
+
+void Profile::getChannelSubscribers(ChannelObject & pChannel)
+{
+	if (!pChannel.isEditor() || !pChannel.isPartnered())
+		return;
+
+	if (!pChannel.isOnline() && pChannel.numSubscribers() != -1)
+		return;
+
+	QUrl lUrl = krakenUrl(QString("/channels/%1/subscriptions").arg(pChannel.name()));
+
+	QNetworkRequest lRequest = serviceRequest(true);
+	lRequest.setUrl(lUrl);
+
+	throttledGet(lRequest, [this] (QNetworkReply & pReply)
+	{
+		twitchtv3::ServerReplySimple lReply(*this, pReply, "ChannelSubscriptions");
+
+		// status=422  message="%channel% does not have a subscription program"
+	});
+}
+
 ChannelObject * Profile::getChannelFor(QString pName)
 {
 	Channel * lChannel = new Channel(*this, pName);

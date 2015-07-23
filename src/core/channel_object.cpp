@@ -8,6 +8,7 @@ ChannelObject::ChannelObject(Profile & pProfile) : QObject(&pProfile), mProfile(
 {
 	mNumViews = -1;
 	mNumFollowers = -1;
+	mNumSubscribers = -1;
 	mDelay = -1;
 	mSelf = false;
 	mEditor = false;

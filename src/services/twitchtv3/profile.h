@@ -50,6 +50,9 @@ public:
 	void getTopCategories(int pStart, int pLimit, CategoryCallback && pCallback) override;
 	void getFollowedChannels(int pStart, int pLimit, ChannelCallback && pCallback) override;
 	void getCategoryChannels(CategoryObject * pCategory, int pStart, int pLimit, ChannelCallback && pCallback) override;
+	void getChannelStream(ChannelObject & pChannel) override;
+	void getChannelFollowers(ChannelObject & pChannel) override;
+	void getChannelSubscribers(ChannelObject & pChannel) override;
 	ChannelObject * getChannelFor(QString pName) override;
 
 	// Networking

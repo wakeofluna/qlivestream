@@ -35,6 +35,7 @@ public:
 	inline QUrl logoUrl() const { return mLogoUrl; }
 	inline int numViews() const { return mNumViews; }
 	inline int numFollowers() const { return mNumFollowers; }
+	inline int numSubscribers() const { return mNumSubscribers; }
 	inline int delay() const { return mDelay; }
 	inline bool isSelf() const { return mSelf; }
 	inline bool isEditor() const { return mEditor; }
@@ -71,6 +72,7 @@ protected:
 	QUrl     mLogoUrl;
 	int      mNumViews;
 	int      mNumFollowers;
+	int      mNumSubscribers;
 	int      mDelay;
 	bool     mSelf;
 	bool     mEditor;

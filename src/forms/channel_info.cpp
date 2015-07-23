@@ -8,6 +8,7 @@
 
 #include <QDesktopServices>
 #include <QTime>
+#include <QTimer>
 
 namespace forms
 {
@@ -47,6 +48,16 @@ ChannelInfo::ChannelInfo(ChannelObject & pChannel, QWidget * parent) : QWidget(p
 
 	connect(&mChannel, &ChannelObject::statsChanged, this, &ChannelInfo::updateFromChannel);
 	updateFromChannel();
+
+	if (!mChannel.isPartnered() || !mChannel.isEditor())
+		ui->frmSubscribers->hide();
+
+	mUpdateCounter = 0;
+	mUpdateTimer = new QTimer(this);
+	mUpdateTimer->setInterval(10000);
+	mUpdateTimer->start();
+	connect(mUpdateTimer, &QTimer::timeout, this, &ChannelInfo::onUpdateTimer);
+	onUpdateTimer();
 }
 
 ChannelInfo::~ChannelInfo()
@@ -133,6 +144,27 @@ void ChannelInfo::chatMessage(ChannelChatter & pChatter, QString pMessage, Chann
 			.arg(pChatter.displayName())
 			.arg(lMessage);
 	ui->txtChat->append(lText);
+}
+
+void ChannelInfo::onUpdateTimer()
+{
+	switch (mUpdateCounter)
+	{
+		case 0:
+			mChannel.profile().getChannelStream(mChannel);
+			break;
+
+		case 1:
+			mChannel.profile().getChannelFollowers(mChannel);
+			break;
+
+		case 2:
+			mChannel.profile().getChannelSubscribers(mChannel);
+			mUpdateCounter = -1;
+			break;
+	}
+
+	++mUpdateCounter;
 }
 
 void ChannelInfo::on_btnOpenChat_clicked()

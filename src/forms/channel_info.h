@@ -6,6 +6,7 @@
 #include "core/channel_chat.h"
 class ChannelChatter;
 class ChannelObject;
+class QTimer;
 
 namespace Ui
 {
@@ -46,12 +47,15 @@ private slots:
 	void chatterChanged(ChannelChatter & pChatter);
 	void chatterLost(ChannelChatter & pChatter);
 	void chatMessage(ChannelChatter & pChatter, QString pMessage, ChannelChat::SmileyList const & pSmilies);
+	void onUpdateTimer();
 
 private:
 	void updateFromChannel();
 
 	Ui::ChannelInfo * ui;
 	ChannelObject & mChannel;
+	QTimer * mUpdateTimer;
+	int mUpdateCounter;
 };
 
 } // namespace forms

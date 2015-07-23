@@ -55,7 +55,7 @@
    <item row="1" column="1">
     <layout class="QHBoxLayout" name="layChannelStats">
      <item>
-      <widget class="QFrame" name="frame">
+      <widget class="QFrame" name="frmSubscribers">
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
        </property>
@@ -93,7 +93,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QFrame" name="frame_2">
+      <widget class="QFrame" name="frmFollowers">
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
        </property>
@@ -131,7 +131,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QFrame" name="frame_3">
+      <widget class="QFrame" name="frmViewers">
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
        </property>
@@ -169,7 +169,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QFrame" name="frame_4">
+      <widget class="QFrame" name="frmViews">
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
        </property>
