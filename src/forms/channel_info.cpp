@@ -87,6 +87,7 @@ void ChannelInfo::chatStateChanged()
 	switch (lChat->state())
 	{
 		case ChannelChat::NONE:
+			ui->lstChatUsers->clear();
 			ui->btnOpenChat->setVisible(true);
 			ui->btnCloseChat->setVisible(false);
 			ui->txtChat->append("Disconnected!");
