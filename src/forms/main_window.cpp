@@ -5,6 +5,7 @@
 #include "core/profile.h"
 #include "core/category_object.h"
 #include "core/channel_object.h"
+#include "forms/category_channels.h"
 #include "forms/category_object_widget.h"
 #include "forms/channel_info.h"
 #include "forms/debug_network_messages.h"
@@ -70,9 +71,10 @@ void MainWindow::openCategoryTab(CategoryObject * pCategory)
 		}
 	}
 
-	QWidget * lWidget = new QWidget(this);
-	ui->tabWidget->addTab(lWidget, lTitle);
-	ui->tabWidget->setCurrentWidget(lWidget);
+	CategoryChannels * lCatChannels = new CategoryChannels(*pCategory, this);
+	connect(lCatChannels, &CategoryChannels::selected, this, &MainWindow::openChannelTab);
+	ui->tabWidget->addTab(lCatChannels, lCatChannels->windowTitle());
+	ui->tabWidget->setCurrentWidget(lCatChannels);
 }
 
 void MainWindow::openChannelTab(ChannelObject * pChannel)

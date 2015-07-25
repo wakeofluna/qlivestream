@@ -3,6 +3,8 @@
 #include "root.h"
 #include "channel.h"
 #include "chat_server.h"
+#include "game.h"
+#include "game_streams.h"
 #include "games_top.h"
 #include "user_follows_channels.h"
 #include "user_follows_games.h"
@@ -167,8 +169,29 @@ void Profile::getFollowedChannels(int pStart, int pLimit, ChannelCallback && pCa
 
 void Profile::getCategoryChannels(CategoryObject * pCategory, int pStart, int pLimit, ChannelCallback && pCallback)
 {
-	QList<ChannelObject*> lList;
-	pCallback(std::move(lList));
+	QUrlQuery lUrlQuery;
+	lUrlQuery.addQueryItem("query", pCategory->name());
+	lUrlQuery.addQueryItem("limit", QString::number(pLimit));
+	lUrlQuery.addQueryItem("offset", QString::number(pStart));
+
+	QUrl lUrl = krakenUrl("/search/streams");
+	lUrl.setQuery(lUrlQuery);
+
+	QNetworkRequest lRequest = serviceRequest(false);
+	lRequest.setUrl(lUrl);
+
+	throttledGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
+	{
+		QList<ChannelObject*> lList;
+
+		twitchtv3::GameStreams lChannels(*this, pReply);
+		if (lChannels.hasError())
+			mLastError = lChannels.lastError();
+		else
+			lList = lChannels.createList();
+
+		pCallback(std::move(lList));
+	});
 }
 
 void Profile::getChannelStream(ChannelObject & pChannel)
@@ -178,9 +201,13 @@ void Profile::getChannelStream(ChannelObject & pChannel)
 	QNetworkRequest lRequest = serviceRequest(false);
 	lRequest.setUrl(lUrl);
 
-	throttledGet(lRequest, [this] (QNetworkReply & pReply)
+	throttledGet(lRequest, [this, &pChannel] (QNetworkReply & pReply)
 	{
 		twitchtv3::ServerReplySimple lReply(*this, pReply, "ChannelStream");
+
+		QVariant lData = lReply.data().value("stream");
+		if (!lData.isNull())
+			static_cast<Channel&>(pChannel).updateFromVariant(lData);
 	});
 }
 

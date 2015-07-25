@@ -5,7 +5,7 @@
 #include "profile.h"
 #include "server_reply.h"
 
-#include <QDebug>
+#include <QDateTime>
 #include <QNetworkReply>
 #include <QJsonDocument>
 #include <QUrl>
@@ -132,6 +132,18 @@ void Channel::updateFromVariant(QVariant const & pValue)
 	bool lSelf = mName == mProfile.account();
 	mSelf = lSelf;
 	mEditor = lSelf;
+
+	if (lItem.contains("viewers"))
+	{
+		mOnlineSince = lItem.value("created_at").toDateTime();
+		mNumViewers = lItem.value("viewers").toInt();
+		mFPS = lItem.value("average_fps").toDouble();
+	}
+	else
+	{
+		mOnlineSince = QDateTime();
+		mNumViewers = -1;
+	}
 
 	emit statsChanged();
 }

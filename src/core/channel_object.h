@@ -3,6 +3,7 @@
 
 #include "config.h"
 #include <QObject>
+#include <QDateTime>
 #include <QString>
 #include <QUrl>
 #include <QVariant>
@@ -33,6 +34,7 @@ public:
 	inline QString displayName() const { return mDisplayName; }
 	inline QString status() const { return mStatus; }
 	inline QUrl logoUrl() const { return mLogoUrl; }
+	inline int numViewers() const { return mNumViewers; }
 	inline int numViews() const { return mNumViews; }
 	inline int numFollowers() const { return mNumFollowers; }
 	inline int numSubscribers() const { return mNumSubscribers; }
@@ -43,7 +45,7 @@ public:
 	inline bool isPartnered() const { return mPartnered; }
 	inline bool isFollowed() const { return mFollowed; }
 	inline QString category() const { return mCategory; }
-	inline bool isOnline() const { return !mCategory.isEmpty(); }
+	inline bool isOnline() const { return mNumViewers >= 0; }
 
 	virtual QString logoCacheString() const;
 	static QString logoCacheString(QString pTag);
@@ -62,7 +64,7 @@ signals:
 	void statsChanged();
 
 protected:
-	void setStats(int pFollowers, int pViews);
+	void setStats(int pFollowers, int pViews, int pViewers);
 
 	Profile & mProfile;
 	QVariant mId;
@@ -80,6 +82,10 @@ protected:
 	bool     mMature;
 	bool     mFollowed;
 	QString  mCategory;
+
+	QDateTime mOnlineSince;
+	int       mNumViewers;
+	double    mFPS;
 };
 
 #endif // CORE_CHANNEL_OBJECT_H_

@@ -11,6 +11,7 @@ set (HEADER_FILES
 	channel.h
 	chat_message.h
 	game.h
+	game_streams.h
 	games_top.h
 	root.h
 	server_reply.h
@@ -26,6 +27,7 @@ set (SOURCE_FILES
 	chat_message.cpp
 	chat_server.cpp
 	game.cpp
+	game_streams.cpp
 	games_top.cpp
 	main.cpp
 	profile.cpp

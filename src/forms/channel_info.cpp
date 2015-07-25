@@ -252,6 +252,7 @@ void ChannelInfo::updateFromChannel()
 	ui->chkPartner->setChecked(mChannel.isPartnered());
 	ui->lblNumFollowers->setText(QString::number(mChannel.numFollowers()));
 	ui->lblNumViews->setText(QString::number(mChannel.numViews()));
+	ui->lblNumViewers->setText(QString::number(mChannel.numViewers()));
 	ui->txtTitle->setText(mChannel.status());
 	ui->txtPlaying->setText(mChannel.category());
 	ui->chkMature->setChecked(mChannel.isMature());

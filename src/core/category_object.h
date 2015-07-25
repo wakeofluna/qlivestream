@@ -17,6 +17,9 @@ public:
 	explicit CategoryObject(Profile & pProfile);
 	virtual ~CategoryObject();
 
+	inline Profile const & profile() const { return mProfile; }
+	inline Profile & profile() { return mProfile; }
+
 	inline QVariant id() const { return mId; }
 	inline QString name() const { return mName; }
 	inline QUrl logoUrl() const { return mLogoUrl; }

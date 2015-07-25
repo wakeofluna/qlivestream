@@ -15,6 +15,9 @@ ChannelObject::ChannelObject(Profile & pProfile) : QObject(&pProfile), mProfile(
 	mPartnered = false;
 	mMature = false;
 	mFollowed = false;
+
+	mNumViewers = -1;
+	mFPS = 0;
 }
 
 ChannelObject::~ChannelObject()
@@ -42,17 +45,18 @@ bool ChannelObject::updateFrom(ChannelObject const & pOther)
 
 	ok &= pOther.mName == mName;
 	if (ok)
-		setStats(pOther.mNumFollowers, pOther.mNumViews);
+		setStats(pOther.mNumFollowers, pOther.mNumViews, pOther.mNumViewers);
 
 	return ok;
 }
 
-void ChannelObject::setStats(int pFollowers, int pViews)
+void ChannelObject::setStats(int pFollowers, int pViews, int pViewers)
 {
-	if (mNumFollowers != pFollowers || mNumViews != pViews)
+	if (mNumFollowers != pFollowers || mNumViews != pViews || mNumViewers != pViewers)
 	{
 		mNumViews = pViews;
 		mNumFollowers = pFollowers;
+		mNumViewers = pViewers;
 		emit statsChanged();
 	}
 }

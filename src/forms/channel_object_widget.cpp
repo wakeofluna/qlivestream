@@ -53,6 +53,11 @@ void ChannelObjectWidget::updateFromObject()
 	ui->lblStatus->setText(lStatus);
 	ui->lblCategory->setText(mChannel->category());
 	ui->lblFollowers->setText(QString::number(mChannel->numFollowers()));
+
+	int lNumViewers = mChannel->numViewers();
+	ui->lblViewersLabel->setVisible(lNumViewers >= 0);
+	ui->lblViewers->setVisible(lNumViewers >= 0);
+	ui->lblViewers->setText(QString::number(lNumViewers));
 }
 
 void ChannelObjectWidget::on_btnChannel_clicked()
