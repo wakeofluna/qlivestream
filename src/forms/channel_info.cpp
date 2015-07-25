@@ -106,7 +106,7 @@ void ChannelInfo::chatStateChanged()
 			ui->btnCloseChat->setEnabled(false);
 			ui->btnChat->setEnabled(false);
 			ui->lstChatUsers->setEnabled(false);
-			ui->txtChat->append("Disconnecting...");
+			//ui->txtChat->append("Disconnecting...");
 			break;
 	}
 }
@@ -118,32 +118,73 @@ void ChannelInfo::chatError(QString pMessage)
 
 void ChannelInfo::chatterNew(ChannelChatter & pChatter)
 {
-	//ui->txtChat->append(QString("(%1 joined)").arg(pChatter.displayName()));
+	//addChatMessage(QString("(%1 joined)").arg(pChatter.displayName()));
+	ui->lstChatUsers->addItem(pChatter.displayName());
+	ui->lstChatUsers->sortItems();
 }
 
 void ChannelInfo::chatterChanged(ChannelChatter & pChatter)
 {
+	for (int i = 0; i < ui->lstChatUsers->count(); ++i)
+	{
+		QListWidgetItem * lItem = ui->lstChatUsers->item(i);
+		QString lName = lItem->text();
+		if (lName.startsWith('#') || lName.startsWith('@') || lName.startsWith('*'))
+			lName = lName.mid(1);
 
+		if (lName.compare(pChatter.displayName(), Qt::CaseInsensitive) == 0)
+		{
+			QString lNew;
+
+			if (pChatter.isOwner())
+				lNew.append('#');
+			else if (pChatter.isModerator())
+				lNew.append('@');
+			else if (pChatter.isSelf())
+				lNew.append('*');
+
+			lNew.append(pChatter.displayName());
+			lItem->setText(lNew);
+			break;
+		}
+	}
+
+	ui->lstChatUsers->sortItems();
 }
 
 void ChannelInfo::chatterLost(ChannelChatter & pChatter)
 {
-	//ui->txtChat->append(QString("(%1 left)").arg(pChatter.displayName()));
+	//addChatMessage(QString("(%1 left)").arg(pChatter.displayName()));
+
+	QList<QListWidgetItem *> lRemove;
+	lRemove.reserve(1);
+
+	for (int i = 0; i < ui->lstChatUsers->count(); ++i)
+	{
+		QListWidgetItem * lItem = ui->lstChatUsers->item(i);
+		QString lName = lItem->text();
+		if (lName.startsWith('#') || lName.startsWith('@') || lName.startsWith('*'))
+			lName = lName.mid(1);
+
+		if (lName.compare(pChatter.displayName(), Qt::CaseInsensitive) == 0)
+			lRemove.append(lItem);
+	}
+
+	for (QListWidgetItem * lItem : lRemove)
+		delete lItem;
 }
 
 void ChannelInfo::chatMessage(ChannelChatter & pChatter, QString pMessage, ChannelChat::SmileyList const & pSmilies)
 {
-	QTime lNow = QTime::currentTime();
-
 	ChannelChatter::Color lColor = pChatter.color();
 	QString lMessage = pMessage.replace('<', "&lt;").replace('>', "&gt;");
 
-	QString lText = QString("<font color='#666666'>[%1]</font> <font color='%2'><b>%3</b></font>: %4")
-			.arg(lNow.toString(Qt::SystemLocaleShortDate))
+	QString lText = QString("<font color='%1'><b>%2</b></font>: %3")
 			.arg(QColor(lColor.r, lColor.g, lColor.b).name())
 			.arg(pChatter.displayName())
 			.arg(lMessage);
-	ui->txtChat->append(lText);
+
+	addChatMessage(lText);
 }
 
 void ChannelInfo::onUpdateTimer()
@@ -271,6 +312,17 @@ void ChannelInfo::updateFromChannel()
 	ui->sliDelay->setEnabled(lIsEditor);
 
 	ui->btnUpdate->setEnabled(false);
+}
+
+void ChannelInfo::addChatMessage(QString pMessage)
+{
+	QTime lNow = QTime::currentTime();
+
+	QString lText = QString("<font color='#666666'>[%1]</font> %2")
+			.arg(lNow.toString(Qt::SystemLocaleShortDate))
+			.arg(pMessage);
+
+	ui->txtChat->append(lText);
 }
 
 } // namespace forms

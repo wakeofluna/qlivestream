@@ -4,12 +4,6 @@
 ChannelChatter::ChannelChatter(ChannelChat & pChannel, QString pName) : mChannel(pChannel), mName(pName)
 {
 	mColor.v = 0;
-	mIsSelf = false;
-	mIsFollower = false;
-	mIsSubscriber = false;
-	mIsVeteran = false;
-	mIsModerator = false;
-	mIsOwner = false;
 }
 
 ChannelChatter::~ChannelChatter()
@@ -36,4 +30,22 @@ bool ChannelChatter::sortStatus(ChannelChatter const& lhs, ChannelChatter const&
 
 	return lhs < rhs;
 #undef TEST
+}
+
+bool ChannelChatter::setDisplayName(QString pName)
+{
+	if (mDisplayName != pName)
+		return false;
+
+	mDisplayName = pName;
+	return true;
+}
+
+bool ChannelChatter::setFlag(Flag pFlag, bool pEnabled)
+{
+	if (mFlags.test(pFlag) == pEnabled)
+		return false;
+
+	mFlags.set(pFlag, pEnabled);
+	return true;
 }

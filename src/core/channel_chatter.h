@@ -2,6 +2,7 @@
 #define CORE_CHANNEL_CHATTER_H_
 
 #include "config.h"
+#include "core/class_bitset.h"
 #include <QString>
 
 class ChannelChat;
@@ -19,6 +20,30 @@ public:
 		quint32 v;
 	};
 
+	struct Flag
+	{
+		enum Value
+		{
+			SELF,
+			OWNER,
+			FOLLOWER,
+			SUBSCRIBER,
+			VETERAN,
+			MODERATOR,
+			INVALID
+		};
+
+		typedef Value enum_type;
+		static const enum_type max = INVALID;
+
+		inline Flag() : mValue(INVALID) {}
+		inline Flag(Value pValue) : mValue(pValue) {}
+		inline operator Value() const { return mValue; }
+
+		Value mValue;
+	};
+	typedef ClassBitset<Flag> Flags;
+
 public:
 	ChannelChatter(ChannelChat & pChannel, QString pName);
 	virtual ~ChannelChatter();
@@ -28,12 +53,12 @@ public:
 	inline QString displayName() const { return !mDisplayName.isEmpty() ? mDisplayName : mName; }
 	inline Color color() const { return mColor; }
 
-	inline bool isSelf() const { return mIsSelf; }
-	inline bool isFollower() const { return mIsFollower; }
-	inline bool isSubscriber() const { return mIsSubscriber; }
-	inline bool isVeteran() const { return mIsVeteran; }
-	inline bool isModerator() const { return mIsModerator; }
-	inline bool isOwner() const { return mIsOwner; }
+	inline bool isSelf() const { return mFlags.test(Flag::SELF); }
+	inline bool isOwner() const { return mFlags.test(Flag::OWNER); }
+	inline bool isFollower() const { return mFlags.test(Flag::FOLLOWER); }
+	inline bool isSubscriber() const { return mFlags.test(Flag::SUBSCRIBER); }
+	inline bool isVeteran() const { return mFlags.test(Flag::VETERAN); }
+	inline bool isModerator() const { return mFlags.test(Flag::MODERATOR); }
 
 	inline bool operator== (ChannelChatter const& pOther) const { return mName == pOther.mName; }
 	inline bool operator!= (ChannelChatter const& pOther) const { return mName != pOther.mName; }
@@ -41,16 +66,16 @@ public:
 	static bool sortStatus(ChannelChatter const& lhs, ChannelChatter const& rhs);
 
 protected:
+	bool setDisplayName(QString pName);
+	bool setFlag(Flag pFlag, bool pEnabled);
+	inline bool addFlag(Flag pFlag) { return setFlag(pFlag, true); }
+	inline bool removeFlag(Flag pFlag) { return setFlag(pFlag, false); }
+
 	ChannelChat & mChannel;
 	QString mName;
 	QString mDisplayName;
 	Color mColor;
-	bool mIsSelf;
-	bool mIsFollower;
-	bool mIsSubscriber;
-	bool mIsVeteran;
-	bool mIsModerator;
-	bool mIsOwner;
+	Flags mFlags;
 };
 
 #endif // CORE_CHANNEL_CHATTER_H_

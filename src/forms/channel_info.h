@@ -51,6 +51,7 @@ private slots:
 
 private:
 	void updateFromChannel();
+	void addChatMessage(QString pMessage);
 
 	Ui::ChannelInfo * ui;
 	ChannelObject & mChannel;

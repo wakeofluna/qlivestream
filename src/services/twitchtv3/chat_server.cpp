@@ -485,6 +485,40 @@ void ChatServer::handleMessage(RawMessage const & pMessage)
 		}
 	}
 
+	else if (pMessage.command == QStringLiteral("MODE"))
+	{
+		ChatChannel * lChannel = findChannel(pMessage.parameters.value(0));
+		if (lChannel != nullptr)
+		{
+			QString pFlags = pMessage.parameters.value(1);
+
+			int m = 0;
+			int t = 2;
+
+			bool lAdd = true;
+			while (m < pFlags.length() && t < pMessage.parameters.length())
+			{
+				switch (pFlags[m++].toLatin1())
+				{
+					case '+':
+						lAdd = true;
+						break;
+
+					case '-':
+						lAdd = false;
+						break;
+
+					case 'o':
+						lChannel->onMode(pMessage.parameters.value(t++), lAdd, ChannelChatter::Flag::MODERATOR);
+						break;
+
+					default:
+						break;
+				}
+			}
+		}
+	}
+
 	else if (pMessage.command == QStringLiteral("USERSTATE"))
 	{
 		ChatChannel * lChannel = findChannel(pMessage.parameters.value(0));

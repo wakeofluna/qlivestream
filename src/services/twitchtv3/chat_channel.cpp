@@ -102,8 +102,8 @@ void ChatChannel::onJoin(QString pSource, ChatServer::Tags const * pTags)
 	else
 	{
 		lChatter = new ChannelChatter(*this, lUsername.toString());
-		lChatter->setSelf(lUsername == mServer->nickname());
-		lChatter->setOwner(lUsername == mChannel.name());
+		lChatter->setFlag(ChannelChatter::Flag::SELF, lUsername == mServer->nickname());
+		lChatter->setFlag(ChannelChatter::Flag::OWNER, lUsername == mChannel.name());
 
 		if (lChatter->isSelf())
 			mSelf = lChatter;
@@ -131,6 +131,16 @@ void ChatChannel::onPart(QString pSource, QString pMessage)
 	mChattersLeft.append(lChatter);
 
 	emit chatterLost(*lChatter);
+}
+
+void ChatChannel::onMode(QString pTarget, bool pAdd, ChannelChatter::Flag pFlag)
+{
+	ChannelChatter * lChatter = findChatter(pTarget.midRef(0));
+	if (lChatter == nullptr)
+		return;
+
+	if (lChatter->setFlag(pFlag, pAdd))
+		emit chatterChanged(*lChatter);
 }
 
 void ChatChannel::onPrivmsg(QString pSource, ChatServer::Tags const & pTags, QString pMessage)

@@ -3,12 +3,12 @@
 
 #include "core/channel_chat.h"
 #include "chat_server.h"
+#include "channel_chatter.h"
 
 namespace twitchtv3
 {
 
 class Channel;
-class ChannelChatter;
 class ChatChannel : public ::ChannelChat
 {
 Q_OBJECT
@@ -31,6 +31,7 @@ private:
 	void onRoomstate(ChatServer::Tags const & pTags);
 	void onJoin(QString pSource, ChatServer::Tags const * pTags = nullptr);
 	void onPart(QString pSource, QString pMessage);
+	void onMode(QString pTarget, bool pAdd, ChannelChatter::Flag pFlag);
 	void onPrivmsg(QString pSource, ChatServer::Tags const & pTags, QString pMessage);
 
 	static QStringRef usernameFrom(QString pSource);

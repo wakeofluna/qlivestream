@@ -29,17 +29,8 @@ bool ChannelChatter::updateFromTags(ChatServer::Tags const & pTags)
 		lChanged = true;
 	}
 
-	if (mIsSubscriber != lSubscriber)
-	{
-		mIsSubscriber = lSubscriber;
-		lChanged = true;
-	}
-
-	if (mIsVeteran != lTurbo)
-	{
-		mIsVeteran = lTurbo;
-		lChanged = true;
-	}
+	lChanged |= setFlag(Flag::SUBSCRIBER, lSubscriber);
+	lChanged |= setFlag(Flag::VETERAN, lTurbo);
 
 	if (mUserType != lUserType && !lUserType.isEmpty())
 	{

@@ -22,9 +22,9 @@ public:
 		return c.test(value(pos));
 	}
 
-	inline ClassBitset<T> & set(T pos)
+	inline ClassBitset<T> & set(T pos, bool val = true)
 	{
-		c.set(value(pos));
+		c.set(value(pos), val);
 		return *this;
 	}
 
