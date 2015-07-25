@@ -6,7 +6,10 @@
 #include "core/channel_chatter.h"
 #include "core/profile.h"
 
+#include <QDebug>
 #include <QDesktopServices>
+#include <QFile>
+#include <QProcess>
 #include <QTime>
 #include <QTimer>
 
@@ -51,6 +54,8 @@ ChannelInfo::ChannelInfo(ChannelObject & pChannel, QWidget * parent) : QWidget(p
 
 	if (!mChannel.isPartnered() || !mChannel.isEditor())
 		ui->frmSubscribers->hide();
+
+	mViewerProcess = nullptr;
 
 	mUpdateCounter = -1;
 	mUpdateTimer = new QTimer(this);
@@ -252,8 +257,37 @@ void ChannelInfo::on_btnUpdate_clicked()
 void ChannelInfo::on_btnOpenStream_clicked()
 {
 	// TODO check preferences
-	QUrl lUrl;
 
+	QString lProgram;
+
+	lProgram = "/usr/bin/livestreamer";
+	if (QFile::exists(lProgram))
+	{
+		if (mViewerProcess != nullptr && mViewerProcess->state() != QProcess::NotRunning)
+		{
+			qDebug() << "Viewer process still running!";
+			return;
+		}
+
+		delete mViewerProcess;
+		mViewerProcess = new QProcess(this);
+
+		QStringList lArguments;
+		lArguments << "--no-version-check";
+		lArguments << "--player" << "/usr/bin/mpv --untimed";
+		lArguments << "--player-passthrough" << "rtmp,hls";
+		lArguments << QString("http://www.twitch.tv/%1").arg(mChannel.name());
+		lArguments << "source,best";
+
+		mViewerProcess->setProcessChannelMode(QProcess::ForwardedChannels);
+		mViewerProcess->setProgram(lProgram);
+		mViewerProcess->setArguments(lArguments);
+		mViewerProcess->start();
+		return;
+	}
+
+	// Fallback to browser
+	QUrl lUrl;
 	lUrl = mChannel.getStreamUrl(ChannelObject::URL_STREAM_WEBSITE);
 	if (lUrl.isValid())
 		QDesktopServices::openUrl(lUrl);

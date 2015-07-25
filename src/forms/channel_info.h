@@ -6,6 +6,7 @@
 #include "core/channel_chat.h"
 class ChannelChatter;
 class ChannelObject;
+class QProcess;
 class QTimer;
 
 namespace Ui
@@ -55,6 +56,7 @@ private:
 
 	Ui::ChannelInfo * ui;
 	ChannelObject & mChannel;
+	QProcess * mViewerProcess;
 	QTimer * mUpdateTimer;
 	int mUpdateCounter;
 };
