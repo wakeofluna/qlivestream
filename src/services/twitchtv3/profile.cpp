@@ -170,11 +170,11 @@ void Profile::getFollowedChannels(int pStart, int pLimit, ChannelCallback && pCa
 void Profile::getCategoryChannels(CategoryObject * pCategory, int pStart, int pLimit, ChannelCallback && pCallback)
 {
 	QUrlQuery lUrlQuery;
-	lUrlQuery.addQueryItem("query", pCategory->name());
+	lUrlQuery.addQueryItem("game", pCategory->name());
 	lUrlQuery.addQueryItem("limit", QString::number(pLimit));
 	lUrlQuery.addQueryItem("offset", QString::number(pStart));
 
-	QUrl lUrl = krakenUrl("/search/streams");
+	QUrl lUrl = krakenUrl("/streams");
 	lUrl.setQuery(lUrlQuery);
 
 	QNetworkRequest lRequest = serviceRequest(false);
