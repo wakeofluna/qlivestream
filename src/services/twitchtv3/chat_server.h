@@ -53,6 +53,7 @@ public:
 	inline QString lastError() const { return mLastError; }
 
 	QString account() const;
+	QString token() const;
 	bool isAnonymous() const;
 	bool isConnected() const;
 
@@ -84,7 +85,6 @@ private:
 	ChannelChat * findChannel(QString pName) const;
 
 	Profile & mProfile;
-	QString mToken;
 	QString mNickname;
 	QTcpSocket * mSocket;
 	QString mLastError;

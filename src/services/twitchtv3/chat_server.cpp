@@ -63,6 +63,11 @@ QString ChatServer::account() const
 	return mProfile.account();
 }
 
+QString ChatServer::token() const
+{
+	return mProfile.token();
+}
+
 bool ChatServer::isAnonymous() const
 {
 	return !mProfile.hasScope(AuthScope::chat_login);
@@ -137,7 +142,7 @@ void ChatServer::socketStateChanged(QAbstractSocket::SocketState pState)
 
 				if (!isAnonymous())
 				{
-					sendRaw(QString("PASS oauth:%1\nUSER %2 - %3 :%2 using Qlivestream\nNICK %2").arg(mToken).arg(account()).arg(mSocket->peerName()));
+					sendRaw(QString("PASS oauth:%1\nUSER %2 - %3 :%2 using Qlivestream\nNICK %2").arg(token()).arg(account()).arg(mSocket->peerName()));
 				}
 				else
 				{
