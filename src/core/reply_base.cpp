@@ -1,13 +1,16 @@
-#include "config.h"
 #include "reply_base.h"
-#include "core/network_access.h"
 
+#include <qglobal.h>
 #include <QByteArray>
-#include <QNetworkReply>
+#include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QMap>
+#include <QNetworkReply>
+#include "i_profile.h"
 
-ReplyBase::ReplyBase(Profile & pProfile, QNetworkReply & pReply) : mProfile(pProfile), mReply(pReply), mNetworkError(0)
+
+ReplyBase::ReplyBase(IProfile & pProfile, QNetworkReply & pReply) : mProfile(pProfile), mReply(pReply), mNetworkError(0)
 {
 }
 
@@ -21,6 +24,7 @@ void ReplyBase::setError(QString pError)
 		qWarning() << "Communication error: " << pError;
 
 	mLastError = pError;
+	profile().setLastError(pError);
 }
 
 #define ERR(x,s) case QNetworkReply::x: setError(s); break

@@ -1,8 +1,10 @@
 #ifndef FORMS_EDIT_PROFILE_H_
 #define FORMS_EDIT_PROFILE_H_
 
-#include "core/profile_factory.h"
 #include <QDialog>
+#include <QString>
+
+#include "../core/profile_factory.h"
 
 class ConfigProfile;
 class QAbstractButton;

@@ -1,14 +1,14 @@
 #ifndef REPLIES_REPLY_BASE_H_
 #define REPLIES_REPLY_BASE_H_
 
-#include "config.h"
+#include <QMetaType>
 #include <QString>
-#include <QVariantMap>
 
-class Profile;
+#include "../config.h"
+
+class IProfile;
 class QByteArray;
 class QNetworkReply;
-
 
 class COREDLL ReplyBase
 {
@@ -21,10 +21,10 @@ public:
 	inline QString lastError() const { return mLastError; }
 	inline int networkError() const { return mNetworkError; }
 
-	inline Profile & profile() const { return mProfile; }
+	inline IProfile & profile() const { return mProfile; }
 
 protected:
-	ReplyBase(Profile & pProfile, QNetworkReply & pReply);
+	ReplyBase(IProfile & pProfile, QNetworkReply & pReply);
 
 	virtual void log() const = 0;
 
@@ -33,7 +33,7 @@ protected:
 	QVariantMap parseJsonReply();
 	QByteArray readByteArray();
 
-	Profile & mProfile;
+	IProfile & mProfile;
 	QNetworkReply & mReply;
 
 private:

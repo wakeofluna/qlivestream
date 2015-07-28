@@ -1,121 +1,59 @@
 #include "config.h"
 #include "category_channels.h"
 #include "ui_category_channels.h"
-#include "core/category_object.h"
-#include "core/channel_object.h"
-#include "core/profile.h"
 #include "forms/channel_object_widget.h"
 #include "forms/flowing_layout.h"
+#include "forms/form_helpers.h"
 
 #include <QScrollBar>
+
+#include "../core/i_category.h"
+#include "../core/i_channel.h"
+#include "../core/i_profile.h"
 
 namespace forms
 {
 
-CategoryChannels::CategoryChannels(CategoryObject & pCategory, QWidget * parent) : QWidget(parent), mCategory(pCategory)
+CategoryChannels::CategoryChannels(ICategory & pCategory, QWidget * parent) : QWidget(parent), mCategory(pCategory)
 {
 	ui = new Ui::CategoryChannels();
 	ui->setupUi(this);
-	ui->scrAreaContents->setLayout(new FlowingLayout(ui->scrAreaContents));
+	ui->scrAreaContents->setLayout(new FlowingLayout(ui->scrAreaContents, qobject_less<QWidget, ChannelObjectWidget>()));
 
 	setWindowTitle(mCategory.name());
 
 	connect(ui->btnRefresh, &QPushButton::clicked, this, &CategoryChannels::refresh);
 	connect(ui->scrArea->verticalScrollBar(), &QScrollBar::valueChanged, this, &CategoryChannels::checkRollup);
+	connect(&mCategory, &ICategory::channelsUpdated, this, &CategoryChannels::onChannelsUpdated);
 
-	mCanRollup = false;
-	refresh();
+	mCategory.resetChannels();
 }
 
 CategoryChannels::~CategoryChannels()
 {
+	qDeleteAll(mWidgets);
 	delete ui;
 }
 
 void CategoryChannels::refresh()
 {
-	clear();
-	rollup();
+	mCategory.resetChannels();
 }
 
 void CategoryChannels::rollup()
 {
-	Logger::StatusMessage lMessage("Fetching followed channels list ..");
-
-	mCanRollup = false;
-	mCategory.profile().getCategoryChannels(&mCategory, qMax(0, mChannels.count() - 5), 25, [this, lMessage] (QList<ChannelObject*> && pList)
-	{
-		mCanRollup = pList.count() >= 25;
-		addData(std::move(pList));
-	});
+	mCategory.rollupChannels();
 }
 
 void CategoryChannels::checkRollup(int pSliderValue)
 {
-	bool lRollup = true;
-	lRollup &= mCanRollup;
-	lRollup &= (pSliderValue + 200 >= ui->scrArea->verticalScrollBar()->maximum());
-
-	if (lRollup)
+	if (pSliderValue + 200 >= ui->scrArea->verticalScrollBar()->maximum())
 		rollup();
 }
 
-void CategoryChannels::clear()
+void CategoryChannels::onChannelsUpdated()
 {
-	qDeleteAll(mChannels);
-	mChannels.clear();
-
-	qDeleteAll(mWidgets);
-	mWidgets.clear();
-}
-
-void CategoryChannels::addData(QList<ChannelObject*> && pChannels)
-{
-	for (ChannelObject * lNew : pChannels)
-	{
-		bool lFound = false;
-		for (ChannelObject * lExisting : mChannels)
-			lFound |= lExisting->updateFrom(*lNew);
-
-		if (lFound)
-			delete lNew;
-		else
-			mChannels.append(lNew);
-	}
-
-	pChannels.clear();
-
-	for (ChannelObject * lObject : mChannels)
-	{
-		QLayout * lLayout = ui->scrAreaContents->layout();
-
-		bool lFound = false;
-		for (ChannelObjectWidget * lWidget : mWidgets)
-			lFound |= lWidget->object() == lObject;
-
-		if (!lFound)
-		{
-			ChannelObjectWidget * lWidget = new ChannelObjectWidget(lObject, this);
-			mWidgets.append(lWidget);
-
-			connect(lWidget, &ChannelObjectWidget::clicked, this, &CategoryChannels::selected);
-			lLayout->addWidget(lWidget);
-
-			if (lWidget->object()->logoUrl().isValid())
-				accessCache
-				(
-						lWidget->object()->logoCacheString(),
-						[this,lWidget] (CacheHitCallback && pCallback)
-						{
-							mCategory.profile().downloadLogo(lWidget->object()->logoUrl(), std::move(pCallback));
-						},
-						[lWidget] (QByteArray const & pData)
-						{
-							lWidget->setLogo(pData);
-						}
-				);
-		}
-	}
+	addToFlowLayout(category().channels(), mWidgets, ui->scrAreaContents->layout(), this, &CategoryChannels::selected);
 }
 
 } // namespace forms

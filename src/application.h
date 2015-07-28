@@ -32,12 +32,12 @@ public:
 	bool notify(QObject * receiver, QEvent * e) override;
 
 	QWidget * networkCaptureWindow() const override;
-	void logNetworkMessage(QString pTag, QVariant const & pMessage) override;
-	void logNetworkError(QString pTag, QString const & pError, QVariant const & pMessage = QVariant()) override;
+	void logNetworkMessage(QString const & pTag, QVariant const & pMessage) override;
+	void logNetworkError(QString const & pTag, QString const & pError, QVariant const & pMessage = QVariant()) override;
 
 	void pushStatusBar(QStatusBar * pStatusBar) override;
 	void popStatusBar(QStatusBar * pStatusBar) override;
-	void logStatusUpdate(int & pIdent, QString pMessage) override;
+	void logStatusUpdate(int & pIdent, QString const & pMessage) override;
 	void logStatusClear(int pIdent) override;
 
 private:

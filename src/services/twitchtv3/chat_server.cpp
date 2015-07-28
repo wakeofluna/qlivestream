@@ -1,13 +1,12 @@
 #include "config.h"
 #include "chat_server.h"
-#include "chat_channel.h"
 #include "channel.h"
-#include "profile.h"
-
 #include <QDateTime>
 #include <QHostInfo>
 #include <QTcpSocket>
 #include <QTimer>
+#include "channel_chat.h"
+#include "profile.h"
 
 static const int MAX_PENDING = 4;
 
@@ -23,7 +22,7 @@ QStringRef ChatServer::RawMessage::username() const
 	return source.leftRef(lAt);
 }
 
-ChatServer::ChatServer()
+ChatServer::ChatServer(Profile & pProfile) : mProfile(pProfile)
 {
 	mState = NONE;
 	mSocket = new QTcpSocket();
@@ -59,22 +58,19 @@ ChatServer::~ChatServer()
 		mSocket->deleteLater();
 }
 
+QString ChatServer::account() const
+{
+	return mProfile.account();
+}
+
 bool ChatServer::isAnonymous() const
 {
-	return mAccount.isEmpty();
+	return !mProfile.hasScope(AuthScope::chat_login);
 }
 
 bool ChatServer::isConnected() const
 {
 	return mState == CONNECTED;
-}
-
-void ChatServer::setLogin(QString pAccount, QString pToken)
-{
-	Q_ASSERT(mState == NONE);
-
-	mAccount = pAccount;
-	mToken = pToken;
 }
 
 void ChatServer::connectToServer()
@@ -139,17 +135,17 @@ void ChatServer::socketStateChanged(QAbstractSocket::SocketState pState)
 			{
 				setState(AUTHENTICATING);
 
-				if (mAccount.isEmpty())
+				if (!isAnonymous())
+				{
+					sendRaw(QString("PASS oauth:%1\nUSER %2 - %3 :%2 using Qlivestream\nNICK %2").arg(mToken).arg(account()).arg(mSocket->peerName()));
+				}
+				else
 				{
 					qsrand(QDateTime::currentDateTime().toTime_t());
 					int lNum = qrand() % 1000000;
 
 					QString lNickname = QString("justinfan%1").arg(lNum, 6, 10, QChar('0'));
 					sendRaw(QString("USER guest - %2 :Anonymous user using Qlivestream\nNICK %1").arg(lNickname).arg(mSocket->peerName()));
-				}
-				else
-				{
-					sendRaw(QString("PASS oauth:%3\nUSER %1 - %2 :%1 using Qlivestream\nNICK %1").arg(mAccount).arg(mSocket->peerName()).arg(mToken));
 				}
 			}
 			break;
@@ -182,68 +178,60 @@ void ChatServer::socketError(QAbstractSocket::SocketError pError)
 	mLastError = QString("Socket error #%1").arg((int)pError);
 }
 
-void ChatServer::joinChannel(ChatChannel * pChannel)
+void ChatServer::joinChannel(ChannelChat & pChannel)
 {
-	Q_ASSERT(pChannel != nullptr);
-
-	if (mChannels.contains(pChannel))
+	if (mChannels.contains(&pChannel))
 		return;
 
-	Q_ASSERT(pChannel->state() == ChatChannel::NONE);
+	Q_ASSERT(pChannel.state() == ChannelChat::NONE);
 
-	mChannels.append(pChannel);
+	mChannels.append(&pChannel);
 
 	if (mState == CONNECTED)
 	{
-		sendRaw(QString("JOIN #%1").arg(pChannel->name()));
+		sendRaw(QString("JOIN #%1").arg(pChannel.name()));
 	}
 	else
 	{
 		connectToServer();
 	}
 
-	pChannel->setState(ChatChannel::JOINING);
+	pChannel.setState(ChannelChat::JOINING);
 }
 
-void ChatServer::leaveChannel(ChatChannel * pChannel, QString pMessage)
+void ChatServer::leaveChannel(ChannelChat & pChannel, QString pMessage)
 {
-	Q_ASSERT(pChannel != nullptr);
-
-	if (!mChannels.contains(pChannel))
+	if (!mChannels.contains(&pChannel))
 		return;
 
-	Q_ASSERT(pChannel->state() != ChatChannel::NONE);
+	Q_ASSERT(pChannel.state() != ChannelChat::NONE);
 
-	if (pChannel->state() == ChatChannel::JOINED)
+	if (pChannel.state() == ChannelChat::JOINED)
 	{
 		if (pMessage.isEmpty())
-			sendRaw(QString("PART #%1").arg(pChannel->name()));
+			sendRaw(QString("PART #%1").arg(pChannel.name()));
 		else
-			sendRaw(QString("PART #%1 :%2").arg(pChannel->name()).arg(pMessage));
+			sendRaw(QString("PART #%1 :%2").arg(pChannel.name()).arg(pMessage));
 	}
 
-	pChannel->setState(ChatChannel::LEAVING);
+	pChannel.setState(ChannelChat::LEAVING);
 }
 
-void ChatServer::removeChannel(ChatChannel * pChannel)
+void ChatServer::removeChannel(ChannelChat & pChannel)
 {
-	Q_ASSERT(pChannel != nullptr);
-
-	if (!mChannels.contains(pChannel))
+	if (!mChannels.contains(&pChannel))
 		return;
 
-	Q_ASSERT(pChannel->state() != ChatChannel::NONE);
+	Q_ASSERT(pChannel.state() != ChannelChat::NONE);
 
-	ChatChannel::State lState = pChannel->state();
-
-	if (lState == ChatChannel::JOINED)
+	if (pChannel.state() == ChannelChat::JOINED)
 	{
-		sendRaw(QString("PART #%1").arg(pChannel->name()));
-		pChannel->setState(ChatChannel::LEAVING);
+		sendRaw(QString("PART #%1").arg(pChannel.name()));
+		pChannel.setState(ChannelChat::LEAVING);
 	}
 
-	pChannel->setState(ChatChannel::NONE);
-	mChannels.removeAll(pChannel);
+	pChannel.setState(ChannelChat::NONE);
+	mChannels.removeAll(&pChannel);
 }
 
 void ChatServer::sendRaw(QString pMessage)
@@ -432,7 +420,7 @@ void ChatServer::handleMessage(RawMessage const & pMessage)
 		sendRaw("CAP REQ :twitch.tv/membership");
 		sendRaw("CAP REQ :twitch.tv/commands");
 
-		for (ChatChannel * lChannel : mChannels)
+		for (ChannelChat * lChannel : mChannels)
 			sendRaw(QString("JOIN #%1").arg(lChannel->name()));
 	}
 
@@ -440,16 +428,16 @@ void ChatServer::handleMessage(RawMessage const & pMessage)
 	{
 		bool lSelf = (pMessage.username() == mNickname);
 
-		ChatChannel * lChannel = findChannel(pMessage.parameters.value(0));
+		ChannelChat * lChannel = findChannel(pMessage.parameters.value(0));
 		if (lChannel != nullptr)
 		{
 			if (lSelf)
 			{
-				if (lChannel->state() == ChatChannel::LEAVING)
+				if (lChannel->state() == ChannelChat::LEAVING)
 					sendRaw(QString("PART #%1").arg(lChannel->name()));
 				else
 				{
-					lChannel->setState(ChatChannel::JOINED);
+					lChannel->setState(ChannelChat::JOINED);
 					lChannel->onJoin(pMessage.source);
 				}
 			}
@@ -462,14 +450,14 @@ void ChatServer::handleMessage(RawMessage const & pMessage)
 	{
 		bool lSelf = (pMessage.username() == mNickname);
 
-		ChatChannel * lChannel = findChannel(pMessage.parameters.value(0));
+		ChannelChat * lChannel = findChannel(pMessage.parameters.value(0));
 		if (lChannel != nullptr)
 		{
 			lChannel->onPart(pMessage.source, pMessage.parameters.value(1));
 			if (lSelf)
 			{
 				mChannels.removeAll(lChannel);
-				lChannel->setState(ChatChannel::NONE);
+				lChannel->setState(ChannelChat::NONE);
 			}
 		}
 	}
@@ -479,7 +467,7 @@ void ChatServer::handleMessage(RawMessage const & pMessage)
 		QString lTarget = pMessage.parameters.value(0);
 		if (lTarget.startsWith('#'))
 		{
-			ChatChannel * lChannel = findChannel(pMessage.parameters.value(0));
+			ChannelChat * lChannel = findChannel(pMessage.parameters.value(0));
 			if (lChannel != nullptr)
 				lChannel->onPrivmsg(pMessage.source, pMessage.tags, pMessage.parameters.value(1));
 		}
@@ -487,7 +475,7 @@ void ChatServer::handleMessage(RawMessage const & pMessage)
 
 	else if (pMessage.command == QStringLiteral("MODE"))
 	{
-		ChatChannel * lChannel = findChannel(pMessage.parameters.value(0));
+		ChannelChat * lChannel = findChannel(pMessage.parameters.value(0));
 		if (lChannel != nullptr)
 		{
 			QString pFlags = pMessage.parameters.value(1);
@@ -509,7 +497,7 @@ void ChatServer::handleMessage(RawMessage const & pMessage)
 						break;
 
 					case 'o':
-						lChannel->onMode(pMessage.parameters.value(t++), lAdd, ChannelChatter::Flag::MODERATOR);
+						lChannel->onMode(pMessage.parameters.value(t++), lAdd, ChannelUser::Flag::MODERATOR);
 						break;
 
 					default:
@@ -521,14 +509,14 @@ void ChatServer::handleMessage(RawMessage const & pMessage)
 
 	else if (pMessage.command == QStringLiteral("USERSTATE"))
 	{
-		ChatChannel * lChannel = findChannel(pMessage.parameters.value(0));
+		ChannelChat * lChannel = findChannel(pMessage.parameters.value(0));
 		if (lChannel != nullptr)
 			lChannel->onUserstate(pMessage.tags);
 	}
 
 	else if (pMessage.command == QStringLiteral("ROOMSTATE"))
 	{
-		ChatChannel * lChannel = findChannel(pMessage.parameters.value(0));
+		ChannelChat * lChannel = findChannel(pMessage.parameters.value(0));
 		if (lChannel != nullptr)
 			lChannel->onRoomstate(pMessage.tags);
 	}
@@ -536,12 +524,12 @@ void ChatServer::handleMessage(RawMessage const & pMessage)
 	emit newMessage(pMessage);
 }
 
-ChatChannel * ChatServer::findChannel(QString pName) const
+ChannelChat * ChatServer::findChannel(QString pName) const
 {
 	QString lName = pName.mid(1).toLower();
 
 	auto i = std::find_if(mChannels.begin(), mChannels.end(),
-					[&lName] (ChatChannel * lChannel) -> bool { return lChannel->channel().name().toLower() == lName; });
+					[&lName] (ChannelChat * lChannel) -> bool { return lChannel->name().toLower() == lName; });
 
 	if (i != mChannels.end())
 		return *i;

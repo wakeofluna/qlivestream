@@ -16,7 +16,7 @@ namespace
 	QSqlDatabase mStorageDatabase;
 }
 
-void StorageAccess::accessCache(QString const & pCacheString, CacheMissCallback && pMiss, CacheHitCallback && pHit)
+void StorageAccess::accessCache(QString const & pCacheString, CacheMissCallback && pMiss, DataCallback && pHit)
 {
 	QByteArray lData;
 	if (fromCache(pCacheString, lData))

@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-class Profile;
+class IProfile;
 class QAbstractButton;
 
 namespace Ui
@@ -21,7 +21,7 @@ class SubPanelAcquire : public QWidget
 Q_OBJECT
 
 public:
-	SubPanelAcquire(Profile & pProfile, QWidget * parent);
+	SubPanelAcquire(IProfile & pProfile, QWidget * parent);
 	~SubPanelAcquire();
 
 private slots:
@@ -33,7 +33,7 @@ signals:
 	void onSetToken(QString pToken);
 
 private:
-	Profile & mProfile;
+	IProfile & mProfile;
 	Ui::PerformLoginAcquire * ui;
 };
 
@@ -62,7 +62,7 @@ class SubPanelInvalid : public QWidget
 Q_OBJECT
 
 public:
-	SubPanelInvalid(Profile & pProfile, QWidget * parent);
+	SubPanelInvalid(IProfile & pProfile, QWidget * parent);
 	~SubPanelInvalid();
 
 private slots:
@@ -74,7 +74,7 @@ signals:
 	void retry();
 
 private:
-	Profile & mProfile;
+	IProfile & mProfile;
 	Ui::PerformLoginInvalid * ui;
 };
 

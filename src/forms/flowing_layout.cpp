@@ -19,6 +19,11 @@ FlowingLayout::FlowingLayout(QWidget * parent) : QLayout(parent)
 	setSizeConstraint(SetMinimumSize);
 }
 
+FlowingLayout::FlowingLayout(QWidget * parent, Sorter && pSorter) : FlowingLayout(parent)
+{
+	mSorter = std::move(pSorter);
+}
+
 FlowingLayout::~FlowingLayout()
 {
 	clear(false);
@@ -151,6 +156,16 @@ void FlowingLayout::clear(bool pDeleteWidgets)
 
 	mCurrentRows = 0;
 	mCurrentColumns = 0;
+}
+
+void FlowingLayout::setSorter(Sorter && pSorter)
+{
+	mSorter = std::move(pSorter);
+}
+
+void FlowingLayout::sort()
+{
+	sort(mSorter);
 }
 
 void FlowingLayout::sort(Sorter const & pSorter)

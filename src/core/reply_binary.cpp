@@ -1,8 +1,9 @@
-#include "config.h"
 #include "reply_binary.h"
+
+#include <QVariant>
 #include "logger.h"
 
-ReplyBinary::ReplyBinary(Profile & pProfile, QNetworkReply & pReply, QString pTag) : ReplyBase(pProfile, pReply), mTag(pTag)
+ReplyBinary::ReplyBinary(IProfile & pProfile, QNetworkReply & pReply, QString pTag) : ReplyBase(pProfile, pReply), mTag(pTag)
 {
 	if (!checkNetworkStatus())
 		return;

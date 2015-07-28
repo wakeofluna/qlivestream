@@ -1,14 +1,16 @@
 #ifndef SERVICES_REPLY_BINARY_H_
 #define SERVICES_REPLY_BINARY_H_
 
-#include "config.h"
-#include "reply_base.h"
 #include <QByteArray>
+#include <QString>
+#include "reply_base.h"
+
+#include "../config.h"
 
 class COREDLL ReplyBinary : public ReplyBase
 {
 public:
-	ReplyBinary(Profile & pProfile, QNetworkReply & pReply, QString pTag);
+	ReplyBinary(IProfile & pProfile, QNetworkReply & pReply, QString pTag);
 	~ReplyBinary();
 
 	QString tag() const override;

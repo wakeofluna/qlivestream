@@ -4,7 +4,7 @@
 #include "core/network_access.h"
 #include <QDialog>
 
-class Profile;
+class IProfile;
 
 namespace Ui
 {
@@ -19,7 +19,7 @@ class PerformLogin : public QDialog, protected NetworkAccess
 Q_OBJECT
 
 public:
-	explicit PerformLogin(Profile & pProfile, QWidget * parent = 0);
+	explicit PerformLogin(IProfile & pProfile, QWidget * parent = 0);
 	~PerformLogin();
 
 protected:
@@ -33,7 +33,7 @@ private:
 private:
 	Ui::PerformLogin * ui;
 
-	Profile & mProfile;
+	IProfile & mProfile;
 	int mStep;
 	QWidget * mSubPanel;
 };

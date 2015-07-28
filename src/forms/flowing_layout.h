@@ -15,6 +15,7 @@ public:
 
 public:
 	explicit FlowingLayout(QWidget * parent);
+	explicit FlowingLayout(QWidget * parent, Sorter && pSorter);
 	~FlowingLayout();
 
 	// Overrides QLayout
@@ -44,6 +45,9 @@ public:
     void setAnimated(bool pAnimated);
 
 	void clear(bool pDeleteWidgets = false);
+
+	void setSorter(Sorter && pSorter);
+	void sort();
 	void sort(Sorter const & pSorter);
 
 protected:
@@ -60,6 +64,8 @@ protected:
 
 	QAnimationGroup * mAnimationGroup;
 	bool mAnimated;
+
+	Sorter mSorter;
 };
 
 #endif // CORE_FLOWING_LAYOUT_H_

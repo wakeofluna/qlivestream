@@ -1,161 +1,64 @@
 #include "config.h"
 #include "main_window_categories.h"
 #include "ui_main_window_categories.h"
-#include "core/category_object.h"
-#include "core/profile.h"
 #include "forms/flowing_layout.h"
 #include "forms/category_object_widget.h"
+#include "forms/form_helpers.h"
 #include "misc.h"
 
 #include <algorithm>
 #include <QScrollBar>
 
+#include "../core/i_category.h"
+#include "../core/i_profile.h"
+
 namespace forms
 {
 
-MainWindowCategories::MainWindowCategories(Profile & pProfile, QWidget * parent) : QWidget(parent), mProfile(pProfile)
+MainWindowCategories::MainWindowCategories(IProfile & pProfile, QWidget * parent) : QWidget(parent), mProfile(pProfile)
 {
 	ui = new Ui::MainWindowCategories();
 	ui->setupUi(this);
 
-	ui->grpFavourite->setLayout(new FlowingLayout(ui->grpFavourite));
-	ui->grpAll->setLayout(new FlowingLayout(ui->grpAll));
+	ui->grpFavourite->setLayout(new FlowingLayout(ui->grpFavourite, qobject_less<QWidget, CategoryObjectWidget>()));
+	ui->grpAll->setLayout(new FlowingLayout(ui->grpAll, qobject_less<QWidget, CategoryObjectWidget>()));
 
 	connect(ui->btnRefresh, &QPushButton::clicked, this, &MainWindowCategories::refresh);
 	connect(ui->scrArea->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindowCategories::checkRollup);
+	connect(&mProfile, &IProfile::followedCategoriesUpdated, this, &MainWindowCategories::onCategoriesUpdated);
+	connect(&mProfile, &IProfile::topCategoriesUpdated, this, &MainWindowCategories::onCategoriesUpdated);
 
-	mCanRollup = false;
-	refresh();
+	mProfile.resetFollowedCategories();
+	mProfile.resetTopCategories();
 }
 
 MainWindowCategories::~MainWindowCategories()
 {
 	qDeleteAll(mTop);
 	qDeleteAll(mFavourite);
-	qDeleteAll(mCategories);
 	delete ui;
 }
 
 void MainWindowCategories::refresh()
 {
-	clear();
-
-	Logger::StatusMessage lMessage("Fetching followed categories list ..");
-	mProfile.getFollowedCategories(0, 50, [this, lMessage] (QList<CategoryObject*> && pList)
-	{
-		addData(std::move(pList));
-		rollup();
-	});
+	mProfile.resetTopCategories();
 }
 
 void MainWindowCategories::rollup()
 {
-	Logger::StatusMessage lMessage("Fetching top categories list ..");
-
-	mCanRollup = false;
-	mProfile.getTopCategories(qMax(0, mTop.count() - 5), 25, [this, lMessage] (QList<CategoryObject*> && pList)
-	{
-		mCanRollup = pList.count() >= 25;
-		addData(std::move(pList));
-	});
+	mProfile.rollupTopCategories();
 }
 
 void MainWindowCategories::checkRollup(int pSliderValue)
 {
-	bool lRollup = true;
-	lRollup &= mCanRollup;
-	lRollup &= (pSliderValue + 200 >= ui->scrArea->verticalScrollBar()->maximum());
-
-	if (lRollup)
+	if (pSliderValue + 200 >= ui->scrArea->verticalScrollBar()->maximum())
 		rollup();
 }
 
-void MainWindowCategories::clear()
+void MainWindowCategories::onCategoriesUpdated()
 {
-	qDeleteAll(mTop);
-	mTop.clear();
-
-	for (CategoryObject *& pObject : mCategories)
-	{
-		if (pObject->followed())
-		{
-			pObject->clear();
-		}
-		else
-		{
-			delete pObject;
-			pObject = nullptr;
-		}
-	};
-
-	auto lEnd = std::remove(mCategories.begin(), mCategories.end(), nullptr);
-	mCategories.erase(lEnd, mCategories.end());
-}
-
-void MainWindowCategories::addData(QList<CategoryObject*> && pCategories)
-{
-	for (CategoryObject * lNew : pCategories)
-	{
-		bool lFound = false;
-		for (CategoryObject * lExisting : mCategories)
-			lFound |= lExisting->updateFrom(*lNew);
-
-		if (lFound)
-			delete lNew;
-		else
-			mCategories.append(lNew);
-	}
-
-	pCategories.clear();
-
-	for (CategoryObject * lObject : mCategories)
-		if (lObject->followed())
-			addToList(true, lObject);
-
-	for (CategoryObject * lObject : mCategories)
-		addToList(false, lObject);
-
-	FlowingLayout * lLayout;
-	lLayout = qobject_cast<FlowingLayout*>(ui->grpFavourite->layout());
-	if (lLayout != nullptr)
-		lLayout->sort(qobject_less<QWidget, CategoryObjectWidget>());
-
-	lLayout = qobject_cast<FlowingLayout*>(ui->grpAll->layout());
-	if (lLayout != nullptr)
-		lLayout->sort(qobject_less<QWidget, CategoryObjectWidget>());
-}
-
-void MainWindowCategories::addToList(bool pFavourite, CategoryObject * pCategory)
-{
-	auto & lList = (pFavourite ? mFavourite : mTop);
-	auto * lLayout = (pFavourite ? ui->grpFavourite->layout() : ui->grpAll->layout());
-
-	bool lFound = false;
-	for (CategoryObjectWidget * lWidget : lList)
-		lFound |= lWidget->object() == pCategory;
-
-	if (!lFound)
-	{
-		CategoryObjectWidget * lWidget = new CategoryObjectWidget(pCategory, this);
-		lList.append(lWidget);
-
-		connect(lWidget, &CategoryObjectWidget::clicked, this, &MainWindowCategories::selected);
-		lLayout->addWidget(lWidget);
-
-		if (lWidget->object()->logoUrl().isValid())
-			accessCache
-			(
-					lWidget->object()->logoCacheString(),
-					[this,lWidget] (CacheHitCallback && pCallback)
-					{
-						mProfile.downloadLogo(lWidget->object()->logoUrl(), std::move(pCallback));
-					},
-					[lWidget] (QByteArray const & pData)
-					{
-						lWidget->setLogo(pData);
-					}
-			);
-	}
+	addToFlowLayout(mProfile.followedCategories(), mFavourite, ui->grpFavourite->layout(), this, &MainWindowCategories::selected);
+	addToFlowLayout(mProfile.topCategories(), mTop, ui->grpAll->layout(), this, &MainWindowCategories::selected);
 }
 
 } // namespace forms

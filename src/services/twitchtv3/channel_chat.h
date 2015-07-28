@@ -1,50 +1,51 @@
-#ifndef SERVICES_TWITCHTV3_CHAT_CHANNEL_H_
-#define SERVICES_TWITCHTV3_CHAT_CHANNEL_H_
+#ifndef SERVICES_TWITCHTV3_CHANNEL_CHAT_H_
+#define SERVICES_TWITCHTV3_CHANNEL_CHAT_H_
 
-#include "core/channel_chat.h"
+#include <QString>
+#include <QVector>
+#include "channel_user.h"
 #include "chat_server.h"
-#include "channel_chatter.h"
+
+#include "../../core/i_channel_chat.h"
+#include "../../core/i_channel_user.h"
 
 namespace twitchtv3
 {
 
 class Channel;
-class ChatChannel : public ::ChannelChat
+class ChannelChat : public IChannelChat
 {
-Q_OBJECT
-
 public:
-	ChatChannel(Channel & pChannel, ChatServer::Ptr pServer);
-	~ChatChannel();
+	ChannelChat(Channel & pChannel, ChatServer::Ptr pServer);
+	~ChannelChat();
 
+	Profile & profile() const;
+	User & owner() const;
 	Channel & channel() const;
+	QString name() const;
 
 	void connectToChat() override;
 	void disconnectFromChat(QString pMessage) override;
 	void sendMessage(QString pMessage) override;
 
-	ChannelChatter * findChatter(QStringRef pUsername, bool pOld = false) const;
+	ChannelUser * findChatter(QStringRef pUsername, bool pCreate = true) const;
 
 private:
 	friend class ChatServer;
 	void onUserstate(ChatServer::Tags const & pTags);
 	void onRoomstate(ChatServer::Tags const & pTags);
-	void onJoin(QString pSource, ChatServer::Tags const * pTags = nullptr);
+	void onJoin(QString pSource);
 	void onPart(QString pSource, QString pMessage);
-	void onMode(QString pTarget, bool pAdd, ChannelChatter::Flag pFlag);
+	void onMode(QString pTarget, bool pAdd, ChannelUser::Flag pFlag);
 	void onPrivmsg(QString pSource, ChatServer::Tags const & pTags, QString pMessage);
 
 	static QStringRef usernameFrom(QString pSource);
 
 	ChatServer::Ptr mServer;
+	ChannelUser * mSelf;
 
 	// USERSTATE
-	QString mUserColor;
-	QString mUserDisplayName;
 	QVector<int> mUserEmoteSets;
-	bool mUserSub;
-	bool mUserTurbo;
-	QString mUserType;
 
 	// ROOMSTATE
 	QString mRoomLanguage;
@@ -55,4 +56,4 @@ private:
 
 } // namespace twitchtv3
 
-#endif // SERVICES_TWITCHTV3_CHAT_CHANNEL_H_
+#endif // SERVICES_TWITCHTV3_CHANNEL_CHAT_H_

@@ -2,6 +2,7 @@
 #include "edit_profile.h"
 #include "ui_edit_profile.h"
 #include "core/config_profile.h"
+#include "core/i_profile.h"
 
 #include <QMessageBox>
 #include <QPushButton>
@@ -14,18 +15,18 @@ EditProfile::EditProfile(ConfigProfile & pProfile, QWidget * parent) : QDialog(p
 	ui = new Ui::EditProfile();
 	ui->setupUi(this);
 
-	ProfileFactory::List lFactories = listServices();
-	for (auto & i : lFactories)
-		ui->cbbService->addItem(i.first);
+	QStringList lFactories = listServices();
+	for (QString & i : lFactories)
+		ui->cbbService->addItem(i);
 
-	ui->txtAccount->setText(mProfile.mAccount);
+	ui->txtAccount->setText(mProfile.account());
 	ui->cbbService->setCurrentText(mProfile.service());
-	ui->optAnonymous->setChecked(mProfile.mLevel == Profile::ANONYMOUS);
-	ui->optViewer->setChecked(mProfile.mLevel == Profile::VIEWER);
-	ui->optModerator->setChecked(mProfile.mLevel == Profile::MODERATOR);
-	ui->optStreamer->setChecked(mProfile.mLevel == Profile::STREAMER);
+	ui->optAnonymous->setChecked(mProfile.level() == IProfile::ANONYMOUS);
+	ui->optViewer->setChecked(mProfile.level() == IProfile::VIEWER);
+	ui->optModerator->setChecked(mProfile.level() == IProfile::EDITOR);
+	ui->optStreamer->setChecked(mProfile.level() == IProfile::STREAMER);
 
-	bool lIsNewProfile = mProfile.mAccount.isEmpty();
+	bool lIsNewProfile = mProfile.account().isEmpty();
 	if (lIsNewProfile)
 		ui->btnBox->button(QDialogButtonBox::Discard)->setEnabled(false);
 
@@ -48,10 +49,10 @@ void EditProfile::on_btnBox_clicked(QAbstractButton * pButton)
 	{
 		mProfile.setAccount(ui->txtAccount->text());
 		mProfile.setService(ui->cbbService->currentText());
-		mProfile.setLevel(Profile::ANONYMOUS);
-		if (ui->optViewer->isChecked()) mProfile.setLevel(Profile::VIEWER);
-		if (ui->optModerator->isChecked()) mProfile.setLevel(Profile::MODERATOR);
-		if (ui->optStreamer->isChecked()) mProfile.setLevel(Profile::STREAMER);
+		mProfile.setLevel(IProfile::ANONYMOUS);
+		if (ui->optViewer->isChecked()) mProfile.setLevel(IProfile::VIEWER);
+		if (ui->optModerator->isChecked()) mProfile.setLevel(IProfile::EDITOR);
+		if (ui->optStreamer->isChecked()) mProfile.setLevel(IProfile::STREAMER);
 		mProfile.save();
 		accept();
 	}

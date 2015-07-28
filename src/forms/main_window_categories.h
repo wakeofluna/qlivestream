@@ -1,11 +1,10 @@
 #ifndef FORMS_MAIN_WINDOW_CATEGORIES_H_
 #define FORMS_MAIN_WINDOW_CATEGORIES_H_
 
-#include "core/storage_access.h"
 #include <QWidget>
 
-class CategoryObject;
-class Profile;
+class ICategory;
+class IProfile;
 template <typename T> class QList;
 
 namespace Ui
@@ -18,12 +17,12 @@ namespace forms
 
 class CategoryObjectWidget;
 
-class MainWindowCategories : public QWidget, public StorageAccess
+class MainWindowCategories : public QWidget
 {
 Q_OBJECT
 
 public:
-	explicit MainWindowCategories(Profile & pProfile, QWidget * parent);
+	explicit MainWindowCategories(IProfile & pProfile, QWidget * parent);
 	~MainWindowCategories();
 
 public slots:
@@ -31,24 +30,18 @@ public slots:
 	void rollup();
 
 signals:
-	void selected(CategoryObject * pCategory);
+	void selected(ICategory * pCategory);
 
 private slots:
 	void checkRollup(int pSliderValue);
-
-private:
-	void clear();
-	void addData(QList<CategoryObject*> && pCategories);
-	void addToList(bool pFavourite, CategoryObject * pCategory);
+	void onCategoriesUpdated();
 
 private:
 	Ui::MainWindowCategories * ui;
 
-	Profile & mProfile;
-	QList<CategoryObject*> mCategories;
+	IProfile & mProfile;
 	QList<CategoryObjectWidget*> mFavourite;
 	QList<CategoryObjectWidget*> mTop;
-	bool mCanRollup;
 };
 
 } // namespace forms

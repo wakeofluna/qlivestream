@@ -1,7 +1,5 @@
 #include "config.h"
 #include "network_access.h"
-#include "core/profile.h"
-
 #include <QAuthenticator>
 #include <QList>
 #include <QNetworkAccessManager>
@@ -13,6 +11,7 @@
 #include <QString>
 #include <QUrl>
 #include <QVariantMap>
+#include "i_profile.h"
 
 QNetworkAccessManager * NetworkAccess::mNetworkAccessManager = nullptr;
 

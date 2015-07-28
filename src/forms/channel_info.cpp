@@ -1,11 +1,6 @@
 #include "config.h"
 #include "channel_info.h"
 #include "ui_channel_info.h"
-#include "core/channel_chat.h"
-#include "core/channel_object.h"
-#include "core/channel_chatter.h"
-#include "core/profile.h"
-
 #include <QDebug>
 #include <QDesktopServices>
 #include <QFile>
@@ -13,24 +8,30 @@
 #include <QTime>
 #include <QTimer>
 
+#include "../core/i_channel_user.h"
+#include "../core/i_channel.h"
+#include "../core/i_channel_chat.h"
+#include "../core/i_profile.h"
+#include "../core/i_user.h"
+
 namespace forms
 {
 
-ChannelInfo::ChannelInfo(ChannelObject & pChannel, QWidget * parent) : QWidget(parent), mChannel(pChannel)
+ChannelInfo::ChannelInfo(IChannel & pChannel, QWidget * parent) : QWidget(parent), mChannel(pChannel)
 {
 	ui = new Ui::ChannelInfo();
 	ui->setupUi(this);
 
-	setWindowTitle(mChannel.name());
-	ui->txtChannel->setText(mChannel.name());
+	setWindowTitle(mChannel.owner().name());
+	ui->txtChannel->setText(mChannel.owner().name());
 
-	if (mChannel.profile().level() == Profile::ANONYMOUS)
+	if (mChannel.owner().profile().level() == IProfile::ANONYMOUS)
 	{
 		ui->txtMessage->setVisible(false);
 		ui->btnChat->setVisible(false);
 	}
 
-	ChannelChat * lChat = mChannel.chat();
+	IChannelChat * lChat = mChannel.chat();
 	if (lChat == nullptr)
 	{
 		ui->btnOpenChat->setEnabled(false);
@@ -39,20 +40,20 @@ ChannelInfo::ChannelInfo(ChannelObject & pChannel, QWidget * parent) : QWidget(p
 	}
 	else
 	{
-		connect(lChat, &ChannelChat::chatStateChanged, this, &ChannelInfo::chatStateChanged);
-		connect(lChat, &ChannelChat::chatError, this, &ChannelInfo::chatError);
-		connect(lChat, &ChannelChat::chatterNew, this, &ChannelInfo::chatterNew);
-		connect(lChat, &ChannelChat::chatterChanged, this, &ChannelInfo::chatterChanged);
-		connect(lChat, &ChannelChat::chatterLost, this, &ChannelInfo::chatterLost);
-		connect(lChat, &ChannelChat::chatMessage, this, &ChannelInfo::chatMessage);
+		connect(lChat, &IChannelChat::stateChanged, this, &ChannelInfo::chatStateChanged);
+		connect(lChat, &IChannelChat::chatError, this, &ChannelInfo::chatError);
+		connect(lChat, &IChannelChat::chatterNew, this, &ChannelInfo::chatterNew);
+		connect(lChat, &IChannelChat::chatterChanged, this, &ChannelInfo::chatterChanged);
+		connect(lChat, &IChannelChat::chatterLost, this, &ChannelInfo::chatterLost);
+		connect(lChat, &IChannelChat::chatMessage, this, &ChannelInfo::chatMessage);
 		chatStateChanged();
 		ui->txtChat->clear();
 	}
 
-	connect(&mChannel, &ChannelObject::statsChanged, this, &ChannelInfo::updateFromChannel);
+	connect(&mChannel, &IChannel::infoUpdated, this, &ChannelInfo::updateFromChannel);
 	updateFromChannel();
 
-	if (!mChannel.isPartnered() || !mChannel.isEditor())
+	if (!mChannel.isPartnered() || !mChannel.amEditor())
 		ui->frmSubscribers->hide();
 
 	mViewerProcess = nullptr;
@@ -67,7 +68,7 @@ ChannelInfo::ChannelInfo(ChannelObject & pChannel, QWidget * parent) : QWidget(p
 
 ChannelInfo::~ChannelInfo()
 {
-	ChannelChat * lChat = mChannel.chat();
+	IChannelChat * lChat = mChannel.chat();
 	if (lChat != nullptr)
 		lChat->disconnectFromChat();
 
@@ -76,30 +77,30 @@ ChannelInfo::~ChannelInfo()
 
 void ChannelInfo::requestUpdateChannel()
 {
-	mChannel.requestUpdate();
+	mChannel.refresh();
 }
 
 void ChannelInfo::chatStateChanged()
 {
-	ChannelChat * lChat = mChannel.chat();
+	IChannelChat * lChat = mChannel.chat();
 	Q_ASSERT(lChat != nullptr);
 
 	switch (lChat->state())
 	{
-		case ChannelChat::NONE:
+		case IChannelChat::NONE:
 			ui->lstChatUsers->clear();
 			ui->btnOpenChat->setVisible(true);
 			ui->btnCloseChat->setVisible(false);
 			ui->txtChat->append("Disconnected!");
 			break;
 
-		case ChannelChat::JOINING:
+		case IChannelChat::JOINING:
 			ui->btnOpenChat->setVisible(false);
 			ui->btnCloseChat->setVisible(true);
 			ui->txtChat->append("Connecting to chat...");
 			break;
 
-		case ChannelChat::JOINED:
+		case IChannelChat::JOINED:
 			ui->txtChat->setEnabled(true);
 			ui->txtMessage->setEnabled(true);
 			ui->lstChatUsers->setEnabled(true);
@@ -108,7 +109,7 @@ void ChannelInfo::chatStateChanged()
 			ui->txtChat->append("Connected!");
 			break;
 
-		case ChannelChat::LEAVING:
+		case IChannelChat::LEAVING:
 			ui->btnCloseChat->setEnabled(false);
 			ui->btnChat->setEnabled(false);
 			ui->lstChatUsers->setEnabled(false);
@@ -122,14 +123,14 @@ void ChannelInfo::chatError(QString pMessage)
 	ui->txtChat->append(pMessage);
 }
 
-void ChannelInfo::chatterNew(ChannelChatter & pChatter)
+void ChannelInfo::chatterNew(IChannelUser & pChatter)
 {
 	//addChatMessage(QString("(%1 joined)").arg(pChatter.displayName()));
 	ui->lstChatUsers->addItem(pChatter.displayName());
 	ui->lstChatUsers->sortItems();
 }
 
-void ChannelInfo::chatterChanged(ChannelChatter & pChatter)
+void ChannelInfo::chatterChanged(IChannelUser & pChatter)
 {
 	for (int i = 0; i < ui->lstChatUsers->count(); ++i)
 	{
@@ -158,7 +159,7 @@ void ChannelInfo::chatterChanged(ChannelChatter & pChatter)
 	ui->lstChatUsers->sortItems();
 }
 
-void ChannelInfo::chatterLost(ChannelChatter & pChatter)
+void ChannelInfo::chatterLost(IChannelUser & pChatter)
 {
 	//addChatMessage(QString("(%1 left)").arg(pChatter.displayName()));
 
@@ -180,9 +181,9 @@ void ChannelInfo::chatterLost(ChannelChatter & pChatter)
 		delete lItem;
 }
 
-void ChannelInfo::chatMessage(ChannelChatter & pChatter, QString pMessage, ChannelChat::SmileyList const & pSmilies)
+void ChannelInfo::chatMessage(IChannelUser & pChatter, QString pMessage, IChannelChat::SmileyList const & pSmilies)
 {
-	ChannelChatter::Color lColor = pChatter.color();
+	IChannelUser::Color lColor = pChatter.color();
 	QString lMessage = pMessage.replace('<', "&lt;").replace('>', "&gt;");
 
 	QString lText = QString("<font color='%1'><b>%2</b></font>: %3")
@@ -201,20 +202,20 @@ void ChannelInfo::onUpdateTimer()
 	switch (mUpdateCounter)
 	{
 		case 0:
-			mChannel.profile().getChannelStream(mChannel);
+			mChannel.refresh();
 			break;
 
 		case 1:
-			if ((mChannel.isOnline() && mChannel.isEditor()) || mChannel.numFollowers() == -1)
+			if ((mChannel.isOnline() && mChannel.amEditor()) || mChannel.numFollowers() == -1)
 			{
-				mChannel.profile().getChannelFollowers(mChannel);
+				//mChannel.profile().getChannelFollowers(mChannel);
 			}
 			break;
 
 		case 2:
-			if ((mChannel.isOnline() && mChannel.isEditor()) || mChannel.numSubscribers() == -1)
+			if ((mChannel.isOnline() && mChannel.amEditor()) || mChannel.numSubscribers() == -1)
 			{
-				mChannel.profile().getChannelSubscribers(mChannel);
+				//mChannel.profile().getChannelSubscribers(mChannel);
 			}
 			break;
 	}
@@ -222,21 +223,21 @@ void ChannelInfo::onUpdateTimer()
 
 void ChannelInfo::on_btnOpenChat_clicked()
 {
-	ChannelChat * lChat = mChannel.chat();
+	IChannelChat * lChat = mChannel.chat();
 	Q_ASSERT(lChat != nullptr);
 	lChat->connectToChat();
 }
 
 void ChannelInfo::on_btnCloseChat_clicked()
 {
-	ChannelChat * lChat = mChannel.chat();
+	IChannelChat * lChat = mChannel.chat();
 	Q_ASSERT(lChat != nullptr);
 	lChat->disconnectFromChat();
 }
 
 void ChannelInfo::on_btnChat_clicked()
 {
-	ChannelChat * lChat = mChannel.chat();
+	IChannelChat * lChat = mChannel.chat();
 	Q_ASSERT(lChat != nullptr);
 
 	QString lText = ui->txtMessage->text();
@@ -252,7 +253,8 @@ void ChannelInfo::on_chkPartner_clicked()
 
 void ChannelInfo::on_btnUpdate_clicked()
 {
-	mChannel.updateStreamSettings(ui->txtTitle->text(), ui->txtPlaying->text(), ui->chkMature->isChecked(), ui->sliDelay->value());
+	ICategory * lCategory = mChannel.owner().profile().getCategoryFor(ui->txtPlaying->text(), false);
+	mChannel.modifyStreamSettings(ui->txtTitle->text(), lCategory, ui->chkMature->isChecked(), ui->sliDelay->value());
 }
 
 void ChannelInfo::on_btnOpenStream_clicked()
@@ -277,7 +279,7 @@ void ChannelInfo::on_btnOpenStream_clicked()
 		lArguments << "--no-version-check";
 		lArguments << "--player" << "/usr/bin/mpv --untimed";
 		lArguments << "--player-passthrough" << "rtmp,hls";
-		lArguments << QString("http://www.twitch.tv/%1").arg(mChannel.name());
+		lArguments << QString("http://www.twitch.tv/%1").arg(mChannel.owner().name());
 		lArguments << "source,best";
 
 		mViewerProcess->setProcessChannelMode(QProcess::ForwardedChannels);
@@ -289,14 +291,14 @@ void ChannelInfo::on_btnOpenStream_clicked()
 
 	// Fallback to browser
 	QUrl lUrl;
-	lUrl = mChannel.getStreamUrl(ChannelObject::URL_STREAM_WEBSITE);
+	lUrl = mChannel.getStreamUrl(IChannel::URL_STREAM_WEBSITE);
 	if (lUrl.isValid())
 		QDesktopServices::openUrl(lUrl);
 }
 
 void ChannelInfo::on_chkMature_clicked()
 {
-	if (!mChannel.isEditor())
+	if (!mChannel.amEditor())
 		ui->chkMature->setChecked(mChannel.isMature());
 	else
 		ui->btnUpdate->setEnabled(true);
@@ -329,8 +331,8 @@ void ChannelInfo::updateFromChannel()
 	ui->lblNumFollowers->setText(QString::number(mChannel.numFollowers()));
 	ui->lblNumViews->setText(QString::number(mChannel.numViews()));
 	ui->lblNumViewers->setText(QString::number(mChannel.numViewers()));
-	ui->txtTitle->setText(mChannel.status());
-	ui->txtPlaying->setText(mChannel.category());
+	ui->txtTitle->setText(mChannel.title());
+	ui->txtPlaying->setText(mChannel.category() ? mChannel.category()->name() : QString());
 	ui->chkMature->setChecked(mChannel.isMature());
 
 	int lDelay = mChannel.delay();
@@ -340,7 +342,7 @@ void ChannelInfo::updateFromChannel()
 	ui->lblDelaySeconds->setVisible(lDelay >= 0);
 	ui->sliDelay->setValue(lDelay);
 
-	bool lIsEditor = mChannel.isEditor();
+	bool lIsEditor = mChannel.amEditor();
 	ui->btnUpdate->setVisible(lIsEditor);
 	ui->txtTitle->setReadOnly(!lIsEditor);
 	ui->txtPlaying->setReadOnly(!lIsEditor);

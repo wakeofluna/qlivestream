@@ -1,4 +1,3 @@
-#include "config.h"
 #include "exception.h"
 
 Exception::Exception(QString pTitle, QString pDescription) : mTitle(pTitle), mDescription(pDescription)

@@ -1,8 +1,9 @@
 #ifndef FORMS_CATEGORY_OBJECT_WIDGET_H_
 #define FORMS_CATEGORY_OBJECT_WIDGET_H_
 
+#include "core/storage_access.h"
 #include <QWidget>
-class CategoryObject;
+class ICategory;
 class QByteArray;
 
 namespace Ui
@@ -13,15 +14,16 @@ namespace Ui
 namespace forms
 {
 
-class CategoryObjectWidget : public QWidget
+class CategoryObjectWidget : public QWidget, public StorageAccess
 {
 Q_OBJECT
 
 public:
-	CategoryObjectWidget(CategoryObject * pObject, QWidget * parent);
+	CategoryObjectWidget(ICategory & pObject, QWidget * parent);
 	~CategoryObjectWidget();
 
-	inline CategoryObject * object() const { return mCategory; }
+	inline ICategory & object() const { return mCategory; }
+	inline ICategory & category() const { return mCategory; }
 
 	void setLogo(QByteArray const & pData);
 	bool operator< (CategoryObjectWidget const & pOther) const;
@@ -30,14 +32,14 @@ public slots:
 	void updateFromObject();
 
 signals:
-	void clicked(CategoryObject * pCategory = nullptr);
+	void clicked(ICategory * pCategory = nullptr);
 
 private slots:
 	void on_btnCategory_clicked();
 
 private:
 	Ui::CategoryObjectWidget * ui;
-	CategoryObject * mCategory;
+	ICategory & mCategory;
 };
 
 } // namespace forms

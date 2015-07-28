@@ -102,14 +102,14 @@ QString AuthScope::toString() const
 
 AuthScope AuthScope::fromString(QString pString)
 {
-	for (size_t i = 0; i < max_auth_scope; ++i)
+	for (size_t i = 0; i < AuthScope::max; ++i)
 	{
 		AuthScope lScope((Scope)i);
 		if (lScope.toString() == pString)
 			return lScope;
 	}
 
-	return AuthScope(max_auth_scope);
+	return AuthScope(AuthScope::max);
 }
 
 bool AuthScope::isDefault() const
@@ -148,18 +148,13 @@ AuthScopes::~AuthScopes()
 {
 }
 
-void AuthScopes::setAll()
-{
-	c.set();
-}
-
 QString AuthScopes::toString() const
 {
 	QString lString;
 	QTextStream lStream(&lString);
 	FirstTime lFirst;
 
-	for (size_t i = 0; i < AuthScope::max_auth_scope; ++i)
+	for (size_t i = 0; i < AuthScope::max; ++i)
 	{
 		AuthScope lScope((AuthScope::Scope)i);
 		if (!test(lScope))

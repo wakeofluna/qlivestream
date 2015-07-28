@@ -4,6 +4,7 @@
 #include "edit_profile.h"
 #include "perform_login.h"
 #include "main_window.h"
+#include "core/i_profile.h"
 
 #include <algorithm>
 #include <QString>
@@ -79,10 +80,10 @@ void SelectProfile::on_btnBox_accepted()
 	}
 
 	ConfigProfile & lConfig = mProfiles[ui->cbbProfile->currentIndex()];
-	Profile::UPtr lProfile = lConfig.load();
+	std::unique_ptr<IProfile> lProfile = lConfig.load();
 
 	int lResult;
-	if (lProfile->level() == Profile::ANONYMOUS)
+	if (lProfile->level() == IProfile::ANONYMOUS)
 		lResult = QDialog::Accepted;
 	else
 	{

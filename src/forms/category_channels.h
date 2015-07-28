@@ -5,8 +5,8 @@
 #include <QList>
 #include <QString>
 #include "core/storage_access.h"
-class CategoryObject;
-class ChannelObject;
+class ICategory;
+class IChannel;
 
 
 namespace Ui
@@ -23,32 +23,27 @@ class CategoryChannels : public QWidget, public StorageAccess
 Q_OBJECT
 
 public:
-	explicit CategoryChannels(CategoryObject & pCategory, QWidget * parent);
+	explicit CategoryChannels(ICategory & pCategory, QWidget * parent);
 	~CategoryChannels();
 
-	inline CategoryObject & category() const { return mCategory; }
+	inline ICategory & category() const { return mCategory; }
 
 public slots:
 	void refresh();
 	void rollup();
 
 signals:
-	void selected(ChannelObject * pChannel);
+	void selected(IChannel * pChannel);
 
 private slots:
 	void checkRollup(int pSliderValue);
-
-private:
-	void clear();
-	void addData(QList<ChannelObject*> && pChannels);
+	void onChannelsUpdated();
 
 private:
 	Ui::CategoryChannels * ui;
-	CategoryObject & mCategory;
+	ICategory & mCategory;
 
-	QList<ChannelObject*> mChannels;
 	QList<ChannelObjectWidget*> mWidgets;
-	bool mCanRollup;
 };
 
 }; // namespace forms

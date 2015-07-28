@@ -1,9 +1,10 @@
 #ifndef CORE_EXCEPTION_H_
 #define CORE_EXCEPTION_H_
 
-#include "config.h"
 #include <QException>
 #include <QString>
+
+#include "../config.h"
 
 class COREDLL Exception : public QException
 {

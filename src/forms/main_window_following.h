@@ -4,8 +4,8 @@
 #include "core/storage_access.h"
 #include <QWidget>
 
-class ChannelObject;
-class Profile;
+class IChannel;
+class IProfile;
 template <typename T> class QList;
 
 namespace Ui
@@ -23,7 +23,7 @@ class MainWindowFollowing : public QWidget, public StorageAccess
 Q_OBJECT
 
 public:
-	explicit MainWindowFollowing(Profile & pProfile, QWidget * parent);
+	explicit MainWindowFollowing(IProfile & pProfile, QWidget * parent);
 	~MainWindowFollowing();
 
 public slots:
@@ -31,22 +31,18 @@ public slots:
 	void rollup();
 
 signals:
-	void selected(ChannelObject * pChannel);
+	void selected(IChannel * pChannel);
 
 private slots:
 	void checkRollup(int pSliderValue);
-
-private:
-	void clear();
-	void addData(QList<ChannelObject*> && pChannels);
+	void onChannelsUpdated();
 
 private:
 	Ui::MainWindowFollowing * ui;
 
-	Profile & mProfile;
-	QList<ChannelObject*> mChannels;
-	QList<ChannelObjectWidget*> mWidgets;
-	bool mCanRollup;
+	IProfile & mProfile;
+	QList<ChannelObjectWidget*> mOnlineWidgets;
+	QList<ChannelObjectWidget*> mOfflineWidgets;
 };
 
 } // namespace forms

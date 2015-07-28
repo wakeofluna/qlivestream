@@ -1,13 +1,14 @@
 #include "config.h"
 #include "perform_login.h"
 #include "perform_login_sub.h"
+
+#include "../core/i_profile.h"
 #include "ui_perform_login.h"
-#include "core/profile.h"
 
 namespace forms
 {
 
-PerformLogin::PerformLogin(Profile & pProfile, QWidget * parent) : QDialog(parent, Qt::Window), mProfile(pProfile)
+PerformLogin::PerformLogin(IProfile & pProfile, QWidget * parent) : QDialog(parent, Qt::Window), mProfile(pProfile)
 {
 	ui = new Ui::PerformLogin();
 	ui->setupUi(this);

@@ -50,23 +50,14 @@ public:
 		// Terminator value
 		max_auth_scope
 	};
-
-	typedef Scope enum_type;
-	static const enum_type max = max_auth_scope;
+	ENUMSTRUCT(AuthScope, Scope, max_auth_scope);
 
 public:
-	inline AuthScope(enum_type pScope) : mScope(pScope) {}
-	inline operator enum_type() const { return mScope; }
-
 	QString description() const;
 	QString toString() const;
 	static AuthScope fromString(QString pString);
 
 	bool isDefault() const;
-	inline bool isValid() const { return mScope >= 0 && mScope < max; }
-
-private:
-	Scope mScope;
 };
 
 class AuthScopes : public ClassBitset<AuthScope>
@@ -74,8 +65,6 @@ class AuthScopes : public ClassBitset<AuthScope>
 public:
 	AuthScopes();
 	~AuthScopes();
-
-	void setAll();
 
 	using ClassBitset<AuthScope>::operator =;
 	using ClassBitset<AuthScope>::operator ==;

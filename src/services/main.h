@@ -4,7 +4,7 @@
 #define MAIN(cls,name) \
 extern "C" \
 { \
-Q_DECL_EXPORT Profile * ServiceFactory() \
+Q_DECL_EXPORT IProfile * ServiceFactory() \
 { \
 	return new cls(); \
 } \

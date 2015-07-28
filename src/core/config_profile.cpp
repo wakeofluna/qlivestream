@@ -1,14 +1,15 @@
-#include "config.h"
 #include "config_profile.h"
-#include <QDateTime>
+
 #include <QSqlQuery>
 #include <QVariant>
-#include <QVector>
+#include "exception.h"
+#include "i_profile.h"
+
 
 ConfigProfile::ConfigProfile()
 {
 	mId = -1;
-	mLevel = Profile::ANONYMOUS;
+	mLevel = IProfile::ANONYMOUS;
 	mLastAccess = 0;
 }
 
@@ -46,26 +47,22 @@ QString ConfigProfile::toString() const
 	return QString("[%1] %2").arg(mService).arg(mAccount);
 }
 
-QString ConfigProfile::service() const
-{
-	return mService;
-}
-
 QDateTime ConfigProfile::lastAccess() const
 {
 	return QDateTime::fromTime_t(mLastAccess);
 }
 
-Profile::UPtr ConfigProfile::load() const
+std::unique_ptr<IProfile> ConfigProfile::load() const
 {
-	Profile::UPtr lProfile = createProfile(mService);
+	std::unique_ptr<IProfile> lProfile = createProfile(mService);
 	if (!lProfile)
 		throw Exception("Error loading profile", QString("Unknown service identifier: %1").arg(mService));
 
 	lProfile->mId = mId;
 	lProfile->mAccount = mAccount;
 	lProfile->mToken = mToken;
-	lProfile->mLevel = (Profile::Level)mLevel;
+	lProfile->mLevel = (IProfile::Level)mLevel;
+	lProfile->initProfile();
 
 	// Load succesful, update access time
 	int lLastAccess = QDateTime::currentDateTimeUtc().toTime_t();

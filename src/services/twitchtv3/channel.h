@@ -1,32 +1,37 @@
 #ifndef SERVICES_TWITCHTV3_CHANNEL_H_
 #define SERVICES_TWITCHTV3_CHANNEL_H_
 
-#include "core/channel_object.h"
+#include <QString>
+#include <QVariant>
+
+#include "../../core/i_channel.h"
 
 namespace twitchtv3
 {
 
-class ChatChannel;
+class ChannelChat;
 class Profile;
-class Channel : public ChannelObject
+class User;
+class Channel : public IChannel
 {
 public:
-	explicit Channel(Profile & pProfile, QString pName);
-	explicit Channel(Profile & pProfile, QVariant const & pValue, bool pFollowing);
+	explicit Channel(User & pUser);
 	~Channel();
 
-	Profile * profile() const;
+	Profile & profile() const;
+	User & owner() const;
+	QString name() const;
 
 	QString logoCacheString() const override;
-	ChannelChat * chat() override;
-	void requestUpdate() override;
-	void updateStreamSettings(QString pTitle, QString pCategory, bool pMature, int pDelay) override;
+	IChannelChat * chat() override;
+	void refresh() override;
+	void modifyStreamSettings(QString pTitle, ICategory * pCategory, bool pMature, int pDelay) override;
 	QUrl getStreamUrl(UrlType pType) override;
 
 	void updateFromVariant(QVariant const & pValue);
 
 private:
-	ChatChannel * mChat;
+	ChannelChat * mChat;
 };
 
 } // namespace twitchtv3

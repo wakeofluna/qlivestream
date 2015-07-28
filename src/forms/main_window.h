@@ -1,13 +1,17 @@
 #ifndef FORMS_MAIN_WINDOW_H_
 #define FORMS_MAIN_WINDOW_H_
 
-#include "core/profile.h"
-#include "core/storage_access.h"
-
+#include <memory>
 #include <QMainWindow>
 #include <QMap>
-class CategoryObject;
-class ChannelObject;
+#include <QString>
+#include "channel_info.h"
+
+#include "../core/storage_access.h"
+
+class ICategory;
+class IChannel;
+class IProfile;
 
 namespace Ui
 {
@@ -29,12 +33,12 @@ public:
 	typedef QMap<QString, ChannelInfo*> ChannelMap;
 
 public:
-	MainWindow(Profile::UPtr && pProfile, QWidget *parent = 0);
+	MainWindow(std::unique_ptr<IProfile> && pProfile, QWidget *parent = 0);
 	~MainWindow();
 
 public slots:
-	void openCategoryTab(CategoryObject * pCategory);
-	void openChannelTab(ChannelObject * pChannel);
+	void openCategoryTab(ICategory * pCategory);
+	void openChannelTab(IChannel * pChannel);
 
 protected:
 	void closeEvent(QCloseEvent * event) override;
@@ -54,7 +58,7 @@ private slots:
 private:
 	Ui::MainWindow * ui;
 
-	Profile::UPtr mProfile;
+	std::unique_ptr<IProfile> mProfile;
 	forms::MainWindowCategories * mCategories;
 	forms::MainWindowFollowing * mFollowing;
 	forms::ChannelInfo * mYourChannel;

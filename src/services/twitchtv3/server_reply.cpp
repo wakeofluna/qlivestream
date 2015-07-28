@@ -1,16 +1,18 @@
-#include "config.h"
 #include "server_reply.h"
-#include "profile.h"
 
 #include <QByteArray>
+#include <QMap>
 #include <QNetworkReply>
+#include "profile.h"
+
+#include "../../core/logger.h"
 
 namespace twitchtv3
 {
 
-ServerReply::ServerReply(Profile & pProfile, QNetworkReply & pReply) : ReplyBase(pProfile, pReply)
+ServerReply::ServerReply(Profile & pProfile, QNetworkReply & pReply, QString pTag) : ReplyBase(pProfile, pReply), mTag(pTag)
 {
-
+	parse();
 }
 
 ServerReply::~ServerReply()
@@ -18,9 +20,9 @@ ServerReply::~ServerReply()
 
 }
 
-Profile * ServerReply::profile() const
+Profile & ServerReply::profile() const
 {
-	return static_cast<Profile*>(&mProfile);
+	return static_cast<Profile&>(mProfile);
 }
 
 void ServerReply::log() const
@@ -33,28 +35,23 @@ void ServerReply::log() const
 
 bool ServerReply::parse()
 {
-	bool lOk = true;
-
-	lOk &= checkNetworkStatus();
-
-	QByteArray lApi = mReply.rawHeader("X-API-Version");
-	if (lApi != "3")
+	bool lOk = checkNetworkStatus();
+	if (lOk)
 	{
-		setError("Invalid/unknown API version");
-		lOk = false;
-	}
-	else
-	{
-		mData = parseJsonReply();
+		QByteArray lApi = mReply.rawHeader("X-API-Version");
+		if (lApi == "3")
+		{
+			mData = parseJsonReply();
+		}
+		else
+		{
+			setError("Invalid/unknown API version");
+			lOk = false;
+		}
 	}
 
 	log();
 	return lOk;
-}
-
-ServerReplySimple::ServerReplySimple(Profile & pProfile, QNetworkReply & pReply, QString pTag) : ServerReply(pProfile, pReply), mTag(pTag)
-{
-	parse();
 }
 
 } // namespace twitchtv3

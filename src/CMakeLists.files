@@ -66,4 +66,5 @@ set (SOURCE_FILES
 	forms/ssl_errors.cpp
 	application.cpp
 	main.cpp
+	misc.cpp
 )

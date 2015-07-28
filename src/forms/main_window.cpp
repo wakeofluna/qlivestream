@@ -1,27 +1,31 @@
-#include "config.h"
 #include "main_window.h"
 #include "ui_main_window.h"
-#include "core/network_access.h"
-#include "core/profile.h"
-#include "core/category_object.h"
-#include "core/channel_object.h"
-#include "forms/category_channels.h"
-#include "forms/category_object_widget.h"
-#include "forms/channel_info.h"
-#include "forms/debug_network_messages.h"
-#include "forms/flowing_layout.h"
-#include "forms/main_about.h"
-#include "forms/main_window_categories.h"
-#include "forms/main_window_following.h"
-#include "forms/select_profile.h"
 
+#include <algorithm>
+#include <QAction>
+#include <QApplication>
 #include <QCloseEvent>
+#include <QLabel>
+#include <QList>
 #include <QMessageBox>
+#include <QObject>
+#include <QTabWidget>
+#include "category_channels.h"
+#include "main_about.h"
+#include "main_window_categories.h"
+#include "main_window_following.h"
+#include "select_profile.h"
+
+#include "../core/i_category.h"
+#include "../core/i_channel.h"
+#include "../core/i_profile.h"
+#include "../core/i_user.h"
+#include "../core/logger.h"
 
 namespace forms
 {
 
-MainWindow::MainWindow(Profile::UPtr && pProfile, QWidget *parent) : QMainWindow(parent, Qt::Window), mProfile(std::move(pProfile))
+MainWindow::MainWindow(std::unique_ptr<IProfile> && pProfile, QWidget *parent) : QMainWindow(parent, Qt::Window), mProfile(std::move(pProfile))
 {
 	mCategories = nullptr;
 	mFollowing = nullptr;
@@ -35,15 +39,15 @@ MainWindow::MainWindow(Profile::UPtr && pProfile, QWidget *parent) : QMainWindow
 
 	switch (mProfile->level())
 	{
-		case Profile::ANONYMOUS:
+		case IProfile::ANONYMOUS:
 			ui->mnuViewChannel->setEnabled(false);
 			break;
 
-		case Profile::VIEWER:
-		case Profile::MODERATOR:
+		case IProfile::VIEWER:
+		case IProfile::EDITOR:
 			break;
 
-		case Profile::STREAMER:
+		case IProfile::STREAMER:
 			ui->mnuViewChannel->trigger();
 			break;
 	}
@@ -58,7 +62,7 @@ MainWindow::~MainWindow()
 	delete ui;
 }
 
-void MainWindow::openCategoryTab(CategoryObject * pCategory)
+void MainWindow::openCategoryTab(ICategory * pCategory)
 {
 	QString lTitle = pCategory->name();
 
@@ -77,9 +81,9 @@ void MainWindow::openCategoryTab(CategoryObject * pCategory)
 	ui->tabWidget->setCurrentWidget(lCatChannels);
 }
 
-void MainWindow::openChannelTab(ChannelObject * pChannel)
+void MainWindow::openChannelTab(IChannel * pChannel)
 {
-	QString lTitle = pChannel->name();
+	QString lTitle = pChannel->owner().name();
 
 	for (int i = 0; i < ui->tabWidget->count(); ++i)
 	{
@@ -122,11 +126,10 @@ void MainWindow::on_mnuViewChannel_triggered()
 {
 	if (mYourChannel == nullptr)
 	{
-		ChannelObject * lChannel = mProfile->getChannelFor(mProfile->account());
+		IChannel * lChannel = mProfile->self().channel(true);
 		if (lChannel != nullptr)
 		{
 			mYourChannel = new ChannelInfo(*lChannel, this);
-			mYourChannel->requestUpdateChannel();
 			ui->tabWidget->addTab(mYourChannel, mYourChannel->windowTitle());
 			ui->tabWidget->setCurrentWidget(mYourChannel);
 		}

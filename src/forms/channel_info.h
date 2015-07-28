@@ -3,9 +3,10 @@
 
 #include <QWidget>
 #include <QString>
-#include "core/channel_chat.h"
-class ChannelChatter;
-class ChannelObject;
+
+#include "../core/i_channel_chat.h"
+class IChannelUser;
+class IChannel;
 class QProcess;
 class QTimer;
 
@@ -22,7 +23,7 @@ class ChannelInfo : public QWidget
 Q_OBJECT
 
 public:
-	explicit ChannelInfo(ChannelObject & pChannel, QWidget * parent);
+	explicit ChannelInfo(IChannel & pChannel, QWidget * parent);
 	~ChannelInfo();
 
 public slots:
@@ -44,10 +45,10 @@ protected slots:
 private slots:
 	void chatStateChanged();
 	void chatError(QString pMessage);
-	void chatterNew(ChannelChatter & pChatter);
-	void chatterChanged(ChannelChatter & pChatter);
-	void chatterLost(ChannelChatter & pChatter);
-	void chatMessage(ChannelChatter & pChatter, QString pMessage, ChannelChat::SmileyList const & pSmilies);
+	void chatterNew(IChannelUser & pChatter);
+	void chatterChanged(IChannelUser & pChatter);
+	void chatterLost(IChannelUser & pChatter);
+	void chatMessage(IChannelUser & pChatter, QString pMessage, IChannelChat::SmileyList const & pSmilies);
 	void onUpdateTimer();
 
 private:
@@ -55,7 +56,7 @@ private:
 	void addChatMessage(QString pMessage);
 
 	Ui::ChannelInfo * ui;
-	ChannelObject & mChannel;
+	IChannel & mChannel;
 	QProcess * mViewerProcess;
 	QTimer * mUpdateTimer;
 	int mUpdateCounter;

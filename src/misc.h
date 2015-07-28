@@ -1,6 +1,10 @@
 #ifndef MISC_H_
 #define MISC_H_
 
+#include <QObject>
+#include <QString>
+#include "core/class_bitset.h"
+
 template <typename T1, typename T2>
 struct qobject_less
 {
@@ -25,5 +29,50 @@ struct qobject_less
 		return operator() (&lhs, &rhs);
 	}
 };
+
+template <typename T>
+inline bool updateIfChanged(T & pTarget, T const & pReplacement)
+{
+	if (pTarget != pReplacement)
+	{
+		pTarget = pReplacement;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+template <>
+bool updateIfChanged<QString>(QString & pTarget, QString const & pReplacement);
+
+template <typename T>
+inline bool updateIfChanged(T & pTarget, T const & pReplacement, bool pPredicate)
+{
+	if (pTarget != pReplacement && pPredicate)
+	{
+		pTarget = pReplacement;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+template <typename B>
+inline bool updateIfChanged(ClassBitset<B> & pBitset, typename B::enum_type pFlag, bool pSet)
+{
+	if (pBitset.test(pFlag) != pSet)
+	{
+		pBitset.set(pFlag, pSet);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
 
 #endif // MISC_H_

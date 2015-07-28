@@ -11,15 +11,15 @@ template <typename T> class Initializer;
 class COREDLL StorageAccess
 {
 public:
-	typedef std::function<void (QByteArray const&)> CacheHitCallback;
-	typedef std::function<void (CacheHitCallback &&)> CacheMissCallback;
+	typedef std::function<void (QByteArray const&)> DataCallback;
+	typedef std::function<void (DataCallback &&)> CacheMissCallback;
 
 public:
 	inline StorageAccess() {}
 	inline ~StorageAccess() {}
 
 protected:
-	void accessCache(QString const & pCacheString, CacheMissCallback && pMiss, CacheHitCallback && pHit);
+	void accessCache(QString const & pCacheString, CacheMissCallback && pMiss, DataCallback && pHit);
 
 private:
 	friend class Initializer<StorageAccess>;

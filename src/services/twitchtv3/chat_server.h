@@ -14,7 +14,7 @@ namespace twitchtv3
 {
 
 class Channel;
-class ChatChannel;
+class ChannelChat;
 class Profile;
 
 class ChatServer : public QObject, public QSharedData
@@ -45,20 +45,20 @@ public:
 	};
 
 public:
-	explicit ChatServer();
+	explicit ChatServer(Profile & pProfile);
 	virtual ~ChatServer();
 
+	inline Profile & profile() const { return mProfile; }
+	inline QString nickname() const { return mNickname; }
 	inline QString lastError() const { return mLastError; }
 
-	inline QString nickname() const { return mNickname; }
-
+	QString account() const;
 	bool isAnonymous() const;
 	bool isConnected() const;
-	void setLogin(QString pAccount, QString pToken);
 
-	void joinChannel(ChatChannel * pChannel);
-	void leaveChannel(ChatChannel * pChannel, QString pMessage);
-	void removeChannel(ChatChannel * pChannel);
+	void joinChannel(ChannelChat & pChannel);
+	void leaveChannel(ChannelChat & pChannel, QString pMessage);
+	void removeChannel(ChannelChat & pChannel);
 	void sendRaw(QString pMessage);
 
 public slots:
@@ -81,9 +81,9 @@ private:
 	void sendPing();
 	void sendRawBytes(QByteArray const & pMessage);
 	void handleMessage(RawMessage const & pMessage);
-	ChatChannel * findChannel(QString pName) const;
+	ChannelChat * findChannel(QString pName) const;
 
-	QString mAccount;
+	Profile & mProfile;
 	QString mToken;
 	QString mNickname;
 	QTcpSocket * mSocket;
@@ -96,7 +96,7 @@ private:
 	int mPendingPoints;
 	QByteArrayList mPendingMessages;
 
-	QList<ChatChannel*> mChannels;
+	QList<ChannelChat*> mChannels;
 };
 
 } // namespace twitchtv3

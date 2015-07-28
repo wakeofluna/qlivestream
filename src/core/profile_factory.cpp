@@ -1,21 +1,27 @@
-#include "config.h"
 #include "profile_factory.h"
-#include "core/config_profile.h"
 
 #include <QLibrary>
 #include <QList>
-#include <QString>
+#include <QStringList>
+#include "i_profile.h"
+
 
 namespace
 {
-	QList<ProfileFactory::ServicePair> mList;
-	bool mSorted;
+	struct ServiceDef
+	{
+		inline ServiceDef(QString pName, ProfileFactory::CreateFunc pFunc) : name(pName), func(pFunc) {}
+		QString name;
+		ProfileFactory::CreateFunc func;
+	};
+
+	QList<ServiceDef> mList;
+	QStringList mNameList;
 
 	void _registerService(QString pService, ProfileFactory::CreateFunc pFunction)
 	{
-		mList.append(ProfileFactory::ServicePair(pService, pFunction));
-		if (mList.size() > 1)
-			mSorted = false;
+		mList.append(ServiceDef(pService, pFunction));
+		mNameList.clear();
 	}
 }
 
@@ -24,37 +30,32 @@ void ProfileFactory::registerService(QString pService, CreateFunc pFunction)
 	_registerService(pService, pFunction);
 }
 
-Profile::UPtr ProfileFactory::createProfile(QString pService) const
+std::unique_ptr<IProfile> ProfileFactory::createProfile(QString pService) const
 {
-	auto lItem = std::find_if(mList.begin(), mList.end(),
-			[pService] (ServicePair const & i) -> bool
-			{
-				return i.first == pService;
-			});
+	for (auto & lDef : mList)
+		if (lDef.name == pService)
+			return std::unique_ptr<IProfile>(lDef.func());
 
-	if (lItem == mList.end())
-		return nullptr;
-
-	return Profile::UPtr(lItem->second());
+	return nullptr;
 }
 
-ProfileFactory::List const & ProfileFactory::listServices() const
+QStringList ProfileFactory::listServices() const
 {
-	if (!mSorted)
-		std::sort(mList.begin(), mList.end(),
-				[] (ServicePair const & lhs, ServicePair const & rhs) -> bool
-				{
-					return lhs.first < rhs.first;
-				});
+	if (mNameList.isEmpty() && !mList.isEmpty())
+	{
+		mNameList.reserve(mList.length());
 
-	return mList;
+		for (auto & lDef : mList)
+			mNameList.append(lDef.name);
+
+		mNameList.sort();
+	}
+
+	return mNameList;
 }
 
 void ProfileFactory::initialize()
 {
-	mList.clear();
-	mSorted = true;
-
 	// Hardcoded list of possibly available service plugins
 	loadModule("twitchtv3");
 }
@@ -62,6 +63,7 @@ void ProfileFactory::initialize()
 void ProfileFactory::finalize()
 {
 	mList.clear();
+	mNameList.clear();
 }
 
 bool ProfileFactory::loadModule(QString pModuleName)

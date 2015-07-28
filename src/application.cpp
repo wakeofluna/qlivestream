@@ -2,7 +2,6 @@
 #include "application.h"
 #include "core/exception.h"
 #include "core/network_access.h"
-#include "core/profile_factory.h"
 #include "core/storage_access.h"
 #include "forms/debug_network_messages.h"
 #include "forms/proxy_authentication.h"
@@ -19,6 +18,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QList>
+#include "core/profile_factory.h"
 
 #ifdef Q_OS_WIN
 #include <QLibrary>
@@ -91,13 +91,13 @@ QWidget * Application::networkCaptureWindow() const
 	return mDebugMessages;
 }
 
-void Application::logNetworkMessage(QString pTag, QVariant const & pMessage)
+void Application::logNetworkMessage(QString const & pTag, QVariant const & pMessage)
 {
 	if (!mDebugMessages->isCapturing()) return;
 	mDebugMessages->addMessage(pTag, pMessage);
 }
 
-void Application::logNetworkError(QString pTag, QString const & pError, QVariant const & pMessage)
+void Application::logNetworkError(QString const & pTag, QString const & pError, QVariant const & pMessage)
 {
 	if (!mDebugMessages->isCapturing()) return;
 	mDebugMessages->addError(pTag, pError, pMessage);
@@ -117,7 +117,7 @@ void Application::popStatusBar(QStatusBar * pStatusBar)
 	mStatusBars.removeAll(pStatusBar);
 }
 
-void Application::logStatusUpdate(int & pIdent, QString pMessage)
+void Application::logStatusUpdate(int & pIdent, QString const & pMessage)
 {
 	pIdent = ++mLastStatusMessage;
 

@@ -5,7 +5,7 @@
 #include <QWidget>
 
 class QSettings;
-class Profile;
+class IProfile;
 
 namespace Ui
 {

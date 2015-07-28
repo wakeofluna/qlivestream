@@ -1,9 +1,10 @@
 #ifndef FORMS_CHANNEL_OBJECT_WIDGET_H_
 #define FORMS_CHANNEL_OBJECT_WIDGET_H_
 
+#include "core/storage_access.h"
 #include <QWidget>
 class QByteArray;
-class ChannelObject;
+class IChannel;
 
 namespace Ui
 {
@@ -13,30 +14,32 @@ namespace Ui
 namespace forms
 {
 
-class ChannelObjectWidget : public QWidget
+class ChannelObjectWidget : public QWidget, public StorageAccess
 {
 Q_OBJECT
 
 public:
-	ChannelObjectWidget(ChannelObject * pObject, QWidget * parent);
+	ChannelObjectWidget(IChannel & pObject, QWidget * parent);
 	~ChannelObjectWidget();
 
-	inline ChannelObject * object() const { return mChannel; }
+	inline IChannel & object() const { return mChannel; }
+	inline IChannel & channel() const { return mChannel; }
 
 	void setLogo(QByteArray const & pData);
+	bool operator< (ChannelObjectWidget const & pOther) const;
 
 public slots:
 	void updateFromObject();
 
 signals:
-	void clicked(ChannelObject * pCategory = nullptr);
+	void clicked(IChannel * pCategory = nullptr);
 
 private slots:
 	void on_btnChannel_clicked();
 
 private:
 	Ui::ChannelObjectWidget * ui;
-	ChannelObject * mChannel;
+	IChannel & mChannel;
 };
 
 } // namespace forms

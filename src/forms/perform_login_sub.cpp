@@ -3,19 +3,18 @@
 #include "ui_perform_login_acquire.h"
 #include "ui_perform_login_error.h"
 #include "ui_perform_login_invalid.h"
-#include "core/profile.h"
-
 #include <QAbstractButton>
 #include <QApplication>
 #include <QClipboard>
 #include <QDesktopServices>
 #include <QStyle>
 #include <QUrl>
+#include "../core/i_profile.h"
 
 namespace forms
 {
 
-SubPanelAcquire::SubPanelAcquire(Profile & pProfile, QWidget * parent) : QWidget(parent), mProfile(pProfile)
+SubPanelAcquire::SubPanelAcquire(IProfile & pProfile, QWidget * parent) : QWidget(parent), mProfile(pProfile)
 {
 	ui = new Ui::PerformLoginAcquire();
 	ui->setupUi(this);
@@ -73,7 +72,7 @@ void SubPanelError::on_btnError_rejected()
 	emit cancel();
 }
 
-SubPanelInvalid::SubPanelInvalid(Profile & pProfile, QWidget * parent) : QWidget(parent), mProfile(pProfile)
+SubPanelInvalid::SubPanelInvalid(IProfile & pProfile, QWidget * parent) : QWidget(parent), mProfile(pProfile)
 {
 	ui = new Ui::PerformLoginInvalid();
 	ui->setupUi(this);

@@ -1,19 +1,24 @@
-#include "config.h"
 #include "profile.h"
-#include "root.h"
-#include "channel.h"
-#include "chat_server.h"
-#include "game.h"
-#include "game_streams.h"
-#include "games_top.h"
-#include "user_follows_channels.h"
-#include "user_follows_games.h"
 
-#include <QNetworkReply>
-#include <QNetworkRequest>
+#include <qglobal.h>
+#include <QList>
+#include <QMetaType>
+#include <QObject>
+#include <QScopedPointer>
+#include <QSharedData>
 #include <QTimer>
-#include <QUrl>
 #include <QUrlQuery>
+#include <QVariant>
+#include "category.h"
+#include "channel.h"
+#include "server_reply.h"
+#include "user.h"
+
+#include "../../config.h"
+#include "../../core/class_bitset.h"
+#include "../../core/i_category.h"
+#include "../../core/logger.h"
+#include "../../core/reply_base.h"
 
 static constexpr int MaxPending = 4;
 static constexpr int PendingDelay = 1200;
@@ -23,7 +28,7 @@ namespace twitchtv3
 
 Profile::Profile()
 {
-	mChatServer = new ChatServer();
+	mChatServer = new ChatServer(*this);
 	mPendingPoints = MaxPending;
 	mPendingTimer = new QTimer();
 	mPendingTimer->setInterval(PendingDelay);
@@ -45,16 +50,16 @@ QUrl Profile::acquireTokenUrl() const
 	lRequested.set(AuthScope::user_follows_edit);
 	lRequested.set(AuthScope::user_subscriptions);
 	lRequested.set(AuthScope::chat_login);
-	if (level() >= MODERATOR)
+	if (level() >= EDITOR)
 	{
 		lRequested.set(AuthScope::channel_check_subscription);
+		lRequested.set(AuthScope::channel_subscriptions);
+		lRequested.set(AuthScope::channel_commercial);
+		lRequested.set(AuthScope::channel_editor);
 	}
 	if (level() >= STREAMER)
 	{
-		lRequested.set(AuthScope::channel_subscriptions);
 		lRequested.set(AuthScope::channel_stream);
-		lRequested.set(AuthScope::channel_commercial);
-		lRequested.set(AuthScope::channel_editor);
 		lRequested.set(AuthScope::channel_read);
 	}
 
@@ -74,78 +79,48 @@ void Profile::performLogin(DefaultCallback && pCallback)
 	QNetworkRequest lRequest = serviceRequest();
 	lRequest.setUrl(lUrl);
 
+	mLoggedIn = false;
+	mScopes.reset();
+
 	throttledGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
 	{
-		mLastError.clear();
-
-		twitchtv3::Root lReply(*this, pReply);
+		twitchtv3::ServerReply lReply(*this, pReply, "Authentication");
 		if (lReply.hasError())
-			mLastError = lReply.lastError();
-		else if (lReply.valid() && lReply.username() == account())
+			return;
+
+		QVariantMap lToken = lReply.data().value("token").toMap();
+
+		bool lValid = lToken.value("valid").toBool();
+		QString lUsername = lToken.value("user_name").toString();
+
+		if (lValid && lUsername == account())
 		{
 			mLoggedIn = true;
-			mScopes = lReply.scopes();
 
-			if (mScopes.test(AuthScope::chat_login))
-				mChatServer->setLogin(account(), token());
+			QVariantMap lTokenAuth = lToken.value("authorization").toMap();
+			QVariantList lTokenScopes = lTokenAuth.value("scopes").toList();
+			for (int i = 0; i < lTokenScopes.size(); ++i)
+			{
+				AuthScope lScope = AuthScope::fromString(lTokenScopes[i].toString());
+				mScopes.set(lScope);
+			}
 		}
 
 		pCallback();
 	});
 }
 
-void Profile::getFollowedCategories(int pStart, int pLimit, CategoryCallback && pCallback)
+// XXX -DRY- rollups for Profile
+void Profile::rollupFollowedChannels()
 {
-	QUrl lUrl = apiUrl(QString("/users/%1/follows/games/live").arg(account()));
+	if (!mCanRollupFollowedChannels)
+		return;
 
-	QNetworkRequest lRequest = serviceRequest(false);
-	lRequest.setUrl(lUrl);
+	mCanRollupFollowedChannels = false;
 
-	throttledGet(lRequest, [this, pStart, pLimit, CAPTURE(pCallback)] (QNetworkReply & pReply)
-	{
-		QList<CategoryObject*> lList;
-
-		twitchtv3::UserFollowsGames lFollowed(*this, pReply);
-		if (lFollowed.hasError())
-			mLastError = lFollowed.lastError();
-		else
-			lList = lFollowed.createList();
-
-		pCallback(std::move(lList));
-	});
-}
-
-void Profile::getTopCategories(int pStart, int pLimit, CategoryCallback && pCallback)
-{
 	QUrlQuery lUrlQuery;
-	lUrlQuery.addQueryItem("limit", QString::number(pLimit));
-	lUrlQuery.addQueryItem("offset", QString::number(pStart));
-
-	QUrl lUrl = krakenUrl("/games/top");
-	lUrl.setQuery(lUrlQuery);
-
-	QNetworkRequest lRequest = serviceRequest(false);
-	lRequest.setUrl(lUrl);
-
-	throttledGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
-	{
-		QList<CategoryObject*> lList;
-
-		twitchtv3::GamesTop lGames(*this, pReply);
-		if (lGames.hasError())
-			mLastError = lGames.lastError();
-		else
-			lList = lGames.createList();
-
-		pCallback(std::move(lList));
-	});
-}
-
-void Profile::getFollowedChannels(int pStart, int pLimit, ChannelCallback && pCallback)
-{
-	QUrlQuery lUrlQuery;
-	lUrlQuery.addQueryItem("limit", QString::number(pLimit));
-	lUrlQuery.addQueryItem("offset", QString::number(pStart));
+	lUrlQuery.addQueryItem("limit", "50");
+	lUrlQuery.addQueryItem("offset", QString::number(qMax(0, mFollowedChannels.count() - 5)));
 
 	QUrl lUrl = krakenUrl(QString("/users/%1/follows/channels").arg(mAccount));
 	lUrl.setQuery(lUrlQuery);
@@ -153,99 +128,116 @@ void Profile::getFollowedChannels(int pStart, int pLimit, ChannelCallback && pCa
 	QNetworkRequest lRequest = serviceRequest(false);
 	lRequest.setUrl(lUrl);
 
-	throttledGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
+	Logger::StatusMessage lStatus("Getting followed channels...");
+
+	throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
 	{
-		QList<ChannelObject*> lList;
+		twitchtv3::ServerReply lReply(*this, pReply, "UserFollowsChannels");
+		if (lReply.hasError())
+			return;
 
-		twitchtv3::UserFollowsChannels lFollows(*this, pReply);
-		if (lFollows.hasError())
-			mLastError = lFollows.lastError();
-		else
-			lList = lFollows.createList();
+		QVariantList lList = lReply.data().value("follows").toList();
+		if (!lList.isEmpty())
+		{
+			for (QVariant & lChannelItem : lList)
+			{
+				Channel * lChannel = processChannel(lChannelItem);
+				if (lChannel != nullptr && !mFollowedChannels.contains(lChannel))
+				{
+					mFollowedChannels.append(lChannel);
+					mCanRollupFollowedChannels = true;
+				}
+			}
 
-		pCallback(std::move(lList));
+			std::sort(mFollowedChannels.begin(), mFollowedChannels.end());
+			emit followedChannelsUpdated();
+		}
 	});
 }
 
-void Profile::getCategoryChannels(CategoryObject * pCategory, int pStart, int pLimit, ChannelCallback && pCallback)
+void Profile::rollupFollowedCategories()
 {
-	QUrlQuery lUrlQuery;
-	lUrlQuery.addQueryItem("game", pCategory->name());
-	lUrlQuery.addQueryItem("limit", QString::number(pLimit));
-	lUrlQuery.addQueryItem("offset", QString::number(pStart));
+	if (!mCanRollupFollowedCategories)
+		return;
 
-	QUrl lUrl = krakenUrl("/streams");
+	mCanRollupFollowedCategories = false;
+
+	QUrl lUrl = apiUrl(QString("/users/%1/follows/games/live").arg(account()));
+
+	QNetworkRequest lRequest = serviceRequest(false);
+	lRequest.setUrl(lUrl);
+
+	Logger::StatusMessage lStatus("Getting followed categories...");
+
+	throttledGet(lRequest, [this] (QNetworkReply & pReply)
+	{
+		twitchtv3::ServerReply lReply(*this, pReply, "UserFollowsCategories");
+		if (lReply.hasError())
+			return;
+
+		QVariantList lList = lReply.data().value("follows").toList();
+		if (!lList.isEmpty())
+		{
+			for (QVariant & lCategoryItem : lList)
+			{
+				Category * lCategory = processCategory(lCategoryItem);
+				lCategory->updateFlag(Category::Flag::FOLLOWED, true);
+
+				if (lCategory != nullptr && !mFollowedCategories.contains(lCategory))
+				{
+					mFollowedCategories.append(lCategory);
+					mCanRollupFollowedCategories = true;
+				}
+			}
+
+			std::sort(mFollowedCategories.begin(), mFollowedCategories.end());
+			emit followedCategoriesUpdated();
+		}
+	});
+}
+
+void Profile::rollupTopCategories()
+{
+	if (!mCanRollupTopCategories)
+		return;
+
+	mCanRollupTopCategories = false;
+
+	QUrlQuery lUrlQuery;
+	lUrlQuery.addQueryItem("limit", "25");
+	lUrlQuery.addQueryItem("offset", QString::number(qMax(0, mTopCategories.count() - 5)));
+
+	QUrl lUrl = krakenUrl("/games/top");
 	lUrl.setQuery(lUrlQuery);
 
 	QNetworkRequest lRequest = serviceRequest(false);
 	lRequest.setUrl(lUrl);
 
-	throttledGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
+	Logger::StatusMessage lStatus("Getting top categories...");
+
+	throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
 	{
-		QList<ChannelObject*> lList;
+		twitchtv3::ServerReply lReply(*this, pReply, "TopCategories");
+		if (lReply.hasError())
+			return;
 
-		twitchtv3::GameStreams lChannels(*this, pReply);
-		if (lChannels.hasError())
-			mLastError = lChannels.lastError();
-		else
-			lList = lChannels.createList();
+		QVariantList lList = lReply.data().value("top").toList();
+		if (!lList.isEmpty())
+		{
+			for (QVariant & lCategoryItem : lList)
+			{
+				Category * lCategory = processCategory(lCategoryItem);
+				if (lCategory != nullptr && !mTopCategories.contains(lCategory))
+				{
+					mTopCategories.append(lCategory);
+					mCanRollupTopCategories = true;
+				}
+			}
 
-		pCallback(std::move(lList));
+			std::sort(mTopCategories.begin(), mTopCategories.end());
+			emit topCategoriesUpdated();
+		}
 	});
-}
-
-void Profile::getChannelStream(ChannelObject & pChannel)
-{
-	QUrl lUrl = krakenUrl(QString("/streams/%1").arg(pChannel.name()));
-
-	QNetworkRequest lRequest = serviceRequest(false);
-	lRequest.setUrl(lUrl);
-
-	throttledGet(lRequest, [this, &pChannel] (QNetworkReply & pReply)
-	{
-		twitchtv3::ServerReplySimple lReply(*this, pReply, "ChannelStream");
-
-		QVariant lData = lReply.data().value("stream");
-		if (!lData.isNull())
-			static_cast<Channel&>(pChannel).updateFromVariant(lData);
-	});
-}
-
-void Profile::getChannelFollowers(ChannelObject & pChannel)
-{
-	QUrl lUrl = krakenUrl(QString("/channels/%1/follows").arg(pChannel.name()));
-
-	QNetworkRequest lRequest = serviceRequest(false);
-	lRequest.setUrl(lUrl);
-
-	throttledGet(lRequest, [this] (QNetworkReply & pReply)
-	{
-		twitchtv3::ServerReplySimple lReply(*this, pReply, "ChannelFollows");
-	});
-}
-
-void Profile::getChannelSubscribers(ChannelObject & pChannel)
-{
-	if (!pChannel.isEditor() || !pChannel.isPartnered())
-		return;
-
-	QUrl lUrl = krakenUrl(QString("/channels/%1/subscriptions").arg(pChannel.name()));
-
-	QNetworkRequest lRequest = serviceRequest(true);
-	lRequest.setUrl(lUrl);
-
-	throttledGet(lRequest, [this] (QNetworkReply & pReply)
-	{
-		twitchtv3::ServerReplySimple lReply(*this, pReply, "ChannelSubscriptions");
-
-		// status=422  message="%channel% does not have a subscription program"
-	});
-}
-
-ChannelObject * Profile::getChannelFor(QString pName)
-{
-	Channel * lChannel = new Channel(*this, pName);
-	return lChannel;
 }
 
 QUrl Profile::apiUrl(QString pAppend) const
@@ -293,8 +285,7 @@ void Profile::throttledGet(QNetworkRequest const& pRequest, Receiver && pReceive
 	}
 	else
 	{
-		QScopedPointer<PendingRequest> lPending(new PendingRequest(pRequest, std::move(pReceiver)));
-		mPendingRequests.enqueue(lPending.take());
+		mPendingRequests.enqueue(new PendingRequest(pRequest, std::move(pReceiver)));
 	}
 
 	if (!mPendingTimer->isActive())
@@ -312,8 +303,7 @@ void Profile::throttledPost(const QNetworkRequest& pRequest, const QByteArray& p
 	}
 	else
 	{
-		QScopedPointer<PendingRequest> lPending(new PendingRequest(pRequest, pData, std::move(pReceiver), PendingRequest::POST));
-		mPendingRequests.enqueue(lPending.take());
+		mPendingRequests.enqueue(new PendingRequest(pRequest, pData, std::move(pReceiver), PendingRequest::POST));
 	}
 
 	if (!mPendingTimer->isActive())
@@ -331,12 +321,56 @@ void Profile::throttledPut(const QNetworkRequest& pRequest, QByteArray const & p
 	}
 	else
 	{
-		QScopedPointer<PendingRequest> lPending(new PendingRequest(pRequest, pData, std::move(pReceiver), PendingRequest::PUT));
-		mPendingRequests.enqueue(lPending.take());
+		mPendingRequests.enqueue(new PendingRequest(pRequest, pData, std::move(pReceiver), PendingRequest::PUT));
 	}
 
 	if (!mPendingTimer->isActive())
 		mPendingTimer->start();
+}
+
+Channel * Profile::processChannel(QVariant pValue)
+{
+	QVariantMap lValue = pValue.toMap();
+
+	QVariantMap lCheck = lValue.value("channel", lValue).toMap();
+
+	QString lName = lCheck.value("name").toString();
+	if (lName.isEmpty())
+		return nullptr;
+
+	IUser * lIUser = getUserFor(lName);
+	IChannel * lIChannel = lIUser->channel(true);
+
+	Channel * lChannel = static_cast<Channel*>(lIChannel);
+	lChannel->updateFromVariant(pValue);
+
+	return lChannel;
+}
+
+Category * Profile::processCategory(QVariant pValue)
+{
+	QVariantMap lValue = pValue.toMap();
+
+	QVariantMap lCheck = lValue.value("game", lValue).toMap();
+
+	QString lName = lCheck.value("name").toString();
+	if (lName.isEmpty())
+		return nullptr;
+
+	Category * lCategory = static_cast<Category*>(getCategoryFor(lName));
+	lCategory->updateFromVariant(pValue);
+
+	return lCategory;
+}
+
+IUser * Profile::newUserFor(QString pName)
+{
+	return new User(*this, pName);
+}
+
+ICategory * Profile::newCategoryFor(QString pName)
+{
+	return new Category(*this, pName);
 }
 
 void Profile::throttlePing()
