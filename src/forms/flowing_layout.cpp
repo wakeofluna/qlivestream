@@ -1,6 +1,7 @@
 #include "config.h"
 #include "flowing_layout.h"
 
+#include <QApplication>
 #include <QGraphicsOpacityEffect>
 #include <QParallelAnimationGroup>
 #include <QPropertyAnimation>
@@ -120,8 +121,8 @@ void FlowingLayout::setHorizontalSpacing(int pSpacing)
 
 int FlowingLayout::verticalSpacing() const
 {
-	if (mHorizontalSpacing >= 0)
-		return mHorizontalSpacing;
+	if (mVerticalSpacing >= 0)
+		return mVerticalSpacing;
 
 	return calcSpacing(QStyle::PM_LayoutVerticalSpacing);
 }
@@ -157,9 +158,11 @@ void FlowingLayout::clear(bool pDeleteWidgets)
 	delete mAnimationGroup;
 	mAnimationGroup = nullptr;
 
-	while (count() > 0)
+	while (!mItems.isEmpty())
 	{
-		QLayoutItem * lItem = takeAt(count() - 1);
+		QLayoutItem * lItem = mItems.last();
+		mItems.removeLast();
+
 		if (pDeleteWidgets)
 			delete lItem->widget();
 		delete lItem;
@@ -194,18 +197,33 @@ void FlowingLayout::sort(Sorter const & pSorter)
 int FlowingLayout::calcSpacing(QStyle::PixelMetric pMetric) const
 {
     QObject * lParent = this->parent();
-    if (!lParent)
-        return -1;
+    if (lParent != nullptr)
+    {
+		if (lParent->isWidgetType())
+		{
+			QWidget * lWidget = static_cast<QWidget *>(lParent);
+			return lWidget->style()->pixelMetric(pMetric, 0, lWidget);
+		}
+		else
+		{
+			QVariant lSpacing;
 
-    if (lParent->isWidgetType())
-    {
-        QWidget * lWidget = static_cast<QWidget *>(lParent);
-        return lWidget->style()->pixelMetric(pMetric, 0, lWidget);
+			if (pMetric == QStyle::PM_LayoutHorizontalSpacing)
+				lSpacing = lParent->property("horizontalSpacing");
+			else if (pMetric == QStyle::PM_LayoutVerticalSpacing)
+				lSpacing = lParent->property("verticalSpacing");
+
+			if (!lSpacing.isValid())
+				lSpacing = lParent->property("spacing");
+
+			bool lOk;
+			int lValue = lSpacing.toInt(&lOk);
+			if (lOk && lValue >= 0)
+				return lValue;
+		}
     }
-    else
-    {
-        return static_cast<QLayout *>(lParent)->spacing();
-    }
+
+    return QApplication::style()->pixelMetric(pMetric, 0, 0);
 }
 
 QSize FlowingLayout::doLayout(QRect const & pRect, bool pApply)
