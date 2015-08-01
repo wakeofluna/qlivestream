@@ -23,6 +23,7 @@ public:
     virtual QLayoutItem *itemAt(int index) const Q_DECL_OVERRIDE;
     virtual QLayoutItem *takeAt(int index) Q_DECL_OVERRIDE;
     virtual int count() const Q_DECL_OVERRIDE;
+    void invalidate() Q_DECL_OVERRIDE;
 
     // Overrides QLayoutItem
     virtual Qt::Orientations expandingDirections() const Q_DECL_OVERRIDE;

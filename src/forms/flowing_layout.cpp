@@ -32,6 +32,7 @@ FlowingLayout::~FlowingLayout()
 void FlowingLayout::addItem(QLayoutItem * pItem)
 {
 	mItems.append(pItem);
+	invalidate();
 }
 
 QLayoutItem * FlowingLayout::itemAt(int index) const
@@ -44,12 +45,24 @@ QLayoutItem * FlowingLayout::takeAt(int index)
 	if (index < 0 || index >= mItems.size())
 		return nullptr;
 
-	return mItems.takeAt(index);
+	QLayoutItem * lItem = mItems.takeAt(index);
+	invalidate();
+
+	return lItem;
 }
 
 int FlowingLayout::count() const
 {
 	return mItems.size();
+}
+
+void FlowingLayout::invalidate()
+{
+	mCurrentRows = 0;
+	mCurrentColumns = 0;
+	mLayedoutItems = 0;
+
+	QLayout::invalidate();
 }
 
 Qt::Orientations FlowingLayout::expandingDirections() const
@@ -102,6 +115,7 @@ int FlowingLayout::horizontalSpacing() const
 void FlowingLayout::setHorizontalSpacing(int pSpacing)
 {
 	mHorizontalSpacing = pSpacing;
+	invalidate();
 }
 
 int FlowingLayout::verticalSpacing() const
@@ -115,6 +129,7 @@ int FlowingLayout::verticalSpacing() const
 void FlowingLayout::setVerticalSpacing(int pSpacing)
 {
 	mVerticalSpacing = pSpacing;
+	invalidate();
 }
 
 int FlowingLayout::currentRows() const
@@ -139,12 +154,8 @@ void FlowingLayout::setAnimated(bool pAnimated)
 
 void FlowingLayout::clear(bool pDeleteWidgets)
 {
-	if (mAnimationGroup != nullptr)
-	{
-		mAnimationGroup->stop();
-		delete mAnimationGroup;
-		mAnimationGroup = nullptr;
-	}
+	delete mAnimationGroup;
+	mAnimationGroup = nullptr;
 
 	while (count() > 0)
 	{
@@ -154,8 +165,7 @@ void FlowingLayout::clear(bool pDeleteWidgets)
 		delete lItem;
 	}
 
-	mCurrentRows = 0;
-	mCurrentColumns = 0;
+	invalidate();
 }
 
 void FlowingLayout::setSorter(Sorter && pSorter)
@@ -177,7 +187,7 @@ void FlowingLayout::sort(Sorter const & pSorter)
 			return pSorter(lhs->widget(), rhs->widget());
 		});
 
-		this->invalidate();
+		invalidate();
 	}
 }
 
@@ -223,12 +233,8 @@ QSize FlowingLayout::doLayout(QRect const & pRect, bool pApply)
 
 	if (pApply && (mCurrentColumns != lColumns || mCurrentRows != lRows || mLayedoutItems != mItems.size()))
 	{
-		if (mAnimationGroup != nullptr)
-		{
-			mAnimationGroup->stop();
-			delete mAnimationGroup;
-			mAnimationGroup = nullptr;
-		}
+		delete mAnimationGroup;
+		mAnimationGroup = nullptr;
 
 		for (int i = 0; i < mItems.size(); ++i)
 		{
