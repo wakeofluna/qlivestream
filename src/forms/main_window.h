@@ -30,9 +30,6 @@ class MainWindow : public QMainWindow, public StorageAccess
 Q_OBJECT
 
 public:
-	typedef QMap<QString, ChannelInfo*> ChannelMap;
-
-public:
 	MainWindow(std::unique_ptr<IProfile> && pProfile, QWidget *parent = 0);
 	~MainWindow();
 
@@ -62,7 +59,6 @@ private:
 	forms::MainWindowCategories * mCategories;
 	forms::MainWindowFollowing * mFollowing;
 	forms::ChannelInfo * mYourChannel;
-	ChannelMap mChannels;
 };
 
 } // namespace forms

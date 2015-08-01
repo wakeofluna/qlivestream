@@ -55,11 +55,11 @@ MainWindow::MainWindow(std::unique_ptr<IProfile> && pProfile, QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-	qDeleteAll(mChannels);
 	delete mYourChannel;
 	delete mFollowing;
 	delete mCategories;
 	delete ui;
+	qDeleteAll(children());
 }
 
 void MainWindow::openCategoryTab(ICategory * pCategory)
