@@ -5,10 +5,6 @@
 #include <QSqlQuery>
 #include <QSqlError>
 
-namespace
-{
-
-}
 
 int main(int argc, char **argv)
 {
