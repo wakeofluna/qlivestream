@@ -19,3 +19,10 @@ Planned available reactions:
 * (Message in chat)
 
 This program is not meant to be the most epic in flexibility and extensibility. I don't have that much time :) But I do hope it will be good enough to last a while...
+
+## 3rd party resources
+The main framework used is an unmodified version of "Qt" (>= version 5.4), see http://www.qt.io/ for their website. As Qlivestream is licensed under GPLv2, we use Qt under the obligations of the LGPLv2 release of Qt. See http://www.qt.io/licensing/ for their terms. When running the program, please see the "Help|About Qt" menu option for more details.
+
+# Sources
+* Sources for Qlivestream can be downloaded at https://github.com/wakeofluna/qlivestream
+* Full sources for the open source release of Qt can be downloaded from their website at http://www.qt.io/download-open-source/
