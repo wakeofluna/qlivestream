@@ -39,6 +39,7 @@ set (QT_FORMS
 )
 
 set (QT_RESOURCES
+	resources/icons.qrc
 )
 
 set (HEADER_FILES

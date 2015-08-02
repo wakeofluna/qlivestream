@@ -8,6 +8,7 @@
 #include "forms/ssl_errors.h"
 
 #include <QDebug>
+#include <QIcon>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QSqlQuery>
@@ -36,6 +37,8 @@ Application::Application(int & argc, char ** argv) : QApplication(argc, argv)
 	mDebugMessages = new forms::DebugNetworkMessages();
 	mLastAuthMethod = 0;
 	mLastStatusMessage = 0;
+
+	setWindowIcon(QIcon(":/icons/application"));
 
 	QObject::connect(NetworkAccess::mNetworkAccessManager, &QNetworkAccessManager::proxyAuthenticationRequired, this, &Application::proxyAuthenticationRequired);
 	QObject::connect(NetworkAccess::mNetworkAccessManager, &QNetworkAccessManager::sslErrors, this, &Application::sslErrors);
