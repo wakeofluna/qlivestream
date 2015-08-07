@@ -37,7 +37,10 @@ signals:
 
 private slots:
 	void checkRollup(int pSliderValue);
+	void onChannelUpdated();
 	void onChannelsUpdated();
+	void on_btnFollow_clicked();
+	void on_btnUnfollow_clicked();
 
 private:
 	Ui::CategoryChannels * ui;

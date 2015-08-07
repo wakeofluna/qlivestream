@@ -25,6 +25,15 @@ CategoryChannels::CategoryChannels(ICategory & pCategory, QWidget * parent) : QW
 	connect(ui->btnRefresh, &QPushButton::clicked, this, &CategoryChannels::refresh);
 	connect(ui->scrArea->verticalScrollBar(), &QScrollBar::valueChanged, this, &CategoryChannels::checkRollup);
 	connect(&mCategory, &ICategory::channelsUpdated, this, &CategoryChannels::onChannelsUpdated);
+	connect(&mCategory, &ICategory::infoUpdated, this, &CategoryChannels::onChannelUpdated);
+
+	if (mCategory.profile().level() == IProfile::ANONYMOUS)
+	{
+		ui->btnFollow->setEnabled(false);
+		ui->btnUnfollow->setEnabled(false);
+	}
+
+	onChannelUpdated();
 
 	mCategory.resetChannels();
 }
@@ -51,9 +60,26 @@ void CategoryChannels::checkRollup(int pSliderValue)
 		rollup();
 }
 
+void CategoryChannels::onChannelUpdated()
+{
+	ui->btnFollow->setVisible(!mCategory.isFollowed());
+	ui->btnUnfollow->setVisible(mCategory.isFollowed());
+}
+
 void CategoryChannels::onChannelsUpdated()
 {
 	addToFlowLayout(category().channels(), mWidgets, ui->scrAreaContents->layout(), this, &CategoryChannels::selected);
 }
+
+void CategoryChannels::on_btnFollow_clicked()
+{
+	mCategory.follow();
+}
+
+void CategoryChannels::on_btnUnfollow_clicked()
+{
+	mCategory.unfollow();
+}
+
 
 } // namespace forms

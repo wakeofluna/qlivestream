@@ -36,6 +36,16 @@ bool ICategory::operator< (ICategory const & pOther) const
 	return mName < pOther.mName;
 }
 
+void ICategory::follow()
+{
+	setFollowed(true);
+}
+
+void ICategory::unfollow()
+{
+	setFollowed(false);
+}
+
 void ICategory::resetChannels()
 {
 	mChannels.clear();

@@ -49,7 +49,11 @@ public:
 
 	bool operator< (ICategory const & pOther) const;
 
+	virtual void setFollowed(bool pFollow) = 0;
+
 public slots:
+	void follow();
+	void unfollow();
 	void resetChannels();
 	virtual void rollupChannels() = 0;
 

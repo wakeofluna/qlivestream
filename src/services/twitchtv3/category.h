@@ -20,6 +20,8 @@ public:
 	QString logoCacheString() const override;
 	void rollupChannels() override;
 
+	void setFollowed(bool pFollow) override;
+
 	void updateFromVariant(QVariant pData);
 	void updateFlag(Flag pFlag, bool pEnabled);
 

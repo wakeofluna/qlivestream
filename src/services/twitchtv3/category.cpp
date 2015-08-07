@@ -83,6 +83,47 @@ void Category::rollupChannels()
 	});
 }
 
+void Category::setFollowed(bool pFollow)
+{
+	if (profile().hasScope(AuthScope::user_follows_edit))
+	{
+		QNetworkRequest lRequest = profile().serviceRequest(true);
+		lRequest.setUrl(profile().apiUrl(QString("/users/%1/follows/games/%2").arg(profile().account()).arg(name())));
+
+		if (pFollow)
+		{
+			profile().throttledPut(lRequest, QByteArray(), [this] (QNetworkReply & pReply)
+			{
+				ServerReply lReply(profile(), pReply, "FollowCategory");
+				if (lReply.hasError())
+					return;
+
+				if (updateIfChanged<Flag>(mFlags, Flag::FOLLOWED, true))
+					emit infoUpdated();
+
+				updateFromVariant(lReply.data());
+			});
+		}
+		else
+		{
+			profile().throttledDelete(lRequest, [this] (QNetworkReply & pReply)
+			{
+				ReplyBase lReply(profile(), pReply, "UnfollowCategory");
+
+				bool lOk = lReply.checkNetworkStatus();
+				lReply.log();
+
+				if (lOk)
+				{
+					if (updateIfChanged<Flag>(mFlags, Flag::FOLLOWED, false))
+						emit infoUpdated();
+				}
+			});
+		}
+	}
+
+}
+
 void Category::updateFromVariant(QVariant pData)
 {
 	QVariantMap lItem = pData.toMap();
