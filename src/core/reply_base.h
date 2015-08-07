@@ -13,28 +13,28 @@ class QNetworkReply;
 class COREDLL ReplyBase
 {
 public:
+	ReplyBase(IProfile & pProfile, QNetworkReply & pReply, QString pTag);
 	virtual ~ReplyBase();
 
-	virtual QString tag() const = 0;
-
+	inline QString tag() const { return mTag; }
 	inline bool hasError() const { return !mLastError.isEmpty(); }
 	inline QString lastError() const { return mLastError; }
 	inline int networkError() const { return mNetworkError; }
 
 	inline IProfile & profile() const { return mProfile; }
 
-protected:
-	ReplyBase(IProfile & pProfile, QNetworkReply & pReply);
+	virtual void log() const;
 
-	virtual void log() const = 0;
-
-	void setError(QString pError);
 	bool checkNetworkStatus();
 	QVariantMap parseJsonReply();
 	QByteArray readByteArray();
 
+protected:
+	void setError(QString pError);
+
 	IProfile & mProfile;
 	QNetworkReply & mReply;
+	QString mTag;
 
 private:
 	int     mNetworkError;

@@ -13,15 +13,12 @@ public:
 	ReplyBinary(IProfile & pProfile, QNetworkReply & pReply, QString pTag);
 	~ReplyBinary();
 
-	QString tag() const override;
-
 	inline QByteArray       & data()       { return mData; }
 	inline QByteArray const & data() const { return mData; }
 
 protected:
 	void log() const override;
 
-	QString mTag;
 	QByteArray mData;
 };
 

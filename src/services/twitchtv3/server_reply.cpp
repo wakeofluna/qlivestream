@@ -10,7 +10,7 @@
 namespace twitchtv3
 {
 
-ServerReply::ServerReply(Profile & pProfile, QNetworkReply & pReply, QString pTag) : ReplyBase(pProfile, pReply), mTag(pTag)
+ServerReply::ServerReply(Profile & pProfile, QNetworkReply & pReply, QString pTag) : ReplyBase(pProfile, pReply, pTag)
 {
 	parse();
 }

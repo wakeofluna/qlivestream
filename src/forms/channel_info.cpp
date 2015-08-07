@@ -31,6 +31,12 @@ ChannelInfo::ChannelInfo(IChannel & pChannel, QWidget * parent) : QWidget(parent
 		ui->btnChat->setVisible(false);
 	}
 
+	if (mChannel.owner().profile().level() == IProfile::ANONYMOUS || mChannel.owner().isSelf())
+	{
+		ui->btnFollow->setEnabled(false);
+		ui->btnUnfollow->setEnabled(false);
+	}
+
 	IChannelChat * lChat = mChannel.chat();
 	if (lChat == nullptr)
 	{
@@ -251,6 +257,16 @@ void ChannelInfo::on_chkPartner_clicked()
 	ui->chkPartner->setChecked(mChannel.isPartnered());
 }
 
+void ChannelInfo::on_btnFollow_clicked()
+{
+	mChannel.follow();
+}
+
+void ChannelInfo::on_btnUnfollow_clicked()
+{
+	mChannel.unfollow();
+}
+
 void ChannelInfo::on_btnUpdate_clicked()
 {
 	ICategory * lCategory = mChannel.owner().profile().getCategoryFor(ui->txtPlaying->text(), false);
@@ -291,7 +307,7 @@ void ChannelInfo::on_btnOpenStream_clicked()
 
 	// Fallback to browser
 	QUrl lUrl;
-	lUrl = mChannel.getStreamUrl(IChannel::URL_STREAM_WEBSITE);
+	lUrl = mChannel.streamUrl(IChannel::URL_STREAM_WEBSITE);
 	if (lUrl.isValid())
 		QDesktopServices::openUrl(lUrl);
 }
@@ -328,6 +344,8 @@ void ChannelInfo::updateFromChannel()
 {
 	ui->txtChannel->setText(mChannel.displayName());
 	ui->chkPartner->setChecked(mChannel.isPartnered());
+	ui->btnFollow->setVisible(!mChannel.isFollowed());
+	ui->btnUnfollow->setVisible(mChannel.isFollowed());
 	ui->lblNumFollowers->setText(QString::number(mChannel.numFollowers()));
 	ui->lblNumViews->setText(QString::number(mChannel.numViews()));
 	ui->lblNumViewers->setText(QString::number(mChannel.numViewers()));

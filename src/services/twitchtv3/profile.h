@@ -31,7 +31,8 @@ private:
 		{
 			GET,
 			POST,
-			PUT
+			PUT,
+			DELETE
 		};
 		inline PendingRequest(QNetworkRequest const& pRequest, Receiver && pReceiver, Type pType = GET) : mRequest(pRequest), mCallback(std::move(pReceiver)), mType(pType) {}
 		inline PendingRequest(QNetworkRequest const& pRequest, QByteArray const& pData, Receiver && pReceiver, Type pType) : mRequest(pRequest), mData(pData), mCallback(std::move(pReceiver)), mType(pType) {}
@@ -63,6 +64,7 @@ public:
 	void throttledGet(QNetworkRequest const & pRequest, Receiver && pReceiver);
 	void throttledPost(QNetworkRequest const & pRequest, QByteArray const& pData, Receiver && pReceiver);
 	void throttledPut(QNetworkRequest const & pRequest, QByteArray const& pData, Receiver && pReceiver);
+	void throttledDelete(QNetworkRequest const & pRequest, Receiver && pReceiver);
 
 	inline ChatServerPtr chatServer() const { return mChatServer; }
 

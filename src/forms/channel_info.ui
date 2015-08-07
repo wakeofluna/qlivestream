@@ -43,6 +43,20 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="btnFollow">
+       <property name="text">
+        <string>Follow</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnUnfollow">
+       <property name="text">
+        <string>Unfollow</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item row="1" column="0">

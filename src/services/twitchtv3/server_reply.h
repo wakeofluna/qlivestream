@@ -17,14 +17,12 @@ public:
 	virtual ~ServerReply();
 
 	Profile & profile() const;
-	inline QString tag() const override { return mTag; }
 	inline QVariantMap const & data() const { return mData; }
 
 protected:
 	virtual void log() const override;
 
 	bool parse();
-	QString mTag;
 	QVariantMap mData;
 };
 

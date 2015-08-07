@@ -10,18 +10,27 @@
 #include "i_profile.h"
 
 
-ReplyBase::ReplyBase(IProfile & pProfile, QNetworkReply & pReply) : mProfile(pProfile), mReply(pReply), mNetworkError(0)
+ReplyBase::ReplyBase(IProfile & pProfile, QNetworkReply & pReply, QString pTag) : mProfile(pProfile), mReply(pReply), mTag(pTag), mNetworkError(-1)
 {
+	checkNetworkStatus();
 }
 
 ReplyBase::~ReplyBase()
 {
 }
 
+void ReplyBase::log() const
+{
+	if (!hasError())
+		Logger::get()->logNetworkMessage(mTag, "OK");
+	else
+		Logger::get()->logNetworkError(mTag, lastError(), QVariant());
+}
+
 void ReplyBase::setError(QString pError)
 {
 	if (mLastError.isEmpty())
-		qWarning() << "Communication error: " << pError;
+		qWarning() << mTag << "Communication error: " << pError;
 
 	mLastError = pError;
 	profile().setLastError(pError);
@@ -30,6 +39,9 @@ void ReplyBase::setError(QString pError)
 #define ERR(x,s) case QNetworkReply::x: setError(s); break
 bool ReplyBase::checkNetworkStatus()
 {
+	if (mNetworkError != -1)
+		return (mNetworkError == QNetworkReply::NoError);
+
 	QNetworkReply::NetworkError lNetworkError = mReply.error();
 	mNetworkError = lNetworkError;
 

@@ -30,6 +30,7 @@ public:
 	void networkGet(QNetworkRequest const & pRequest, Receiver && pReceiver, int pRedirection = 0) const;
 	void networkPost(QNetworkRequest const & pRequest, QByteArray const & pBytes, Receiver && pReceiver) const;
 	void networkPut(QNetworkRequest const & pRequest, QByteArray const & pBytes, Receiver && pReceiver) const;
+	void networkDelete(QNetworkRequest const & pRequest, Receiver && pReceiver) const;
 
 protected:
 	inline NetworkAccess() {}

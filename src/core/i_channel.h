@@ -68,6 +68,10 @@ public:
 	static QString logoCacheString(QString pTag);
 
 	virtual IChannelChat * chat() = 0;
+	virtual QUrl streamUrl(UrlType pType) = 0;
+
+	virtual void modifyStreamSettings(QString pTitle, ICategory * pCategory, bool pMature, int pDelay) = 0;
+	virtual void setFollowed(bool pFollow) = 0;
 
 	inline bool isOnline() const { return mOnlineSince.isValid(); }
 	inline QDateTime onlineSince() const { return mOnlineSince; }
@@ -76,8 +80,8 @@ public:
 
 public slots:
 	virtual void refresh() = 0;
-	virtual void modifyStreamSettings(QString pTitle, ICategory * pCategory, bool pMature, int pDelay) = 0;
-	virtual QUrl getStreamUrl(UrlType pType) = 0;
+	void follow();
+	void unfollow();
 
 signals:
 	void infoUpdated();

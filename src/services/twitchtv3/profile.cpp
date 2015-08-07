@@ -328,6 +328,24 @@ void Profile::throttledPut(const QNetworkRequest& pRequest, QByteArray const & p
 		mPendingTimer->start();
 }
 
+void Profile::throttledDelete(QNetworkRequest const & pRequest, Receiver && pReceiver)
+{
+	QMutexLocker lGuard(&mPendingMutex);
+
+	if (mPendingPoints > 0)
+	{
+		--mPendingPoints;
+		networkDelete(pRequest, std::move(pReceiver));
+	}
+	else
+	{
+		mPendingRequests.enqueue(new PendingRequest(pRequest, std::move(pReceiver), PendingRequest::DELETE));
+	}
+
+	if (!mPendingTimer->isActive())
+		mPendingTimer->start();
+}
+
 Channel * Profile::processChannel(QVariant pValue)
 {
 	QVariantMap lValue = pValue.toMap();
@@ -396,6 +414,9 @@ void Profile::throttlePing()
 				break;
 			case PendingRequest::PUT:
 				networkPut(lPending->mRequest, lPending->mData, std::move(lPending->mCallback));
+				break;
+			case PendingRequest::DELETE:
+				networkDelete(lPending->mRequest, std::move(lPending->mCallback));
 				break;
 		}
 	}

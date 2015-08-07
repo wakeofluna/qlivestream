@@ -36,6 +36,8 @@ protected slots:
 	void on_txtPlaying_textEdited(QString pText);
 	void on_sliDelay_actionTriggered(int pAction);
 	void on_sliDelay_valueChanged(int pValue);
+	void on_btnFollow_clicked();
+	void on_btnUnfollow_clicked();
 	void on_btnUpdate_clicked();
 	void on_btnOpenStream_clicked();
 	void on_btnOpenChat_clicked();

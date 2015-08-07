@@ -3,7 +3,7 @@
 #include <QVariant>
 #include "logger.h"
 
-ReplyBinary::ReplyBinary(IProfile & pProfile, QNetworkReply & pReply, QString pTag) : ReplyBase(pProfile, pReply), mTag(pTag)
+ReplyBinary::ReplyBinary(IProfile & pProfile, QNetworkReply & pReply, QString pTag) : ReplyBase(pProfile, pReply, pTag)
 {
 	if (!checkNetworkStatus())
 		return;
@@ -14,11 +14,6 @@ ReplyBinary::ReplyBinary(IProfile & pProfile, QNetworkReply & pReply, QString pT
 ReplyBinary::~ReplyBinary()
 {
 
-}
-
-QString ReplyBinary::tag() const
-{
-	return mTag;
 }
 
 void ReplyBinary::log() const

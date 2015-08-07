@@ -59,6 +59,21 @@ IChannelChat * Channel::chat()
 	return mChat;
 }
 
+QUrl Channel::streamUrl(UrlType pType)
+{
+	switch (pType)
+	{
+		case URL_CHANNEL:
+		case URL_STREAM_WEBSITE:
+			return QUrl(QString("http://www.twitch.tv/%1").arg(name()));
+
+		case URL_STREAM_DIRECT:
+			break;
+	}
+
+	return QUrl();
+}
+
 void Channel::refresh()
 {
 	QNetworkRequest lRequest = profile().serviceRequest(true);
@@ -70,7 +85,22 @@ void Channel::refresh()
 		if (lReply.hasError())
 			return;
 
-		updateFromVariant(lReply.data().value("stream"));
+		if (lReply.data().contains("stream"))
+		{
+			QVariant lStreamData = lReply.data().value("stream");
+			if (lStreamData.isNull())
+			{
+				bool lChanged = false;
+				lChanged |= updateIfChanged(mOnlineSince, QDateTime());
+				lChanged |= updateIfChanged(mNumViewers, -1);
+				if (lChanged)
+					emit infoUpdated();
+			}
+			else
+			{
+				updateFromVariant(lStreamData);
+			}
+		}
 
 		if (mNumViews == -1)
 		{
@@ -116,19 +146,41 @@ void Channel::modifyStreamSettings(QString pTitle, ICategory * pCategory, bool p
 	});
 }
 
-QUrl Channel::getStreamUrl(UrlType pType)
+void Channel::setFollowed(bool pFollow)
 {
-	switch (pType)
+	if (profile().hasScope(AuthScope::user_follows_edit))
 	{
-		case URL_CHANNEL:
-		case URL_STREAM_WEBSITE:
-			return QUrl(QString("http://www.twitch.tv/%1").arg(name()));
+		QNetworkRequest lRequest = profile().serviceRequest(true);
+		lRequest.setUrl(profile().krakenUrl(QString("/users/%1/follows/channels/%2").arg(profile().account()).arg(name())));
 
-		case URL_STREAM_DIRECT:
-			break;
+		if (pFollow)
+		{
+			profile().throttledPut(lRequest, QByteArray(), [this] (QNetworkReply & pReply)
+			{
+				ServerReply lReply(profile(), pReply, "FollowChannel");
+				if (lReply.hasError())
+					return;
+
+				updateFromVariant(lReply.data());
+			});
+		}
+		else
+		{
+			profile().throttledDelete(lRequest, [this] (QNetworkReply & pReply)
+			{
+				ReplyBase lReply(profile(), pReply, "UnfollowChannel");
+
+				bool lOk = lReply.checkNetworkStatus();
+				lReply.log();
+
+				if (lOk)
+				{
+					if (updateIfChanged<Flag>(mFlags, Flag::FOLLOWED, false))
+						emit infoUpdated();
+				}
+			});
+		}
 	}
-
-	return QUrl();
 }
 
 void Channel::updateFromVariant(QVariant const & pValue)
@@ -163,16 +215,10 @@ void Channel::updateFromVariant(QVariant const & pValue)
 		lChanged |= updateIfChanged(mNumViewers, lItem.value("viewers").toInt(&lOk), lOk);
 		//mFPS = lItem.value("average_fps").toDouble();
 	}
-	else
+	else if (lItem.contains("notifications"))
 	{
-		lChanged |= updateIfChanged(mOnlineSince, QDateTime());
-		lChanged |= updateIfChanged(mNumViewers, -1);
-
-		if (lItem.contains("notifications"))
-		{
-			lChanged |= updateIfChanged(mFollowedSince, lItem.value("created_at").toDateTime());
-			lChanged |= updateIfChanged<Flag>(mFlags, Flag::FOLLOWED, true);
-		}
+		lChanged |= updateIfChanged(mFollowedSince, lItem.value("created_at").toDateTime());
+		lChanged |= updateIfChanged<Flag>(mFlags, Flag::FOLLOWED, true);
 	}
 
 	if (lChanged)

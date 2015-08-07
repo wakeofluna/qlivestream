@@ -44,3 +44,14 @@ bool IChannel::operator< (IChannel const & pOther) const
 
 	return mDisplayName < pOther.mDisplayName;
 }
+
+void IChannel::follow()
+{
+	setFollowed(true);
+}
+
+void IChannel::unfollow()
+{
+	setFollowed(false);
+}
+

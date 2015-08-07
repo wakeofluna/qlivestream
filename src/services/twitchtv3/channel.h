@@ -24,9 +24,11 @@ public:
 
 	QString logoCacheString() const override;
 	IChannelChat * chat() override;
+	QUrl streamUrl(UrlType pType) override;
+
 	void refresh() override;
 	void modifyStreamSettings(QString pTitle, ICategory * pCategory, bool pMature, int pDelay) override;
-	QUrl getStreamUrl(UrlType pType) override;
+	void setFollowed(bool pFollow) override;
 
 	void updateFromVariant(QVariant const & pValue);
 

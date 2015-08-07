@@ -76,6 +76,22 @@ void NetworkAccess::networkPut(QNetworkRequest const & pRequest, QByteArray cons
 	});
 }
 
+void NetworkAccess::networkDelete(QNetworkRequest const & pRequest, Receiver && pReceiver) const
+{
+	QNetworkReply * lReply = mNetworkAccessManager->deleteResource(pRequest);
+
+	QSignalMapper * lMapper = new QSignalMapper(lReply);
+	lMapper->setMapping(lReply, lReply);
+	QObject::connect(lReply, &QNetworkReply::finished, lMapper, (void (QSignalMapper::*) ()) &QSignalMapper::map);
+	QObject::connect(lMapper, (void (QSignalMapper::*)(QObject*)) &QSignalMapper::mapped, [this,CAPTURE(pReceiver)] (QObject * o) mutable
+	{
+		QNetworkReply * lReply = qobject_cast<QNetworkReply*>(o);
+		lReply->deleteLater();
+
+		pReceiver(*lReply);
+	});
+}
+
 void NetworkAccess::proxyAuthenticationRequired(QNetworkProxy const & proxy, QAuthenticator * authenticator)
 {
 	qDebug() << "Proxy authentication required!";
