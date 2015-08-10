@@ -9,12 +9,50 @@
 #include "../../core/i_user.h"
 #include "../../misc.h"
 
+namespace
+{
+
+struct ColorDef
+{
+	const char * name;
+	IChannelUser::Color color;
+};
+
+static constexpr ColorDef _predefined[] = {
+		{ "Red",         { 0xFF, 0x00, 0x00 } },
+		{ "Blue",        { 0x00, 0x00, 0xFF } },
+		{ "Green",       { 0x00, 0x80, 0x00 } },
+		{ "FireBrick",   { 0xB2, 0x22, 0x22 } },
+		{ "Coral",       { 0xFF, 0x7F, 0x50 } },
+		{ "YellowGreen", { 0x9A, 0xCD, 0x32 } },
+		{ "OrangeRed",   { 0xFF, 0x45, 0x00 } },
+		{ "SeaGreen",    { 0x2E, 0x8B, 0x57 } },
+		{ "GoldenRod",   { 0xDA, 0xA5, 0x20 } },
+		{ "Chocolate",   { 0xD2, 0x69, 0x1E } },
+		{ "CadetBlue",   { 0x5F, 0x9E, 0xA0 } },
+		{ "DodgerBlue",  { 0x1E, 0x90, 0xFF } },
+		{ "HotPink",     { 0xFF, 0x69, 0xB4 } },
+		{ "BlueViolet",  { 0x8A, 0x2B, 0xE2 } },
+		{ "SpringGreen", { 0x00, 0xFF, 0x7F } }
+};
+
+static constexpr int _numPredefined = sizeof(_predefined) / sizeof(*_predefined);
+
+}
+
 namespace twitchtv3
 {
 
 ChannelUser::ChannelUser(Channel & pChannel, User & pUser) : IChannelUser(pChannel, pUser)
 {
 	QObject::connect(&pUser, &IUser::infoUpdated, this, &IChannelUser::infoUpdated);
+
+	QString lName = pUser.name();
+	if (!lName.isEmpty())
+	{
+		int lSum = lName.at(0).toLatin1() + lName.at(lName.length()-1).toLatin1();
+		mColor = _predefined[lSum % _numPredefined].color;
+	}
 }
 
 ChannelUser::~ChannelUser()
@@ -77,7 +115,6 @@ ChannelUser::Color ChannelUser::parseColor(QString pInput)
 	lColor.r = pInput.mid(1, 2).toInt(&ok[0], 16);
 	lColor.g = pInput.mid(3, 2).toInt(&ok[1], 16);
 	lColor.b = pInput.mid(5, 2).toInt(&ok[2], 16);
-	lColor.a = 255;
 
 	if (!ok[0] || !ok[1] || !ok[2])
 		lColor.a = 0;
