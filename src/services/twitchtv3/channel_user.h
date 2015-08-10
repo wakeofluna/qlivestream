@@ -31,7 +31,6 @@ private:
 	static Color parseColor(QString pInput);
 
 	QString mUserType;
-	QMetaObject::Connection mInfoConnection;
 };
 
 } // namespace twitchtv3
