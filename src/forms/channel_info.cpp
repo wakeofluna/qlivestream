@@ -267,6 +267,11 @@ void ChannelInfo::on_btnUnfollow_clicked()
 	mChannel.unfollow();
 }
 
+void ChannelInfo::on_btnVideos_clicked()
+{
+	emit showVideos(&mChannel);
+}
+
 void ChannelInfo::on_btnUpdate_clicked()
 {
 	ICategory * lCategory = mChannel.owner().profile().getCategoryFor(ui->txtPlaying->text(), false);

@@ -36,6 +36,7 @@ public:
 public slots:
 	void openCategoryTab(ICategory * pCategory);
 	void openChannelTab(IChannel * pChannel);
+	void openChannelVideosTab(IChannel * pChannel);
 
 protected:
 	void closeEvent(QCloseEvent * event) override;

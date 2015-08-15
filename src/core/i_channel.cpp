@@ -13,6 +13,7 @@ IChannel::IChannel(IUser & pUser) : QObject(&pUser), mUser(pUser)
 	mNumSubscribers = -1;
 	mNumViewers = -1;
 	mDelay = -1;
+	mCanRollupVideos = true;
 }
 
 IChannel::~IChannel()
@@ -55,3 +56,9 @@ void IChannel::unfollow()
 	setFollowed(false);
 }
 
+void IChannel::resetVideos()
+{
+	mVideos.clear();
+	mCanRollupVideos = true;
+	rollupVideos();
+}

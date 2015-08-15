@@ -14,6 +14,7 @@
 #include "main_about.h"
 #include "main_window_categories.h"
 #include "main_window_following.h"
+#include "main_window_videos.h"
 #include "select_profile.h"
 
 #include "../core/i_category.h"
@@ -77,6 +78,7 @@ void MainWindow::openCategoryTab(ICategory * pCategory)
 
 	CategoryChannels * lCatChannels = new CategoryChannels(*pCategory, this);
 	connect(lCatChannels, &CategoryChannels::selected, this, &MainWindow::openChannelTab);
+	lCatChannels->setWindowTitle(lTitle);
 	ui->tabWidget->addTab(lCatChannels, lCatChannels->windowTitle());
 	ui->tabWidget->setCurrentWidget(lCatChannels);
 }
@@ -94,9 +96,30 @@ void MainWindow::openChannelTab(IChannel * pChannel)
 		}
 	}
 
-	QWidget * lWidget = new ChannelInfo(*pChannel, this);
-	ui->tabWidget->addTab(lWidget, lWidget->windowTitle());
-	ui->tabWidget->setCurrentWidget(lWidget);
+	ChannelInfo * lChannelInfo = new ChannelInfo(*pChannel, this);
+	connect(lChannelInfo, &ChannelInfo::showVideos, this, &MainWindow::openChannelVideosTab);
+	lChannelInfo->setWindowTitle(lTitle);
+	ui->tabWidget->addTab(lChannelInfo, lChannelInfo->windowTitle());
+	ui->tabWidget->setCurrentWidget(lChannelInfo);
+}
+
+void MainWindow::openChannelVideosTab(IChannel * pChannel)
+{
+	QString lTitle = QString("%1 - Videos").arg(pChannel->owner().name());
+
+	for (int i = 0; i < ui->tabWidget->count(); ++i)
+	{
+		if (ui->tabWidget->tabText(i) == lTitle)
+		{
+			ui->tabWidget->setCurrentIndex(i);
+			return;
+		}
+	}
+
+	QWidget * lVideos = new MainWindowVideos(*pChannel, this);
+	lVideos->setWindowTitle(lTitle);
+	ui->tabWidget->addTab(lVideos, lVideos->windowTitle());
+	ui->tabWidget->setCurrentWidget(lVideos);
 }
 
 void MainWindow::closeEvent(QCloseEvent * event)
@@ -130,6 +153,7 @@ void MainWindow::on_mnuViewChannel_triggered()
 		if (lChannel != nullptr)
 		{
 			mYourChannel = new ChannelInfo(*lChannel, this);
+			connect(mYourChannel, &ChannelInfo::showVideos, this, &MainWindow::openChannelVideosTab);
 			ui->tabWidget->addTab(mYourChannel, mYourChannel->windowTitle());
 			ui->tabWidget->setCurrentWidget(mYourChannel);
 		}

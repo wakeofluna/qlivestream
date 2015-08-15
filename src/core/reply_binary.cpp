@@ -9,6 +9,7 @@ ReplyBinary::ReplyBinary(IProfile & pProfile, QNetworkReply & pReply, QString pT
 		return;
 
 	mData = readByteArray();
+	log();
 }
 
 ReplyBinary::~ReplyBinary()

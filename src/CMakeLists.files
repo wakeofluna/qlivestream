@@ -9,12 +9,14 @@ set (QT_HEADER_FILES
 	forms/main_about.h
 	forms/main_window_categories.h
 	forms/main_window_following.h
+	forms/main_window_videos.h
 	forms/main_window.h
 	forms/perform_login_sub.h
 	forms/perform_login.h
 	forms/proxy_authentication.h
 	forms/select_profile.h
 	forms/ssl_errors.h
+	forms/video_object_widget.h
 	application.h
 )
 
@@ -28,6 +30,7 @@ set (QT_FORMS
 	forms/main_about.ui
 	forms/main_window_categories.ui
 	forms/main_window_following.ui
+	forms/main_window_videos.ui
 	forms/main_window.ui
 	forms/perform_login_acquire.ui
 	forms/perform_login_error.ui
@@ -36,6 +39,7 @@ set (QT_FORMS
 	forms/proxy_authentication.ui
 	forms/select_profile.ui
 	forms/ssl_errors.ui
+	forms/video_object_widget.ui
 )
 
 set (QT_RESOURCES
@@ -59,12 +63,14 @@ set (SOURCE_FILES
 	forms/main_about.cpp
 	forms/main_window_categories.cpp
 	forms/main_window_following.cpp
+	forms/main_window_videos.cpp
 	forms/main_window.cpp
 	forms/perform_login_sub.cpp
 	forms/perform_login.cpp
 	forms/proxy_authentication.cpp
 	forms/select_profile.cpp
 	forms/ssl_errors.cpp
+	forms/video_object_widget.cpp
 	application.cpp
 	main.cpp
 	misc.cpp

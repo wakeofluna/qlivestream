@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ChannelObjectWidget</class>
- <widget class="QWidget" name="ChannelObjectWidget">
+ <class>VideoObjectWidget</class>
+ <widget class="QWidget" name="VideoObjectWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>430</width>
-    <height>148</height>
+    <width>425</width>
+    <height>118</height>
    </rect>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_2">
+  <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="sizeConstraint">
     <enum>QLayout::SetFixedSize</enum>
    </property>
    <item>
-    <widget class="QPushButton" name="btnChannel">
+    <widget class="QPushButton" name="btnVideo">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -28,6 +28,12 @@
        <height>100</height>
       </size>
      </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>150</height>
+      </size>
+     </property>
      <property name="text">
       <string notr="true">[icon]</string>
      </property>
@@ -36,24 +42,31 @@
    <item>
     <layout class="QFormLayout" name="formLayout">
      <item row="0" column="0" colspan="2">
-      <widget class="QLabel" name="lblName">
+      <widget class="QLabel" name="lblTitle">
        <property name="styleSheet">
-        <string notr="true">font: 11pt;</string>
+        <string notr="true">text-decoration: underline;</string>
        </property>
        <property name="text">
-        <string notr="true">[name]</string>
+        <string>[title]</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="lblFollowersLabel">
+     <item row="1" column="0" colspan="2">
+      <widget class="QLabel" name="lblDescription">
        <property name="text">
-        <string>Followers:</string>
+        <string>[description]</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QLabel" name="lblFollowers">
+     <item row="4" column="0">
+      <widget class="QLabel" name="lblViewsLabel">
+       <property name="text">
+        <string>Views:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLabel" name="lblViews">
        <property name="text">
         <string notr="true">...</string>
        </property>
@@ -62,35 +75,19 @@
      <item row="2" column="0" colspan="2">
       <widget class="QLabel" name="lblCategory">
        <property name="text">
-        <string notr="true">[category]</string>
+        <string>[category]</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0" colspan="2">
-      <widget class="QLabel" name="lblStatus">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>1</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">text-decoration: underline;</string>
-       </property>
+     <item row="3" column="0">
+      <widget class="QLabel" name="lblDateLabel">
        <property name="text">
-        <string notr="true">[status]</string>
+        <string>Date:</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="lblViewersLabel">
-       <property name="text">
-        <string>Viewers:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QLabel" name="lblViewers">
+     <item row="3" column="1">
+      <widget class="QLabel" name="lblDate">
        <property name="text">
         <string notr="true">...</string>
        </property>

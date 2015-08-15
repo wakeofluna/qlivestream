@@ -4,6 +4,7 @@
 #include <QDateTime>
 #include <QObject>
 #include <QString>
+#include <QList>
 #include <QUrl>
 #include <QVariant>
 #include "class_bitset.h"
@@ -14,6 +15,7 @@ class ICategory;
 class IUser;
 class IChannelChat;
 class IProfile;
+class IVideo;
 
 class COREDLL IChannel : public QObject
 {
@@ -76,15 +78,20 @@ public:
 	inline bool isOnline() const { return mOnlineSince.isValid(); }
 	inline QDateTime onlineSince() const { return mOnlineSince; }
 
+	inline QList<IVideo *> videos() const { return mVideos; }
+
 	bool operator< (IChannel const & pOther) const;
 
 public slots:
 	virtual void refresh() = 0;
 	void follow();
 	void unfollow();
+	void resetVideos();
+	virtual void rollupVideos() = 0;
 
 signals:
 	void infoUpdated();
+	void videosUpdated();
 
 protected:
 	IUser     & mUser;
@@ -102,6 +109,9 @@ protected:
 
 	QDateTime mFollowedSince;
 	QDateTime mOnlineSince;
+
+	bool mCanRollupVideos;
+	QList<IVideo *> mVideos;
 };
 
 #endif // CORE_I_CHANNEL_H_

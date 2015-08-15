@@ -29,10 +29,13 @@ public:
 	void refresh() override;
 	void modifyStreamSettings(QString pTitle, ICategory * pCategory, bool pMature, int pDelay) override;
 	void setFollowed(bool pFollow) override;
+	void rollupVideos() override;
 
 	void updateFromVariant(QVariant const & pValue);
 
 private:
+	IVideo * processVideoObject(QVariant pVideo);
+
 	ChannelChat * mChat;
 };
 

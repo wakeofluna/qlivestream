@@ -29,6 +29,9 @@ public:
 public slots:
 	void requestUpdateChannel();
 
+signals:
+	void showVideos(IChannel * pChannel = nullptr);
+
 protected slots:
 	void on_chkPartner_clicked();
 	void on_chkMature_clicked();
@@ -38,6 +41,7 @@ protected slots:
 	void on_sliDelay_valueChanged(int pValue);
 	void on_btnFollow_clicked();
 	void on_btnUnfollow_clicked();
+	void on_btnVideos_clicked();
 	void on_btnUpdate_clicked();
 	void on_btnOpenStream_clicked();
 	void on_btnOpenChat_clicked();

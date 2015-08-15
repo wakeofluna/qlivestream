@@ -6,13 +6,16 @@
 #include <QMetaType>
 #include <QNetworkRequest>
 #include <QUrl>
+#include <QUrlQuery>
 #include "channel_chat.h"
 #include "profile.h"
 #include "server_reply.h"
 #include "user.h"
+#include "video.h"
 
 #include "../../core/class_bitset.h"
 #include "../../core/i_user.h"
+#include "../../core/i_video.h"
 #include "../../core/reply_base.h"
 #include "../../misc.h"
 
@@ -183,6 +186,46 @@ void Channel::setFollowed(bool pFollow)
 	}
 }
 
+void Channel::rollupVideos()
+{
+	if (!mCanRollupVideos)
+		return;
+
+	mCanRollupVideos = false;
+
+	QUrlQuery lUrlQuery;
+	lUrlQuery.addQueryItem("game", name());
+	lUrlQuery.addQueryItem("limit", "5");
+	lUrlQuery.addQueryItem("offset", QString::number(mVideos.count()));
+
+	QUrl lUrl = profile().krakenUrl(QString("/channels/%1/videos").arg(name()));
+	lUrl.setQuery(lUrlQuery);
+
+	QNetworkRequest lRequest = profile().serviceRequest(false);
+	lRequest.setUrl(lUrl);
+
+	Logger::StatusMessage lStatus("Getting videos for channel...");
+
+	profile().throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
+	{
+		twitchtv3::ServerReply lReply(profile(), pReply, "ChannelVideos");
+		if (lReply.hasError())
+			return;
+
+		QVariantList lList = lReply.data().value("videos").toList();
+		if (!lList.isEmpty())
+		{
+			mCanRollupVideos = (lList.size() == 5);
+
+			for (QVariant & lVideoItem : lList)
+				processVideoObject(lVideoItem);
+
+			std::sort(mVideos.begin(), mVideos.end());
+			emit videosUpdated();
+		}
+	});
+}
+
 void Channel::updateFromVariant(QVariant const & pValue)
 {
 	QVariantMap lItem = pValue.toMap();
@@ -223,6 +266,28 @@ void Channel::updateFromVariant(QVariant const & pValue)
 
 	if (lChanged)
 		emit infoUpdated();
+}
+
+IVideo * Channel::processVideoObject(QVariant pVideo)
+{
+	QVariantMap lObject = pVideo.toMap();
+
+	Video * lVideo;
+
+	QVariant lId = lObject.value("_id");
+	auto iter = std::find_if(mVideos.begin(), mVideos.end(), [&lId] (IVideo * v) { return v->id() == lId; });
+	if (iter == mVideos.end())
+	{
+		lVideo = new Video(*this, lId);
+		mVideos.push_back(lVideo);
+	}
+	else
+	{
+		lVideo = static_cast<Video*>(*iter);
+	}
+
+	lVideo->updateFromVariant(pVideo);
+	return lVideo;
 }
 
 } // namespace twitchtv3
