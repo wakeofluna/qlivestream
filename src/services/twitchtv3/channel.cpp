@@ -17,6 +17,7 @@
 #include "../../core/i_user.h"
 #include "../../core/i_video.h"
 #include "../../core/reply_base.h"
+#include "../../core/reply_text.h"
 #include "../../misc.h"
 
 namespace twitchtv3
@@ -74,7 +75,55 @@ QUrl Channel::streamUrl(UrlType pType)
 			return QUrl(QString("http://www.twitch.tv/%1").arg(name()));
 
 		case URL_STREAM_DIRECT:
+		{
+			QNetworkRequest lRequest;
+			QUrl lUrl;
+			QUrlQuery lParams;
+
+			lUrl = profile().apiUrl(QString("/channels/%1/access_token").arg(name()));
+			lRequest = profile().serviceRequest(true);
+			lRequest.setUrl(lUrl);
+
+			ServerReply lReply(profile(), *profile().synchronisedGet(lRequest), "ChannelToken");
+			if (lReply.hasError())
+				break;
+
+			lParams.clear();
+			lParams.addQueryItem("p", QString::number(int(double(qrand()) / RAND_MAX * 999999)));
+			lParams.addQueryItem("type", "any");
+			lParams.addQueryItem("allow_source", "true");
+			lParams.addQueryItem("allow_audio_only", "true");
+			lParams.addQueryItem("sig", lReply.data().value("sig").toString());
+			lParams.addQueryItem("token", lReply.data().value("token").toString());
+			lUrl = profile().usherUrl(QString("/api/channel/hls/%1.m3u8").arg(name()));
+			lUrl.setQuery(lParams);
+			lRequest = profile().serviceRequest(false);
+			lRequest.setUrl(lUrl);
+
+			ReplyText lReply2(profile(), *profile().synchronisedGet(lRequest), "ChannelPlaylist");
+			if (lReply2.hasError())
+				break;
+
+			QStringList lPlaylist = lReply2.data();
+			if (lPlaylist.isEmpty() || lPlaylist[0] != "#EXTM3U")
+			{
+				qCritical() << "Received playlist is not a valid M3U playlist?";
+				break;
+			}
+
+			// Grab the very first valid line, should be best available quality
+			for (QString & lLine : lPlaylist)
+			{
+				if (lLine[0] == '#')
+					continue;
+
+				QUrl lUrl(lLine);
+				if (lUrl.isValid())
+					return lUrl;
+			}
+
 			break;
+		}
 	}
 
 	return QUrl();

@@ -20,6 +20,7 @@ set (HEADER_FILES
 	profile_factory.h
 	reply_base.h
 	reply_binary.h
+	reply_text.h
 	storage_access.h
 )
 
@@ -38,5 +39,6 @@ set (SOURCE_FILES
 	profile_factory.cpp
 	reply_base.cpp
 	reply_binary.cpp
+	reply_text.cpp
 	storage_access.cpp
 )

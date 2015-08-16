@@ -33,6 +33,8 @@
 
 Application::Application(int & argc, char ** argv) : QApplication(argc, argv)
 {
+	qsrand(QDateTime::currentDateTimeUtc().toTime_t());
+
 	mGotUsername = false;
 	mDebugMessages = new forms::DebugNetworkMessages();
 	mLastAuthMethod = 0;

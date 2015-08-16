@@ -36,6 +36,19 @@ void recursiveAdd(QTreeWidgetItem * pItem, QVariant const & pValue)
 			recursiveAdd(lItem, lList.at(i));
 		}
 	}
+	else if (pValue.type() == QVariant::StringList)
+	{
+		QStringList lList = pValue.toStringList();
+
+		pItem->setText(1, QString("(%1 lines)").arg(lList.size()));
+
+		for (int i = 0; i < lList.size(); ++i)
+		{
+			QTreeWidgetItem * lItem = new QTreeWidgetItem(pItem);
+			lItem->setText(0, QString("Line %1").arg(i+1));
+			lItem->setText(1, lList.at(i));
+		}
+	}
 	else
 	{
 		pItem->setText(1, pValue.toString());

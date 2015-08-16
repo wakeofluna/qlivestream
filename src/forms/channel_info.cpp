@@ -282,10 +282,29 @@ void ChannelInfo::on_btnOpenStream_clicked()
 {
 	// TODO check preferences
 
+	QUrl lUrl;
 	QString lProgram;
+	QStringList lArguments;
 
-	lProgram = "/usr/bin/livestreamer";
-	if (QFile::exists(lProgram))
+	lUrl = mChannel.streamUrl(IChannel::URL_STREAM_DIRECT);
+	if (lUrl.isValid())
+	{
+		lProgram = "/usr/bin/mpv";
+		lArguments << "--untimed";
+		lArguments << "--quiet";
+		lArguments << lUrl.toString(QUrl::FullyEncoded);
+	}
+	else
+	{
+		lProgram = "/usr/bin/livestreamer";
+		lArguments << "--no-version-check";
+		lArguments << "--player" << "/usr/bin/mpv --untimed";
+		lArguments << "--player-passthrough" << "rtmp,hls";
+		lArguments << QString("http://www.twitch.tv/%1").arg(mChannel.owner().name());
+		lArguments << "source,best";
+	}
+
+	if (!lProgram.isEmpty() && QFile::exists(lProgram))
 	{
 		if (mViewerProcess != nullptr && mViewerProcess->state() != QProcess::NotRunning)
 		{
@@ -296,13 +315,6 @@ void ChannelInfo::on_btnOpenStream_clicked()
 		delete mViewerProcess;
 		mViewerProcess = new QProcess(this);
 
-		QStringList lArguments;
-		lArguments << "--no-version-check";
-		lArguments << "--player" << "/usr/bin/mpv --untimed";
-		lArguments << "--player-passthrough" << "rtmp,hls";
-		lArguments << QString("http://www.twitch.tv/%1").arg(mChannel.owner().name());
-		lArguments << "source,best";
-
 		mViewerProcess->setProcessChannelMode(QProcess::ForwardedChannels);
 		mViewerProcess->setProgram(lProgram);
 		mViewerProcess->setArguments(lArguments);
@@ -311,7 +323,6 @@ void ChannelInfo::on_btnOpenStream_clicked()
 	}
 
 	// Fallback to browser
-	QUrl lUrl;
 	lUrl = mChannel.streamUrl(IChannel::URL_STREAM_WEBSITE);
 	if (lUrl.isValid())
 		QDesktopServices::openUrl(lUrl);

@@ -5,10 +5,9 @@
 
 ReplyBinary::ReplyBinary(IProfile & pProfile, QNetworkReply & pReply, QString pTag) : ReplyBase(pProfile, pReply, pTag)
 {
-	if (!checkNetworkStatus())
-		return;
+	if (checkNetworkStatus())
+		mData = readByteArray();
 
-	mData = readByteArray();
 	log();
 }
 

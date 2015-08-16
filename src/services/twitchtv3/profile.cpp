@@ -258,20 +258,35 @@ QUrl Profile::krakenUrl(QString pAppend) const
 	return lUrl;
 }
 
+QUrl Profile::usherUrl(QString pAppend) const
+{
+	QUrl lUrl;
+	lUrl.setScheme("http");
+	lUrl.setHost("usher.twitch.tv");
+	lUrl.setPath(pAppend);
+	return lUrl;
+}
+
 QNetworkRequest Profile::serviceRequest(bool pAuthed) const
 {
 	QNetworkRequest lRequest;
 	lRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
-	lRequest.setHeader(QNetworkRequest::UserAgentHeader, APP_NAME);
-	lRequest.setRawHeader("Accept", "application/vnd.twitchtv.v3+json");
 
 	if (level() != ANONYMOUS && !token().isEmpty() && pAuthed)
 	{
 		QString lAuth = QString("OAuth %1").arg(token());
 		lRequest.setRawHeader("Authorization", lAuth.toUtf8());
+
+		lRequest.setHeader(QNetworkRequest::UserAgentHeader, APP_NAME);
+		lRequest.setRawHeader("Accept", "application/vnd.twitchtv.v3+json");
 	}
 
 	return lRequest;
+}
+
+QNetworkReply * Profile::synchronisedGet(QNetworkRequest const & pRequest)
+{
+	return networkGetSync(pRequest);
 }
 
 void Profile::throttledGet(QNetworkRequest const& pRequest, Receiver && pReceiver)

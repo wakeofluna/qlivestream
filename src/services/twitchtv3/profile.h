@@ -59,8 +59,10 @@ public:
 	// Networking
 	QUrl apiUrl(QString pAppend) const;
 	QUrl krakenUrl(QString pAppend = QString()) const;
+	QUrl usherUrl(QString pAppend) const;
 	QNetworkRequest serviceRequest(bool pAuthed = true) const;
 
+	QNetworkReply * synchronisedGet(QNetworkRequest const & pRequest);
 	void throttledGet(QNetworkRequest const & pRequest, Receiver && pReceiver);
 	void throttledPost(QNetworkRequest const & pRequest, QByteArray const& pData, Receiver && pReceiver);
 	void throttledPut(QNetworkRequest const & pRequest, QByteArray const& pData, Receiver && pReceiver);

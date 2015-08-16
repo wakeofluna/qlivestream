@@ -1,6 +1,7 @@
 #include "config.h"
 #include "network_access.h"
 #include <QAuthenticator>
+#include <QEventLoop>
 #include <QList>
 #include <QNetworkAccessManager>
 #include <QNetworkProxy>
@@ -14,6 +15,18 @@
 #include "i_profile.h"
 
 QNetworkAccessManager * NetworkAccess::mNetworkAccessManager = nullptr;
+
+QNetworkReply * NetworkAccess::networkGetSync(QNetworkRequest const & pRequest) const
+{
+	QNetworkReply * lReply = mNetworkAccessManager->get(pRequest);
+
+	QEventLoop lLoop;
+	QObject::connect(lReply, &QNetworkReply::finished, &lLoop, &QEventLoop::quit);
+	lLoop.exec();
+
+	lReply->deleteLater();
+	return lReply;
+}
 
 void NetworkAccess::networkGet(QNetworkRequest const & pRequest, Receiver && pReceiver, int pRedirection) const
 {
