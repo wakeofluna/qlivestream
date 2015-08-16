@@ -4,7 +4,7 @@
 #include <QVariant>
 #include "logger.h"
 
-ReplyText::ReplyText(IProfile & pProfile, QNetworkReply & pReply, QString pTag) : ReplyBase(pProfile, pReply, pTag)
+ReplyText::ReplyText(IProfile * pProfile, QNetworkReply & pReply, QString pTag) : ReplyBase(pProfile, pReply, pTag)
 {
 	if (checkNetworkStatus())
 	{

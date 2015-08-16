@@ -9,6 +9,7 @@
 
 #include "../config.h"
 
+class IDownloader;
 class IProfile;
 
 class COREDLL IVideo : public QObject
@@ -39,6 +40,7 @@ public:
 	inline int views() const { return mViews; }
 
 	virtual QUrl videoUrl(UrlType pType) = 0;
+	virtual IDownloader * downloader() = 0;
 
 	bool operator< (IVideo const & pOther) const;
 

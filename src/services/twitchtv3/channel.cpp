@@ -84,7 +84,7 @@ QUrl Channel::streamUrl(UrlType pType)
 			lRequest = profile().serviceRequest(true);
 			lRequest.setUrl(lUrl);
 
-			ServerReply lReply(profile(), *profile().synchronisedGet(lRequest), "ChannelToken");
+			ServerReply lReply(&profile(), *profile().synchronisedGet(lRequest), "ChannelToken");
 			if (lReply.hasError())
 				break;
 
@@ -100,7 +100,7 @@ QUrl Channel::streamUrl(UrlType pType)
 			lRequest = profile().serviceRequest(false, false);
 			lRequest.setUrl(lUrl);
 
-			ReplyText lReply2(profile(), *profile().synchronisedGet(lRequest), "ChannelPlaylist");
+			ReplyText lReply2(&profile(), *profile().synchronisedGet(lRequest), "ChannelPlaylist");
 			if (lReply2.hasError())
 				break;
 
@@ -136,7 +136,7 @@ void Channel::refresh()
 
 	profile().throttledGet(lRequest, [this] (QNetworkReply & pReply)
 	{
-		ServerReply lReply(profile(), pReply, "StreamInfo");
+		ServerReply lReply(&profile(), pReply, "StreamInfo");
 		if (lReply.hasError())
 			return;
 
@@ -164,7 +164,7 @@ void Channel::refresh()
 
 			profile().throttledGet(lRequest, [this] (QNetworkReply & pReply)
 			{
-				ServerReply lReply(profile(), pReply, "ChannelInfo");
+				ServerReply lReply(&profile(), pReply, "ChannelInfo");
 				if (lReply.hasError())
 					return;
 
@@ -193,7 +193,7 @@ void Channel::modifyStreamSettings(QString pTitle, ICategory * pCategory, bool p
 
 	profile().throttledPut(lRequest, lJson.toJson(QJsonDocument::Compact), [this] (QNetworkReply & pReply)
 	{
-		ServerReply lReply(profile(), pReply, "UpdateChannel");
+		ServerReply lReply(&profile(), pReply, "UpdateChannel");
 		if (lReply.hasError())
 			return;
 
@@ -212,7 +212,7 @@ void Channel::setFollowed(bool pFollow)
 		{
 			profile().throttledPut(lRequest, QByteArray(), [this] (QNetworkReply & pReply)
 			{
-				ServerReply lReply(profile(), pReply, "FollowChannel");
+				ServerReply lReply(&profile(), pReply, "FollowChannel");
 				if (lReply.hasError())
 					return;
 
@@ -223,7 +223,7 @@ void Channel::setFollowed(bool pFollow)
 		{
 			profile().throttledDelete(lRequest, [this] (QNetworkReply & pReply)
 			{
-				ReplyBase lReply(profile(), pReply, "UnfollowChannel");
+				ReplyBase lReply(&profile(), pReply, "UnfollowChannel");
 
 				bool lOk = lReply.checkNetworkStatus();
 				lReply.log();
@@ -260,7 +260,7 @@ void Channel::rollupVideos()
 
 	profile().throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
 	{
-		twitchtv3::ServerReply lReply(profile(), pReply, "ChannelVideos");
+		twitchtv3::ServerReply lReply(&profile(), pReply, "ChannelVideos");
 		if (lReply.hasError())
 			return;
 

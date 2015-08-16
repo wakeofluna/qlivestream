@@ -3,6 +3,7 @@ set (QT_HEADER_FILES
 	i_channel_chat.h
 	i_channel_user.h
 	i_channel.h
+	i_downloader.h
 	i_profile.h
 	i_user.h
 	i_video.h
@@ -31,6 +32,7 @@ set (SOURCE_FILES
 	i_channel_chat.cpp
 	i_channel_user.cpp
 	i_channel.cpp
+	i_downloader.cpp
 	i_profile.cpp
 	i_user.cpp
 	i_video.cpp

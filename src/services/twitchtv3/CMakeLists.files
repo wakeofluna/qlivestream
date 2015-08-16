@@ -13,6 +13,7 @@ set (HEADER_FILES
 	server_reply.h
 	user.h
 	video.h
+	video_downloader.h
 )
 
 set (SOURCE_FILES
@@ -27,4 +28,5 @@ set (SOURCE_FILES
 	server_reply.cpp
 	user.cpp
 	video.cpp
+	video_downloader.cpp
 )

@@ -3,7 +3,7 @@
 #include <QVariant>
 #include "logger.h"
 
-ReplyBinary::ReplyBinary(IProfile & pProfile, QNetworkReply & pReply, QString pTag) : ReplyBase(pProfile, pReply, pTag)
+ReplyBinary::ReplyBinary(IProfile * pProfile, QNetworkReply & pReply, QString pTag) : ReplyBase(pProfile, pReply, pTag)
 {
 	if (checkNetworkStatus())
 		mData = readByteArray();

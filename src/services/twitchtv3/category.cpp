@@ -60,7 +60,7 @@ void Category::rollupChannels()
 
 	profile().throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
 	{
-		twitchtv3::ServerReply lReply(profile(), pReply, "CategoryChannels");
+		twitchtv3::ServerReply lReply(&profile(), pReply, "CategoryChannels");
 		if (lReply.hasError())
 			return;
 
@@ -108,7 +108,7 @@ void Category::setFollowed(bool pFollow)
 		{
 			profile().throttledPut(lRequest, QByteArray(), [this] (QNetworkReply & pReply)
 			{
-				ServerReply lReply(profile(), pReply, "FollowCategory");
+				ServerReply lReply(&profile(), pReply, "FollowCategory");
 				if (lReply.hasError())
 					return;
 
@@ -122,7 +122,7 @@ void Category::setFollowed(bool pFollow)
 		{
 			profile().throttledDelete(lRequest, [this] (QNetworkReply & pReply)
 			{
-				ReplyBase lReply(profile(), pReply, "UnfollowCategory");
+				ReplyBase lReply(&profile(), pReply, "UnfollowCategory");
 
 				bool lOk = lReply.checkNetworkStatus();
 				lReply.log();

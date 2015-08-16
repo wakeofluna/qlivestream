@@ -10,7 +10,7 @@
 class COREDLL ReplyBinary : public ReplyBase
 {
 public:
-	ReplyBinary(IProfile & pProfile, QNetworkReply & pReply, QString pTag);
+	ReplyBinary(IProfile * pProfile, QNetworkReply & pReply, QString pTag);
 	~ReplyBinary();
 
 	inline QByteArray       & data()       { return mData; }

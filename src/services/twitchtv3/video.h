@@ -33,6 +33,7 @@ public:
 	Profile & profile() const;
 
 	QUrl videoUrl(UrlType pType) override;
+	IDownloader * downloader() override;
 
 	void updateFromVariant(QVariant pData);
 

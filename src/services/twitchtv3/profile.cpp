@@ -84,7 +84,7 @@ void Profile::performLogin(DefaultCallback && pCallback)
 
 	throttledGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
 	{
-		twitchtv3::ServerReply lReply(*this, pReply, "Authentication");
+		twitchtv3::ServerReply lReply(this, pReply, "Authentication");
 		if (lReply.hasError())
 			return;
 
@@ -132,7 +132,7 @@ void Profile::rollupFollowedChannels()
 
 	throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
 	{
-		twitchtv3::ServerReply lReply(*this, pReply, "UserFollowsChannels");
+		twitchtv3::ServerReply lReply(this, pReply, "UserFollowsChannels");
 		if (lReply.hasError())
 			return;
 
@@ -171,7 +171,7 @@ void Profile::rollupFollowedCategories()
 
 	throttledGet(lRequest, [this] (QNetworkReply & pReply)
 	{
-		twitchtv3::ServerReply lReply(*this, pReply, "UserFollowsCategories");
+		twitchtv3::ServerReply lReply(this, pReply, "UserFollowsCategories");
 		if (lReply.hasError())
 			return;
 
@@ -217,7 +217,7 @@ void Profile::rollupTopCategories()
 
 	throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
 	{
-		twitchtv3::ServerReply lReply(*this, pReply, "TopCategories");
+		twitchtv3::ServerReply lReply(this, pReply, "TopCategories");
 		if (lReply.hasError())
 			return;
 

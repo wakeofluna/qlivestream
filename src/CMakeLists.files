@@ -4,6 +4,7 @@ set (QT_HEADER_FILES
 	forms/channel_info.h
 	forms/channel_object_widget.h
 	forms/debug_network_messages.h
+	forms/download_window.h
 	forms/edit_profile.h
 	forms/flowing_layout.h
 	forms/main_about.h
@@ -26,6 +27,7 @@ set (QT_FORMS
 	forms/channel_info.ui
 	forms/channel_object_widget.ui
 	forms/debug_network_messages.ui
+	forms/download_window.ui
 	forms/edit_profile.ui
 	forms/main_about.ui
 	forms/main_window_categories.ui
@@ -58,6 +60,7 @@ set (SOURCE_FILES
 	forms/channel_info.cpp
 	forms/channel_object_widget.cpp
 	forms/debug_network_messages.cpp
+	forms/download_window.cpp
 	forms/flowing_layout.cpp
 	forms/edit_profile.cpp
 	forms/main_about.cpp

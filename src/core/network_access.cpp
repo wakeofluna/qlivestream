@@ -28,6 +28,11 @@ QNetworkReply * NetworkAccess::networkGetSync(QNetworkRequest const & pRequest) 
 	return lReply;
 }
 
+QNetworkReply * NetworkAccess::networkGetAsync(QNetworkRequest const & pRequest) const
+{
+	return mNetworkAccessManager->get(pRequest);
+}
+
 void NetworkAccess::networkGet(QNetworkRequest const & pRequest, Receiver && pReceiver, int pRedirection) const
 {
 	QNetworkReply * lReply = mNetworkAccessManager->get(pRequest);

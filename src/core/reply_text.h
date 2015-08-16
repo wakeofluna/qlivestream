@@ -9,7 +9,7 @@
 class COREDLL ReplyText : public ReplyBase
 {
 public:
-	ReplyText(IProfile & pProfile, QNetworkReply & pReply, QString pTag);
+	ReplyText(IProfile * pProfile, QNetworkReply & pReply, QString pTag);
 	~ReplyText();
 
 	inline QStringList const & data() const { return mData; }

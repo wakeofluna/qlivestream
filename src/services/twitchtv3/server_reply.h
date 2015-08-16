@@ -13,10 +13,10 @@ class Profile;
 class ServerReply : public ReplyBase
 {
 public:
-	ServerReply(Profile & pProfile, QNetworkReply & pReply, QString pTag);
+	ServerReply(Profile * pProfile, QNetworkReply & pReply, QString pTag);
 	virtual ~ServerReply();
 
-	Profile & profile() const;
+	Profile * profile() const;
 	inline QVariantMap const & data() const { return mData; }
 
 protected:

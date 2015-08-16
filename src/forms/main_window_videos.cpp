@@ -1,6 +1,7 @@
 #include "config.h"
 #include "main_window_videos.h"
 #include "ui_main_window_videos.h"
+#include "forms/download_window.h"
 #include "forms/flowing_layout.h"
 #include "forms/video_object_widget.h"
 #include "forms/form_helpers.h"
@@ -10,6 +11,8 @@
 #include <QScrollBar>
 #include <QDebug>
 #include <QDesktopServices>
+#include <QDir>
+#include <QFile>
 #include <QProcess>
 
 #include "../core/i_profile.h"
@@ -63,13 +66,25 @@ void MainWindowVideos::selected(IVideo * pVideo)
 {
 	// TODO merge with logic from channel
 
-	QUrl lUrl;
-	QString lProgram;
-	QStringList lArguments;
+	QWidget * lPopup = new QWidget(this, Qt::Popup);
+	QPushButton * lButton;
 
-	lUrl = pVideo->videoUrl(IVideo::URL_VIDEO_DIRECT);
-	if (lUrl.isValid())
+	lPopup->setAttribute(Qt::WA_DeleteOnClose);
+	lPopup->setLayout(new QBoxLayout(QBoxLayout::TopToBottom, lPopup));
+
+	lButton = new QPushButton(lPopup);
+	lButton->setText("Watch!");
+	QObject::connect(lButton, &QPushButton::clicked, [pVideo,lPopup]
 	{
+		lPopup->setEnabled(false);
+		QUrl lUrl = pVideo->videoUrl(IVideo::URL_VIDEO_DIRECT);
+		lPopup->close();
+
+		if (!lUrl.isValid())
+			return;
+
+		QString lProgram;
+		QStringList lArguments;
 		lProgram = "/usr/bin/mpv";
 		lArguments << "--untimed";
 		lArguments << "--quiet";
@@ -81,13 +96,43 @@ void MainWindowVideos::selected(IVideo * pVideo)
 		lProcess->setProgram(lProgram);
 		lProcess->setArguments(lArguments);
 		lProcess->start();
+	});
+	lPopup->layout()->addWidget(lButton);
 
-		return;
-	}
+	lButton = new QPushButton(lPopup);
+	lButton->setText("Open in browser");
+	QObject::connect(lButton, &QPushButton::clicked, [pVideo,lPopup]
+	{
+		lPopup->setEnabled(false);
+		QUrl lUrl = pVideo->videoUrl(IVideo::URL_VIDEO_WEBSITE);
+		lPopup->close();
 
-	lUrl = pVideo->videoUrl(IVideo::URL_VIDEO_WEBSITE);
-	if (lUrl.isValid())
+		if (!lUrl.isValid())
+			return;
+
 		QDesktopServices::openUrl(lUrl);
+	});
+	lPopup->layout()->addWidget(lButton);
+
+	lButton = new QPushButton(lPopup);
+	lButton->setText("Download ...");
+	QObject::connect(lButton, &QPushButton::clicked, [pVideo,lPopup]
+	{
+		lPopup->setEnabled(false);
+		IDownloader * lDownloader = pVideo->downloader();
+		lPopup->close();
+
+		if (lDownloader == nullptr)
+			return;
+
+		DownloadWindow * lWindow = new DownloadWindow(lDownloader);
+		lWindow->setAttribute(Qt::WA_DeleteOnClose);
+		lWindow->show();
+	});
+	lPopup->layout()->addWidget(lButton);
+
+	lPopup->move(QCursor::pos() - QPoint(5, 10));
+	lPopup->show();
 }
 
 } // namespace forms

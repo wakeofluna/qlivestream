@@ -1,17 +1,20 @@
 #include "video.h"
 
 #include <qglobal.h>
+#include <cstdlib>
+#include <QChar>
+#include <QDebug>
 #include <QList>
 #include <QMetaType>
+#include <QNetworkReply>
 #include <QNetworkRequest>
-#include <QString>
-#include <QUrl>
+#include <QTextStream>
 #include <QUrlQuery>
 #include "channel.h"
 #include "profile.h"
 #include "server_reply.h"
+#include "video_downloader.h"
 
-#include "../../core/logger.h"
 #include "../../core/reply_base.h"
 #include "../../core/reply_text.h"
 #include "../../misc.h"
@@ -66,7 +69,7 @@ QUrl Video::videoUrl(UrlType pType)
 			lRequest = profile().serviceRequest(true);
 			lRequest.setUrl(lUrl);
 
-			ServerReply lReply(profile(), *profile().synchronisedGet(lRequest), "VideoToken");
+			ServerReply lReply(&profile(), *profile().synchronisedGet(lRequest), "VideoToken");
 			if (lReply.hasError())
 				break;
 
@@ -82,7 +85,7 @@ QUrl Video::videoUrl(UrlType pType)
 			lRequest = profile().serviceRequest(false, false);
 			lRequest.setUrl(lUrl);
 
-			ReplyText lReply2(profile(), *profile().synchronisedGet(lRequest), "VideoPlaylist");
+			ReplyText lReply2(&profile(), *profile().synchronisedGet(lRequest), "VideoPlaylist");
 			if (lReply2.hasError())
 				break;
 
@@ -112,6 +115,11 @@ QUrl Video::videoUrl(UrlType pType)
 	}
 
 	return QUrl();
+}
+
+IDownloader * Video::downloader()
+{
+	return new VideoDownloader(*this);
 }
 
 void Video::updateFromVariant(QVariant pData)

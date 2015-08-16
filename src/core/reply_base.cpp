@@ -10,7 +10,7 @@
 #include "i_profile.h"
 
 
-ReplyBase::ReplyBase(IProfile & pProfile, QNetworkReply & pReply, QString pTag) : mProfile(pProfile), mReply(pReply), mTag(pTag), mNetworkError(-1)
+ReplyBase::ReplyBase(IProfile * pProfile, QNetworkReply & pReply, QString pTag) : mProfile(pProfile), mReply(pReply), mTag(pTag), mNetworkError(-1)
 {
 	checkNetworkStatus();
 }
@@ -33,7 +33,8 @@ void ReplyBase::setError(QString pError)
 		qWarning() << mTag << "Communication error: " << pError;
 
 	mLastError = pError;
-	profile().setLastError(pError);
+	if (mProfile != nullptr)
+		mProfile->setLastError(pError);
 }
 
 #define ERR(x,s) case QNetworkReply::x: setError(s); break

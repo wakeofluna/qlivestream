@@ -13,7 +13,7 @@ class QNetworkReply;
 class COREDLL ReplyBase
 {
 public:
-	ReplyBase(IProfile & pProfile, QNetworkReply & pReply, QString pTag);
+	ReplyBase(IProfile * pProfile, QNetworkReply & pReply, QString pTag);
 	virtual ~ReplyBase();
 
 	inline QString tag() const { return mTag; }
@@ -21,7 +21,7 @@ public:
 	inline QString lastError() const { return mLastError; }
 	inline int networkError() const { return mNetworkError; }
 
-	inline IProfile & profile() const { return mProfile; }
+	inline IProfile * profile() const { return mProfile; }
 
 	virtual void log() const;
 
@@ -32,7 +32,7 @@ public:
 protected:
 	void setError(QString pError);
 
-	IProfile & mProfile;
+	IProfile * mProfile;
 	QNetworkReply & mReply;
 	QString mTag;
 
