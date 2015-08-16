@@ -17,6 +17,12 @@ class COREDLL ICategory : public QObject
 Q_OBJECT
 
 public:
+	enum UrlType
+	{
+		URL_LOGO,
+		URL_CATEGORY
+	};
+
 	struct Flag
 	{
 		enum Value
@@ -37,7 +43,6 @@ public:
 
 	inline QVariant id() const { return mId; }
 	inline QString name() const { return mName; }
-	inline QUrl logoUrl() const { return mLogoUrl; }
 	inline int numChannels() const { return mNumChannels; }
 	inline int numViewers() const { return mNumViewers; }
 	inline bool isFollowed() const { return mFlags.test(Flag::FOLLOWED); }
@@ -49,6 +54,7 @@ public:
 
 	bool operator< (ICategory const & pOther) const;
 
+	virtual QUrl categoryUrl(UrlType pType) const = 0;
 	virtual void setFollowed(bool pFollow) = 0;
 
 public slots:
@@ -65,7 +71,6 @@ protected:
 	IProfile & mProfile;
 	QVariant mId;
 	QString  mName;
-	QUrl     mLogoUrl;
 	Flags    mFlags;
 	int      mNumChannels;
 	int      mNumViewers;

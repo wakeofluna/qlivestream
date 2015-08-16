@@ -20,6 +20,7 @@ public:
 	QString logoCacheString() const override;
 	void rollupChannels() override;
 
+	QUrl categoryUrl(UrlType pType) const override;
 	void setFollowed(bool pFollow) override;
 
 	void updateFromVariant(QVariant pData);
@@ -27,6 +28,7 @@ public:
 
 private:
 	int mGiantBombId;
+	QUrl mLogoUrl;
 };
 
 } // namespace twitchtv3

@@ -83,6 +83,20 @@ void Category::rollupChannels()
 	});
 }
 
+QUrl Category::categoryUrl(UrlType pType) const
+{
+	switch (pType)
+	{
+		case URL_LOGO:
+			return mLogoUrl;
+
+		case URL_CATEGORY:
+			return QUrl(QString("http://www.twitch.tv/directory/game/%1").arg(name()));
+	}
+
+	return QUrl();
+}
+
 void Category::setFollowed(bool pFollow)
 {
 	if (profile().hasScope(AuthScope::user_follows_edit))

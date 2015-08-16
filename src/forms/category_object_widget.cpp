@@ -26,13 +26,13 @@ CategoryObjectWidget::CategoryObjectWidget(ICategory & pObject, QWidget * parent
 	connect(&mCategory, &ICategory::infoUpdated, this, &CategoryObjectWidget::updateFromObject);
 	updateFromObject();
 
-	if (mCategory.logoUrl().isValid())
+	if (mCategory.categoryUrl(ICategory::URL_LOGO).isValid())
 		accessCache
 		(
 				mCategory.logoCacheString(),
 				[this] (DataCallback && pCallback)
 				{
-					mCategory.profile().downloadLogo(mCategory.logoUrl(), std::move(pCallback));
+					mCategory.profile().downloadLogo(mCategory.categoryUrl(ICategory::URL_LOGO), std::move(pCallback));
 				},
 				[this] (QByteArray const & pData)
 				{
