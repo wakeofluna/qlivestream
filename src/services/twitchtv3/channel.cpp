@@ -66,6 +66,9 @@ QUrl Channel::streamUrl(UrlType pType)
 {
 	switch (pType)
 	{
+		case URL_LOGO:
+			return mLogoUrl;
+
 		case URL_CHANNEL:
 		case URL_STREAM_WEBSITE:
 			return QUrl(QString("http://www.twitch.tv/%1").arg(name()));

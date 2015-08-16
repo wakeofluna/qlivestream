@@ -37,6 +37,7 @@ private:
 	IVideo * processVideoObject(QVariant pVideo);
 
 	ChannelChat * mChat;
+	QUrl mLogoUrl;
 };
 
 } // namespace twitchtv3

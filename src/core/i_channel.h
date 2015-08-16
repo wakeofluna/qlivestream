@@ -24,6 +24,7 @@ Q_OBJECT
 public:
 	enum UrlType
 	{
+		URL_LOGO,
 		URL_CHANNEL,
 		URL_STREAM_WEBSITE,
 		URL_STREAM_DIRECT,
@@ -52,7 +53,6 @@ public:
 	inline QVariant id() const { return mId; }
 	inline QString displayName() const { return mDisplayName; }
 	inline QString title() const { return mTitle; }
-	inline QUrl logoUrl() const { return mLogoUrl; }
 	inline ICategory * category() const { return mCategory; }
 	inline int numViewers() const { return mNumViewers; }
 	inline int numViews() const { return mNumViews; }
@@ -99,7 +99,6 @@ protected:
 	Flags     mFlags;
 	QString   mDisplayName;
 	QString   mTitle;
-	QUrl      mLogoUrl;
 	ICategory * mCategory;
 	int       mNumViews;
 	int       mNumFollowers;

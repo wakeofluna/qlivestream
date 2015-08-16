@@ -25,13 +25,13 @@ ChannelObjectWidget::ChannelObjectWidget(IChannel & pObject, QWidget * parent) :
 	connect(&mChannel, &IChannel::infoUpdated, this, &ChannelObjectWidget::updateFromObject);
 	updateFromObject();
 
-	if (mChannel.logoUrl().isValid())
+	if (mChannel.streamUrl(IChannel::URL_LOGO).isValid())
 		accessCache
 		(
 				mChannel.logoCacheString(),
 				[this] (DataCallback && pCallback)
 				{
-					mChannel.owner().profile().downloadLogo(mChannel.logoUrl(), std::move(pCallback));
+					mChannel.owner().profile().downloadLogo(mChannel.streamUrl(IChannel::URL_LOGO), std::move(pCallback));
 				},
 				[this] (QByteArray const & pData)
 				{
