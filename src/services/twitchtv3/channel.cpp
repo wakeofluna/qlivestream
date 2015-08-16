@@ -97,7 +97,7 @@ QUrl Channel::streamUrl(UrlType pType)
 			lParams.addQueryItem("token", lReply.data().value("token").toString());
 			lUrl = profile().usherUrl(QString("/api/channel/hls/%1.m3u8").arg(name()));
 			lUrl.setQuery(lParams);
-			lRequest = profile().serviceRequest(false);
+			lRequest = profile().serviceRequest(false, false);
 			lRequest.setUrl(lUrl);
 
 			ReplyText lReply2(profile(), *profile().synchronisedGet(lRequest), "ChannelPlaylist");

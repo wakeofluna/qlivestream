@@ -267,18 +267,21 @@ QUrl Profile::usherUrl(QString pAppend) const
 	return lUrl;
 }
 
-QNetworkRequest Profile::serviceRequest(bool pAuthed) const
+QNetworkRequest Profile::serviceRequest(bool pAuthed, bool pJson) const
 {
 	QNetworkRequest lRequest;
 	lRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
+
+	if (pJson)
+	{
+		lRequest.setHeader(QNetworkRequest::UserAgentHeader, APP_NAME);
+		lRequest.setRawHeader("Accept", "application/vnd.twitchtv.v3+json");
+	}
 
 	if (level() != ANONYMOUS && !token().isEmpty() && pAuthed)
 	{
 		QString lAuth = QString("OAuth %1").arg(token());
 		lRequest.setRawHeader("Authorization", lAuth.toUtf8());
-
-		lRequest.setHeader(QNetworkRequest::UserAgentHeader, APP_NAME);
-		lRequest.setRawHeader("Accept", "application/vnd.twitchtv.v3+json");
 	}
 
 	return lRequest;

@@ -13,6 +13,7 @@ namespace twitchtv3
 {
 
 class Channel;
+class Profile;
 class Video : public IVideo
 {
 public:
@@ -29,6 +30,7 @@ public:
 	~Video();
 
 	Channel & channel() const;
+	Profile & profile() const;
 
 	QUrl videoUrl(UrlType pType) override;
 

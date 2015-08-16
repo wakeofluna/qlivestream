@@ -8,7 +8,9 @@
 
 #include <algorithm>
 #include <QScrollBar>
+#include <QDebug>
 #include <QDesktopServices>
+#include <QProcess>
 
 #include "../core/i_profile.h"
 #include "../core/i_video.h"
@@ -59,11 +61,33 @@ void MainWindowVideos::onVideosUpdated()
 
 void MainWindowVideos::selected(IVideo * pVideo)
 {
+	// TODO merge with logic from channel
+
 	QUrl lUrl;
+	QString lProgram;
+	QStringList lArguments;
+
+	lUrl = pVideo->videoUrl(IVideo::URL_VIDEO_DIRECT);
+	if (lUrl.isValid())
+	{
+		lProgram = "/usr/bin/mpv";
+		lArguments << "--untimed";
+		lArguments << "--quiet";
+		lArguments << lUrl.toString(QUrl::FullyEncoded);
+
+		QProcess * lProcess = new QProcess();
+		QObject::connect(lProcess, (void (QProcess::*) (int))&QProcess::finished, [lProcess] (int pExitCode) { lProcess->deleteLater(); });
+		lProcess->setProcessChannelMode(QProcess::ForwardedChannels);
+		lProcess->setProgram(lProgram);
+		lProcess->setArguments(lArguments);
+		lProcess->start();
+
+		return;
+	}
+
 	lUrl = pVideo->videoUrl(IVideo::URL_VIDEO_WEBSITE);
 	if (lUrl.isValid())
 		QDesktopServices::openUrl(lUrl);
-
 }
 
 } // namespace forms

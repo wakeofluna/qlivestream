@@ -60,7 +60,7 @@ public:
 	QUrl apiUrl(QString pAppend) const;
 	QUrl krakenUrl(QString pAppend = QString()) const;
 	QUrl usherUrl(QString pAppend) const;
-	QNetworkRequest serviceRequest(bool pAuthed = true) const;
+	QNetworkRequest serviceRequest(bool pAuthed = true, bool pJson = true) const;
 
 	QNetworkReply * synchronisedGet(QNetworkRequest const & pRequest);
 	void throttledGet(QNetworkRequest const & pRequest, Receiver && pReceiver);

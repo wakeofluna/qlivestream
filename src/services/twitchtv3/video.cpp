@@ -13,6 +13,7 @@
 
 #include "../../core/logger.h"
 #include "../../core/reply_base.h"
+#include "../../core/reply_text.h"
 #include "../../misc.h"
 
 namespace twitchtv3
@@ -41,6 +42,11 @@ Channel & Video::channel() const
 	return static_cast<Channel&>(mChannel);
 }
 
+Profile & Video::profile() const
+{
+	return channel().profile();
+}
+
 QUrl Video::videoUrl(UrlType pType)
 {
 	switch (pType)
@@ -49,7 +55,57 @@ QUrl Video::videoUrl(UrlType pType)
 			return mPreviewImage;
 
 		case URL_VIDEO_DIRECT:
+		{
+			QNetworkRequest lRequest;
+			QUrl lUrl;
+			QUrlQuery lParams;
+
+			QString lId = id().toString().mid(1);
+
+			lUrl = profile().apiUrl(QString("/vods/%1/access_token").arg(lId));
+			lRequest = profile().serviceRequest(true);
+			lRequest.setUrl(lUrl);
+
+			ServerReply lReply(profile(), *profile().synchronisedGet(lRequest), "VideoToken");
+			if (lReply.hasError())
+				break;
+
+			lParams.clear();
+			lParams.addQueryItem("p", QString::number(int(double(qrand()) / RAND_MAX * 999999)));
+			lParams.addQueryItem("type", "any");
+			lParams.addQueryItem("allow_source", "true");
+			lParams.addQueryItem("allow_audio_only", "true");
+			lParams.addQueryItem("nauthsig", lReply.data().value("sig").toString());
+			lParams.addQueryItem("nauth", lReply.data().value("token").toString());
+			lUrl = profile().usherUrl(QString("/vod/%1").arg(lId));
+			lUrl.setQuery(lParams);
+			lRequest = profile().serviceRequest(false, false);
+			lRequest.setUrl(lUrl);
+
+			ReplyText lReply2(profile(), *profile().synchronisedGet(lRequest), "VideoPlaylist");
+			if (lReply2.hasError())
+				break;
+
+			QStringList lPlaylist = lReply2.data();
+			if (lPlaylist.isEmpty() || lPlaylist[0] != "#EXTM3U")
+			{
+				qCritical() << "Received playlist is not a valid M3U playlist?";
+				break;
+			}
+
+			// Grab the very first valid line, should be best available quality
+			for (QString & lLine : lPlaylist)
+			{
+				if (lLine[0] == '#')
+					continue;
+
+				QUrl lUrl(lLine);
+				if (lUrl.isValid())
+					return lUrl;
+			}
+
 			break;
+		}
 
 		case URL_VIDEO_WEBSITE:
 			return mWebpage;
