@@ -246,9 +246,10 @@ void Channel::rollupVideos()
 	mCanRollupVideos = false;
 
 	QUrlQuery lUrlQuery;
-	lUrlQuery.addQueryItem("game", name());
 	lUrlQuery.addQueryItem("limit", "5");
 	lUrlQuery.addQueryItem("offset", QString::number(mVideos.count()));
+	lUrlQuery.addQueryItem("hls", "true");
+	//lUrlQuery.addQueryItem("broadcasts", "true");
 
 	QUrl lUrl = profile().krakenUrl(QString("/channels/%1/videos").arg(name()));
 	lUrl.setQuery(lUrlQuery);

@@ -48,10 +48,13 @@ private:
 
 	IDownloader * mDownloader;
 	bool mPaused;
+	bool mMerged;
 	QDir mTarget;
 	QByteArray mCurrentData;
 	QFile mCurrentFile;
+	QFile mStatusFile;
 	QFile mPlaylist;
+	qint64 mTotalSize;
 };
 
 } // namespace forms

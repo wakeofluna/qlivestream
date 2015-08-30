@@ -40,14 +40,17 @@ VideoDownloader::~VideoDownloader()
 
 QString VideoDownloader::suggestedFolder() const
 {
-	return QString("twitch-%1-%2").arg(mOwner).arg(!mTitle.isEmpty() ? mTitle : mVideoId);
+	if (mTitle.isEmpty())
+		return QString("twitch-%1-%2").arg(mOwner).arg(mVideoId);
+	else
+		return QString("twitch-%1-%2-%3").arg(mOwner).arg(mTitle).arg(mVideoId);
 }
 
 QString VideoDownloader::suggestedFilename(int pChunkNr) const
 {
 	QString lExtension;
 
-	const Entry & lChunk = mChunks.value(pChunkNr);
+	const Entry & lChunk = mChunks.value(pChunkNr < 0 ? 0 : pChunkNr);
 
 	int lDot = lChunk.mLocation.lastIndexOf('.');
 	if (lDot != -1)
@@ -56,7 +59,7 @@ QString VideoDownloader::suggestedFilename(int pChunkNr) const
 		lExtension = lChunk.mLocation.mid(lDot, lEnd - lDot);
 	}
 
-	if (mChunks.size() <= 1 && pChunkNr == 0)
+	if (pChunkNr == -2 || (mChunks.size() <= 1 && pChunkNr == 0))
 		return QString("%1%2").arg(suggestedFolder()).arg(lExtension);
 	else if (pChunkNr == -1)
 		return QString("%1").arg(mVideoId);

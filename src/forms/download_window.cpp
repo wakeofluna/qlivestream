@@ -24,6 +24,8 @@ DownloadWindow::DownloadWindow(IDownloader * pDownloader) : QWidget(nullptr, Qt:
 	Q_ASSERT(mDownloader != nullptr);
 
 	mPaused = false;
+	mMerged = true; // TODO make configurable
+	mTotalSize = 0;
 
 	ui = new Ui::DownloadWindow();
 	ui->setupUi(this);
@@ -93,6 +95,12 @@ void DownloadWindow::downloadNext()
 		if (mPlaylist.isOpen())
 			mPlaylist.flush();
 
+		if (mStatusFile.isOpen())
+			mStatusFile.flush();
+
+		if (mCurrentFile.isOpen())
+			mCurrentFile.flush();
+
 		return;
 	}
 
@@ -110,11 +118,14 @@ void DownloadWindow::downloadNext()
 		mDownloader->setCurrentChunk(lNext);
 		mCurrentData.clear();
 
-		QString lFullname = mTarget.filePath(mDownloader->suggestedFilename(lNext));
-		mCurrentFile.close();
-		mCurrentFile.setFileName(lFullname);
+		if (!mMerged)
+		{
+			QString lFullname = mTarget.filePath(mDownloader->suggestedFilename(lNext));
+			mCurrentFile.close();
+			mCurrentFile.setFileName(lFullname);
+		}
 
-		if (mCurrentFile.exists())
+		if (!mMerged && mCurrentFile.exists())
 		{
 			ui->prgFile->setValue(1);
 			ui->prgFile->setMaximum(1);
@@ -143,6 +154,12 @@ void DownloadWindow::downloadNext()
 			mPlaylist.write("#EXT-X-ENDLIST\n");
 			mPlaylist.close();
 		}
+
+		if (mCurrentFile.isOpen())
+			mCurrentFile.close();
+
+		if (mStatusFile.isOpen())
+			mStatusFile.close();
 
 		emit finished();
 	}
@@ -200,9 +217,10 @@ void DownloadWindow::onDownloaderInitialized()
 		close();
 		return;
 	}
+
 	mTarget = lDir;
 
-	if (mDownloader->numChunks() > 1)
+	if (mDownloader->numChunks() > 1 && !mMerged)
 	{
 		QString lSubdir = mDownloader->suggestedFolder();
 		if (!lSubdir.isEmpty())
@@ -212,10 +230,36 @@ void DownloadWindow::onDownloaderInitialized()
 			mPlaylist.setFileName(mTarget.filePath(QString("%1.m3u").arg(mDownloader->suggestedFilename(-1))));
 		}
 	}
-	ui->btnBox->button(QDialogButtonBox::Open)->setEnabled(true);
+	else
+	{
+		mCurrentFile.setFileName(mTarget.filePath(mDownloader->suggestedFilename(-2)));
+		mStatusFile.setFileName(mTarget.filePath(QString("%1.log").arg(mDownloader->suggestedFilename(-2))));
+
+		if (mStatusFile.exists())
+		{
+			mStatusFile.open(QFile::ReadOnly);
+
+			qint64 lLastChunk;
+			qint64 lFileSize;
+			QTextStream lStatus(&mStatusFile);
+			lStatus >> lLastChunk >> lFileSize;
+
+			mDownloader->setCurrentChunk(lLastChunk);
+			mTotalSize = lFileSize;
+
+			mStatusFile.close();
+		}
+
+		if (mCurrentFile.exists())
+		{
+			mCurrentFile.open(QFile::WriteOnly | QFile::Append);
+			mCurrentFile.resize(mTotalSize);
+		}
+	}
 
 	mCurrentData.reserve(12*1024*1024);
 
+	ui->btnBox->button(QDialogButtonBox::Open)->setEnabled(true);
 	ui->btnBox->button(QDialogButtonBox::Cancel)->setEnabled(true);
 	downloadNext();
 }
@@ -272,7 +316,8 @@ void DownloadWindow::onChunkCompleted()
 		mCurrentFile.write(mCurrentData);
 		mCurrentData.clear();
 	}
-	mCurrentFile.close();
+
+	mTotalSize += mDownloader->currentChunkProgress();
 
 	if (!mPlaylist.fileName().isEmpty())
 	{
@@ -296,6 +341,22 @@ void DownloadWindow::onChunkCompleted()
 
 		mPlaylist.write(lItem.toLatin1());
 		mPlaylist.write("\n");
+	}
+
+	if (!mStatusFile.fileName().isEmpty())
+	{
+		if (!mStatusFile.isOpen())
+		{
+			mStatusFile.open(QFile::WriteOnly | QFile::Truncate);
+		}
+		else
+		{
+			mStatusFile.resize(0);
+			mStatusFile.seek(0);
+		}
+
+		QString lStatus = QString("%1 %2").arg(mDownloader->currentChunk()).arg(mTotalSize);
+		mStatusFile.write(lStatus.toUtf8());
 	}
 
 	emit chunkFinished();
