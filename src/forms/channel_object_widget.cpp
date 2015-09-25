@@ -16,6 +16,8 @@ namespace forms
 
 ChannelObjectWidget::ChannelObjectWidget(IChannel & pObject, QWidget * parent) : QWidget(parent), mChannel(pObject)
 {
+	mIsOnline = false;
+
 	ui = new Ui::ChannelObjectWidget();
 	ui->setupUi(this);
 
@@ -73,6 +75,8 @@ void ChannelObjectWidget::updateFromObject()
 	else
 		ui->lblStatus->setToolTip(QString());
 
+	bool lIsOnline = mChannel.isOnline();
+
 	ui->lblStatus->setText(lStatus);
 	ui->lblCategory->setText(mChannel.category() ? mChannel.category()->name() : QString());
 	ui->lblFollowers->setText(QString::number(mChannel.numFollowers()));
@@ -81,6 +85,12 @@ void ChannelObjectWidget::updateFromObject()
 	ui->lblViewersLabel->setVisible(lNumViewers >= 0);
 	ui->lblViewers->setVisible(lNumViewers >= 0);
 	ui->lblViewers->setText(QString::number(lNumViewers));
+
+	if (mIsOnline != lIsOnline)
+	{
+		mIsOnline = lIsOnline;
+		emit onlineChanged(&mChannel);
+	}
 }
 
 void ChannelObjectWidget::on_btnChannel_clicked()

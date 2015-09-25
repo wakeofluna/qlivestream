@@ -44,7 +44,7 @@ Profile::~Profile()
 QUrl Profile::acquireTokenUrl() const
 {
 	AuthScopes lRequested;
-	//lRequested.set(AuthScope::user_read);
+	lRequested.set(AuthScope::user_read);
 	lRequested.set(AuthScope::user_blocks_edit);
 	lRequested.set(AuthScope::user_blocks_read);
 	lRequested.set(AuthScope::user_follows_edit);
@@ -93,7 +93,7 @@ void Profile::performLogin(DefaultCallback && pCallback)
 		bool lValid = lToken.value("valid").toBool();
 		QString lUsername = lToken.value("user_name").toString();
 
-		if (lValid && lUsername == account())
+		if (lValid && lUsername.compare(account(), Qt::CaseInsensitive) == 0)
 		{
 			mLoggedIn = true;
 
@@ -117,6 +117,9 @@ void Profile::rollupFollowedChannels()
 		return;
 
 	mCanRollupFollowedChannels = false;
+
+	if (mFollowedChannels.isEmpty() && mScopes.test(AuthScope::user_read))
+		getFollowedStreams();
 
 	QUrlQuery lUrlQuery;
 	lUrlQuery.addQueryItem("limit", "50");
@@ -146,6 +149,9 @@ void Profile::rollupFollowedChannels()
 				{
 					mFollowedChannels.append(lChannel);
 					mCanRollupFollowedChannels = true;
+
+					if (!mScopes.test(AuthScope::user_read))
+						lChannel->refresh();
 				}
 			}
 
@@ -238,6 +244,42 @@ void Profile::rollupTopCategories()
 			emit topCategoriesUpdated();
 		}
 	});
+}
+
+void Profile::getFollowedStreams()
+{
+	QUrlQuery lUrlQuery;
+	lUrlQuery.addQueryItem("limit", "100");
+
+	QUrl lUrl = krakenUrl(QString("/streams/followed"));
+	lUrl.setQuery(lUrlQuery);
+
+	QNetworkRequest lRequest = serviceRequest(true);
+	lRequest.setUrl(lUrl);
+
+	Logger::StatusMessage lStatus("Getting followed streams...");
+
+	throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
+	{
+		twitchtv3::ServerReply lReply(this, pReply, "UserFollowsStreams");
+		if (lReply.hasError())
+			return;
+
+		QVariantList lList = lReply.data().value("streams").toList();
+		if (!lList.isEmpty())
+		{
+			for (QVariant & lChannelItem : lList)
+			{
+				Channel * lChannel = processChannel(lChannelItem);
+				if (lChannel != nullptr && !mFollowedChannels.contains(lChannel))
+					mFollowedChannels.append(lChannel);
+			}
+
+			std::sort(mFollowedChannels.begin(), mFollowedChannels.end());
+			emit followedChannelsUpdated();
+		}
+	});
+
 }
 
 QUrl Profile::apiUrl(QString pAppend) const

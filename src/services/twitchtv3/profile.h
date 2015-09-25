@@ -55,6 +55,7 @@ public:
 	void rollupFollowedChannels() override;
 	void rollupFollowedCategories() override;
 	void rollupTopCategories() override;
+	void getFollowedStreams();
 
 	// Networking
 	QUrl apiUrl(QString pAppend) const;

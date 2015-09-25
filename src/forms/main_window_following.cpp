@@ -63,8 +63,19 @@ void MainWindowFollowing::onChannelsUpdated()
 			lOffline.append(lChannel);
 	}
 
-	addToFlowLayout(lOnline, mOnlineWidgets, ui->grpOnline->layout(), this, &MainWindowFollowing::selected);
-	addToFlowLayout(lOffline, mOfflineWidgets, ui->grpOffline->layout(), this, &MainWindowFollowing::selected);
+	std::function<void (ChannelObjectWidget*)> lCallback = [this] (ChannelObjectWidget * pNewWidget)
+	{
+		connect(pNewWidget, &ChannelObjectWidget::clicked, this, &MainWindowFollowing::selected);
+		connect(pNewWidget, &ChannelObjectWidget::onlineChanged, this, &MainWindowFollowing::onChannelsOnlineChanged);
+	};
+
+	addToFlowLayout(lOnline, mOnlineWidgets, ui->grpOnline->layout(), this, lCallback);
+	addToFlowLayout(lOffline, mOfflineWidgets, ui->grpOffline->layout(), this, lCallback);
+}
+
+void MainWindowFollowing::onChannelsOnlineChanged()
+{
+	onChannelsUpdated();
 }
 
 } // namespace forms

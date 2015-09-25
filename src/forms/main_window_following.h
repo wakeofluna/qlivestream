@@ -36,6 +36,7 @@ signals:
 private slots:
 	void checkRollup(int pSliderValue);
 	void onChannelsUpdated();
+	void onChannelsOnlineChanged();
 
 private:
 	Ui::MainWindowFollowing * ui;

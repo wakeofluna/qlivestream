@@ -32,7 +32,8 @@ public slots:
 	void updateFromObject();
 
 signals:
-	void clicked(IChannel * pCategory = nullptr);
+	void clicked(IChannel * pCategory);
+	void onlineChanged(IChannel * pChannel);
 
 private slots:
 	void on_btnChannel_clicked();
@@ -40,6 +41,7 @@ private slots:
 private:
 	Ui::ChannelObjectWidget * ui;
 	IChannel & mChannel;
+	bool mIsOnline;
 };
 
 } // namespace forms
