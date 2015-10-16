@@ -27,10 +27,7 @@ Profile * ServerReply::profile() const
 
 void ServerReply::log() const
 {
-	if (hasError())
-		Logger::get()->logNetworkError(tag(), lastError(), mData);
-	else
-		Logger::get()->logNetworkMessage(tag(), mData);
+	ReplyBase::log(mData);
 }
 
 bool ServerReply::parse()
@@ -45,8 +42,12 @@ bool ServerReply::parse()
 		}
 		else
 		{
-			setError("Invalid/unknown API version");
-			lOk = false;
+			setError(QString("Invalid/unknown API version: '%1'").arg(QString::fromUtf8(lApi)));
+
+			// Try it anyway..
+			mData = parseJsonReply();
+			if (mData.isEmpty())
+				lOk = false;
 		}
 	}
 

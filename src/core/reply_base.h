@@ -30,6 +30,7 @@ public:
 	QByteArray readByteArray();
 
 protected:
+	void log(QVariant pData) const;
 	void setError(QString pError);
 
 	IProfile * mProfile;

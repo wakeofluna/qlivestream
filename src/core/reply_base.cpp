@@ -22,9 +22,31 @@ ReplyBase::~ReplyBase()
 void ReplyBase::log() const
 {
 	if (!hasError())
-		Logger::get()->logNetworkMessage(mTag, "OK");
+		log("OK");
 	else
-		Logger::get()->logNetworkError(mTag, lastError(), QVariant());
+		log(QVariant());
+}
+
+void ReplyBase::log(QVariant pData) const
+{
+	if (!hasError())
+	{
+		Logger::get()->logNetworkMessage(mTag, pData);
+	}
+	else
+	{
+		QVariantList lHeaders;
+		for (auto const& i : mReply.rawHeaderPairs())
+			lHeaders.append(QString("%1: %2").arg(QString::fromUtf8(i.first)).arg(QString::fromUtf8(i.second)));
+
+		QVariantMap lMessage;
+		lMessage["Headers"] = lHeaders;
+
+		if (!pData.isNull())
+			lMessage["Data"] = pData;
+
+		Logger::get()->logNetworkError(mTag, lastError(), lMessage);
+	}
 }
 
 void ReplyBase::setError(QString pError)
@@ -33,6 +55,7 @@ void ReplyBase::setError(QString pError)
 		qWarning() << mTag << "Communication error: " << pError;
 
 	mLastError = pError;
+
 	if (mProfile != nullptr)
 		mProfile->setLastError(pError);
 }
