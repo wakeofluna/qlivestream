@@ -232,8 +232,10 @@ void DownloadWindow::onDownloaderInitialized()
 	}
 	else
 	{
-		mCurrentFile.setFileName(mTarget.filePath(mDownloader->suggestedFilename(-2)));
-		mStatusFile.setFileName(mTarget.filePath(QString("%1.log").arg(mDownloader->suggestedFilename(-2))));
+		QString lSuggestedName = mDownloader->suggestedFilename(-2);
+
+		mCurrentFile.setFileName(mTarget.filePath(lSuggestedName));
+		mStatusFile.setFileName(mTarget.filePath(QString("%1.log").arg(lSuggestedName)));
 
 		if (mStatusFile.exists())
 		{

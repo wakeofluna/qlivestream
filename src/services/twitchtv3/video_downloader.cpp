@@ -43,7 +43,7 @@ QString VideoDownloader::suggestedFolder() const
 	if (mTitle.isEmpty())
 		return QString("twitch-%1-%2").arg(mOwner).arg(mVideoId);
 	else
-		return QString("twitch-%1-%2-%3").arg(mOwner).arg(mTitle).arg(mVideoId);
+		return QString("twitch-%1-%2-%3").arg(mOwner).arg(escapeFilePath(mTitle)).arg(mVideoId);
 }
 
 QString VideoDownloader::suggestedFilename(int pChunkNr) const

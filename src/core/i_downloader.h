@@ -36,6 +36,7 @@ signals:
 
 protected:
 	IDownloader(QObject * parent = nullptr);
+	static QString escapeFilePath(QString pPath);
 
 	int mCurrentChunk;
 	int mChunkSize;
