@@ -441,6 +441,12 @@ Category * Profile::processCategory(QVariant pValue)
 	return lCategory;
 }
 
+void Profile::initProfile()
+{
+	IProfile::initProfile();
+	mAccount = mAccount.toLower();
+}
+
 IUser * Profile::newUserFor(QString pName)
 {
 	return new User(*this, pName);

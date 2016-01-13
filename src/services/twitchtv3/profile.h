@@ -74,6 +74,9 @@ public:
 	Channel * processChannel(QVariant pValue);
 	Category * processCategory(QVariant pValue);
 
+protected:
+	void initProfile() override;
+
 private:
 	IUser * newUserFor(QString pName) override;
 	ICategory * newCategoryFor(QString pName) override;
