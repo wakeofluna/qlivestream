@@ -139,14 +139,14 @@ void StorageAccess::checkDatabaseStructure()
 		SQL_PREPARE(q,
 				"create table statistics ("
 				"session_id INTEGER REFERENCES sessions (id) ON DELETE CASCADE ON UPDATE CASCADE,"
-				"current_time INTEGER,"
+				"curr_time INTEGER,"
 				"total_subscribers INTEGER,"
 				"total_followers INTEGER,"
 				"total_viewers INTEGER,"
 				"total_chatters INTEGER,"
 				"num_lines_chatted INTEGER,"
 				"num_words_chatted INTEGER,"
-				"PRIMARY KEY (session_id, current_time)"
+				"PRIMARY KEY (session_id, curr_time)"
 				")"
 		);
 		SQL_EXEC(q);
