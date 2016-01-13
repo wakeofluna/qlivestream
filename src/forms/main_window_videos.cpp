@@ -86,8 +86,21 @@ void MainWindowVideos::selected(IVideo * pVideo)
 		QString lProgram;
 		QStringList lArguments;
 		lProgram = "/usr/bin/mpv";
-		lArguments << "--untimed";
-		lArguments << "--quiet";
+		if (QFile::exists(lProgram))
+		{
+			lArguments << "--untimed";
+			lArguments << "--quiet";
+		}
+		else
+		{
+			lProgram = "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe";
+			if (!QFile::exists(lProgram))
+				lProgram = "C:\\Program Files\\VLC\\vlc.exe";
+			if (!QFile::exists(lProgram))
+				lProgram = "C:\\Program Files (x86)\\VideoLAN\\VLC\\vlc.exe";
+			if (!QFile::exists(lProgram))
+				lProgram = "C:\\Program Files (x86)\\VLC\\vlc.exe";
+		}
 		lArguments << lUrl.toString(QUrl::FullyEncoded);
 
 		QProcess * lProcess = new QProcess();
