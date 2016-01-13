@@ -18,11 +18,11 @@ Q_OBJECT
 public:
 	union Color
 	{
-		inline constexpr Color() : v(0) {}
-		inline constexpr Color(quint8 _r, quint8 _g, quint8 _b) : b(_b), g(_g), r(_r), a(255) {}
-		inline constexpr bool isValid() const { return a != 0; }
-		inline constexpr bool operator== (Color const& c) const { return v == c.v; }
-		inline constexpr bool operator!= (Color const& c) const { return v != c.v; }
+		inline Q_DECL_CONSTEXPR Color() : v(0) {}
+		inline Q_DECL_CONSTEXPR Color(quint8 _r, quint8 _g, quint8 _b) : b(_b), g(_g), r(_r), a(255) {}
+		inline Q_DECL_CONSTEXPR bool isValid() const { return a != 0; }
+		inline Q_DECL_CONSTEXPR bool operator== (Color const& c) const { return v == c.v; }
+		inline Q_DECL_CONSTEXPR bool operator!= (Color const& c) const { return v != c.v; }
 
 		struct { quint8 b, g, r, a; };
 		quint32 v;

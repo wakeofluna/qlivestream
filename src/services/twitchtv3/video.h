@@ -19,8 +19,9 @@ class Video : public IVideo
 public:
 	struct Quality
 	{
+		Quality() { mResolution[0] = -1; mResolution[1] = -1; }
 		bool mHasVideo = false;
-		int mResolution[2] = { -1, -1 };
+		int mResolution[2];
 		float mFps = 0;
 		bool operator== (const Quality & pOther) const;
 	};

@@ -18,7 +18,7 @@ struct ColorDef
 	IChannelUser::Color color;
 };
 
-static constexpr ColorDef _predefined[] = {
+static Q_CONSTEXPR ColorDef _predefined[] = {
 		{ "Red",         { 0xFF, 0x00, 0x00 } },
 		{ "Blue",        { 0x00, 0x00, 0xFF } },
 		{ "Green",       { 0x00, 0x80, 0x00 } },
@@ -36,7 +36,7 @@ static constexpr ColorDef _predefined[] = {
 		{ "SpringGreen", { 0x00, 0xFF, 0x7F } }
 };
 
-static constexpr int _numPredefined = sizeof(_predefined) / sizeof(*_predefined);
+static Q_CONSTEXPR int _numPredefined = sizeof(_predefined) / sizeof(*_predefined);
 
 }
 

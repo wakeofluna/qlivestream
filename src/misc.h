@@ -45,7 +45,18 @@ inline bool updateIfChanged(T & pTarget, T const & pReplacement)
 }
 
 template <>
-bool updateIfChanged<QString>(QString & pTarget, QString const & pReplacement);
+inline bool updateIfChanged<QString>(QString & pTarget, QString const & pReplacement)
+{
+	if (pTarget != pReplacement && !pReplacement.isEmpty())
+	{
+		pTarget = pReplacement;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
 
 template <typename T>
 inline bool updateIfChanged(T & pTarget, T const & pReplacement, bool pPredicate)

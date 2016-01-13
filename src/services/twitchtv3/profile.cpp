@@ -20,8 +20,8 @@
 #include "../../core/logger.h"
 #include "../../core/reply_base.h"
 
-static constexpr int MaxPending = 4;
-static constexpr int PendingDelay = 1200;
+static Q_CONSTEXPR int MaxPending = 4;
+static Q_CONSTEXPR int PendingDelay = 1200;
 
 namespace twitchtv3
 {
