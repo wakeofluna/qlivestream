@@ -249,7 +249,7 @@ void Channel::rollupVideos()
 	lUrlQuery.addQueryItem("limit", "5");
 	lUrlQuery.addQueryItem("offset", QString::number(mVideos.count()));
 	lUrlQuery.addQueryItem("hls", "true");
-	//lUrlQuery.addQueryItem("broadcasts", "true");
+	lUrlQuery.addQueryItem("broadcasts", "true");
 
 	QUrl lUrl = profile().krakenUrl(QString("/channels/%1/videos").arg(name()));
 	lUrl.setQuery(lUrlQuery);
