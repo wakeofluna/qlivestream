@@ -36,7 +36,7 @@ bool ServerReply::parse()
 	if (lOk)
 	{
 		QByteArray lApi = mReply.rawHeader("X-API-Version");
-		if (lApi == "3")
+		if (lApi == "3" || lApi.isNull())
 		{
 			mData = parseJsonReply();
 		}
