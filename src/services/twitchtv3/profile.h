@@ -83,6 +83,7 @@ private:
 	void throttlePing();
 
 	AuthScopes mScopes;
+	QString mClientID;
 
 	ChatServerPtr mChatServer;
 

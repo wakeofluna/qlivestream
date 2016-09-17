@@ -96,6 +96,7 @@ void Profile::performLogin(DefaultCallback && pCallback)
 		if (lValid && lUsername.compare(account(), Qt::CaseInsensitive) == 0)
 		{
 			mLoggedIn = true;
+			mClientID = lToken.value("client_id").toString();
 
 			QVariantMap lTokenAuth = lToken.value("authorization").toMap();
 			QVariantList lTokenScopes = lTokenAuth.value("scopes").toList();
@@ -325,6 +326,9 @@ QNetworkRequest Profile::serviceRequest(bool pAuthed, bool pJson) const
 		QString lAuth = QString("OAuth %1").arg(token());
 		lRequest.setRawHeader("Authorization", lAuth.toUtf8());
 	}
+
+	if (!mClientID.isEmpty())
+		lRequest.setRawHeader("Client-ID", mClientID.toUtf8());
 
 	return lRequest;
 }
