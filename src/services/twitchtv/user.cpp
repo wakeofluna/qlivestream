@@ -6,7 +6,7 @@
 #include "../../misc.h"
 
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 User::User(Profile& pProfile, QString pName) : IUser(pProfile)
@@ -47,4 +47,4 @@ IChannelUser * User::newChannelUser(IChannel & pChannel)
 	return new ChannelUser(static_cast<Channel&>(pChannel), *this);
 }
 
-} // namespace twitchtv3
+} // namespace twitchtv

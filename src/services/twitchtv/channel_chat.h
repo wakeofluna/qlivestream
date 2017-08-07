@@ -1,5 +1,5 @@
-#ifndef SERVICES_TWITCHTV3_CHANNEL_CHAT_H_
-#define SERVICES_TWITCHTV3_CHANNEL_CHAT_H_
+#ifndef SERVICES_TWITCHTV_CHANNEL_CHAT_H_
+#define SERVICES_TWITCHTV_CHANNEL_CHAT_H_
 
 #include <QString>
 #include <QVector>
@@ -9,7 +9,7 @@
 #include "../../core/i_channel_chat.h"
 #include "../../core/i_channel_user.h"
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 class Channel;
@@ -54,6 +54,6 @@ private:
 	bool mRoomSubsOnly;
 };
 
-} // namespace twitchtv3
+} // namespace twitchtv
 
-#endif // SERVICES_TWITCHTV3_CHANNEL_CHAT_H_
+#endif // SERVICES_TWITCHTV_CHANNEL_CHAT_H_

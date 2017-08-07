@@ -1,5 +1,5 @@
-#ifndef SERVICES_TWITCHTV3_VIDEO_DOWNLOADER_H_
-#define SERVICES_TWITCHTV3_VIDEO_DOWNLOADER_H_
+#ifndef SERVICES_TWITCHTV_VIDEO_DOWNLOADER_H_
+#define SERVICES_TWITCHTV_VIDEO_DOWNLOADER_H_
 
 #include <QList>
 #include <QString>
@@ -8,7 +8,7 @@ class QNetworkReply;
 
 #include "../../core/i_downloader.h"
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 class Video;
@@ -50,6 +50,6 @@ private:
 	QNetworkReply * mCurrentReply;
 };
 
-} // namespace twitchtv3
+} // namespace twitchtv
 
-#endif // SERVICES_TWITCHTV3_VIDEO_DOWNLOADER_H_
+#endif // SERVICES_TWITCHTV_VIDEO_DOWNLOADER_H_

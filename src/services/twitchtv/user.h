@@ -1,11 +1,11 @@
-#ifndef SERVICES_TWITCHTV3_USER_H_
-#define SERVICES_TWITCHTV3_USER_H_
+#ifndef SERVICES_TWITCHTV_USER_H_
+#define SERVICES_TWITCHTV_USER_H_
 
 #include <QString>
 
 #include "../../core/i_user.h"
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 class Profile;
@@ -27,6 +27,6 @@ private:
 	IChannelUser * newChannelUser(IChannel & pChannel);
 };
 
-} // namespace twitchtv3
+} // namespace twitchtv
 
-#endif // SERVICES_TWITCHTV3_USER_H_
+#endif // SERVICES_TWITCHTV_USER_H_

@@ -7,7 +7,7 @@
 
 #include "../../core/logger.h"
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 ServerReply::ServerReply(Profile * pProfile, QNetworkReply & pReply, QString pTag) : ReplyBase(pProfile, pReply, pTag)
@@ -55,4 +55,4 @@ bool ServerReply::parse()
 	return lOk;
 }
 
-} // namespace twitchtv3
+} // namespace twitchtv

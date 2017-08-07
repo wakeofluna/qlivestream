@@ -19,7 +19,7 @@
 #include "../../core/reply_text.h"
 #include "../../misc.h"
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 bool Video::Quality::operator== (const Quality & pOther) const
@@ -169,4 +169,4 @@ void Video::updateFromVariant(QVariant pData)
 }
 
 
-} // namespace twitchtv3
+} // namespace twitchtv

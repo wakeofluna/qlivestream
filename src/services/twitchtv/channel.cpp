@@ -20,7 +20,7 @@
 #include "../../core/reply_text.h"
 #include "../../misc.h"
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 Channel::Channel(User & pUser) : IChannel(pUser)
@@ -55,7 +55,7 @@ QString Channel::name() const
 
 QString Channel::logoCacheString() const
 {
-	return IChannel::logoCacheString(QString("twitchtv3:%1").arg(name()));
+	return IChannel::logoCacheString(QString("twitchtv:%1").arg(name()));
 }
 
 IChannelChat * Channel::chat()
@@ -261,7 +261,7 @@ void Channel::rollupVideos()
 
 	profile().throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
 	{
-		twitchtv3::ServerReply lReply(&profile(), pReply, "ChannelVideos");
+		twitchtv::ServerReply lReply(&profile(), pReply, "ChannelVideos");
 		if (lReply.hasError())
 			return;
 
@@ -343,4 +343,4 @@ IVideo * Channel::processVideoObject(QVariant pVideo)
 	return lVideo;
 }
 
-} // namespace twitchtv3
+} // namespace twitchtv

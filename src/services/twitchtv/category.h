@@ -1,11 +1,11 @@
-#ifndef SERVICES_TWITCHTV3_CATEGORY_H_
-#define SERVICES_TWITCHTV3_CATEGORY_H_
+#ifndef SERVICES_TWITCHTV_CATEGORY_H_
+#define SERVICES_TWITCHTV_CATEGORY_H_
 
 #include <QVariant>
 
 #include "../../core/i_category.h"
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 class Profile;
@@ -31,6 +31,6 @@ private:
 	QUrl mLogoUrl;
 };
 
-} // namespace twitchtv3
+} // namespace twitchtv
 
-#endif // SERVICES_TWITCHTV3_CATEGORY_H_
+#endif // SERVICES_TWITCHTV_CATEGORY_H_

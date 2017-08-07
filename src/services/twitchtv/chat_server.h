@@ -1,5 +1,5 @@
-#ifndef SERVICES_TWITCHTV3_CHAT_SERVER_H_
-#define SERVICES_TWITCHTV3_CHAT_SERVER_H_
+#ifndef SERVICES_TWITCHTV_CHAT_SERVER_H_
+#define SERVICES_TWITCHTV_CHAT_SERVER_H_
 
 #include <QByteArrayList>
 #include <QMap>
@@ -10,7 +10,7 @@
 #include <QTcpSocket>
 class QTimer;
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 class Channel;
@@ -99,6 +99,6 @@ private:
 	QList<ChannelChat*> mChannels;
 };
 
-} // namespace twitchtv3
+} // namespace twitchtv
 
-#endif // SERVICES_TWITCHTV3_CHAT_SERVER_H_
+#endif // SERVICES_TWITCHTV_CHAT_SERVER_H_

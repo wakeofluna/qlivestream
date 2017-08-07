@@ -23,7 +23,7 @@
 static Q_CONSTEXPR int MaxPending = 4;
 static Q_CONSTEXPR int PendingDelay = 1200;
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 Profile::Profile()
@@ -84,7 +84,7 @@ void Profile::performLogin(DefaultCallback && pCallback)
 
 	throttledGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
 	{
-		twitchtv3::ServerReply lReply(this, pReply, "Authentication");
+		twitchtv::ServerReply lReply(this, pReply, "Authentication");
 		if (lReply.hasError())
 			return;
 
@@ -136,7 +136,7 @@ void Profile::rollupFollowedChannels()
 
 	throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
 	{
-		twitchtv3::ServerReply lReply(this, pReply, "UserFollowsChannels");
+		twitchtv::ServerReply lReply(this, pReply, "UserFollowsChannels");
 		if (lReply.hasError())
 			return;
 
@@ -178,7 +178,7 @@ void Profile::rollupFollowedCategories()
 
 	throttledGet(lRequest, [this] (QNetworkReply & pReply)
 	{
-		twitchtv3::ServerReply lReply(this, pReply, "UserFollowsCategories");
+		twitchtv::ServerReply lReply(this, pReply, "UserFollowsCategories");
 		if (lReply.hasError())
 			return;
 
@@ -224,7 +224,7 @@ void Profile::rollupTopCategories()
 
 	throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
 	{
-		twitchtv3::ServerReply lReply(this, pReply, "TopCategories");
+		twitchtv::ServerReply lReply(this, pReply, "TopCategories");
 		if (lReply.hasError())
 			return;
 
@@ -262,7 +262,7 @@ void Profile::getFollowedStreams()
 
 	throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
 	{
-		twitchtv3::ServerReply lReply(this, pReply, "UserFollowsStreams");
+		twitchtv::ServerReply lReply(this, pReply, "UserFollowsStreams");
 		if (lReply.hasError())
 			return;
 
@@ -492,4 +492,4 @@ void Profile::throttlePing()
 	}
 }
 
-} // namespace twitchtv3
+} // namespace twitchtv

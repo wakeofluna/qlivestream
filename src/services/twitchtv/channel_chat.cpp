@@ -9,7 +9,7 @@
 #include "profile.h"
 #include "user.h"
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 ChannelChat::ChannelChat(Channel & pChannel, ChatServer::Ptr pServer) : IChannelChat(pChannel), mServer(pServer)
@@ -169,4 +169,4 @@ QStringRef ChannelChat::usernameFrom(QString pSource)
 	return pSource.leftRef(lAt);
 }
 
-} // namespace twitchtv3
+} // namespace twitchtv

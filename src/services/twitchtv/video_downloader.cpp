@@ -11,7 +11,7 @@
 
 #include "../../core/reply_text.h"
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 VideoDownloader::VideoDownloader(Video & pVideo) : IDownloader()
@@ -191,4 +191,4 @@ void VideoDownloader::onFinished()
 	emit chunkCompleted();
 }
 
-} // namespace twitchtv3
+} // namespace twitchtv

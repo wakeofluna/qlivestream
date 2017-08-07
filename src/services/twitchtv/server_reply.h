@@ -1,12 +1,12 @@
-#ifndef SERVICES_TWITCHTV3_SERVER_REPLY_H_
-#define SERVICES_TWITCHTV3_SERVER_REPLY_H_
+#ifndef SERVICES_TWITCHTV_SERVER_REPLY_H_
+#define SERVICES_TWITCHTV_SERVER_REPLY_H_
 
 #include <QString>
 #include <QVariantMap>
 
 #include "../../core/reply_base.h"
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 class Profile;
@@ -26,6 +26,6 @@ protected:
 	QVariantMap mData;
 };
 
-} // namespace twitchtv3
+} // namespace twitchtv
 
-#endif // SERVICES_TWITCHTV3_SERVER_REPLY_H_
+#endif // SERVICES_TWITCHTV_SERVER_REPLY_H_

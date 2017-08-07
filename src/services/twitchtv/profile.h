@@ -1,5 +1,5 @@
-#ifndef SERVICES_TWITCHTV3_PROFILE_H_
-#define SERVICES_TWITCHTV3_PROFILE_H_
+#ifndef SERVICES_TWITCHTV_PROFILE_H_
+#define SERVICES_TWITCHTV_PROFILE_H_
 
 #include <algorithm>
 #include <QByteArray>
@@ -15,7 +15,7 @@
 #include "../../core/i_profile.h"
 #include "../../core/network_access.h"
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 class Category;
@@ -93,6 +93,6 @@ private:
 	int mPendingPoints;
 };
 
-} // namespace twitchtv3
+} // namespace twitchtv
 
-#endif // SERVICES_TWITCHTV3_PROFILE_H_
+#endif // SERVICES_TWITCHTV_PROFILE_H_
