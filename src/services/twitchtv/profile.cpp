@@ -97,6 +97,7 @@ void Profile::performLogin(DefaultCallback && pCallback)
 		{
 			mLoggedIn = true;
 			mClientID = lToken.value("client_id").toString();
+			mUserID = lToken.value("user_id").toString();
 
 			QVariantMap lTokenAuth = lToken.value("authorization").toMap();
 			QVariantList lTokenScopes = lTokenAuth.value("scopes").toList();
@@ -318,7 +319,7 @@ QNetworkRequest Profile::serviceRequest(bool pAuthed, bool pJson) const
 	if (pJson)
 	{
 		lRequest.setHeader(QNetworkRequest::UserAgentHeader, APP_NAME);
-		lRequest.setRawHeader("Accept", "application/vnd.twitchtv.v3+json");
+		lRequest.setRawHeader("Accept", "application/vnd.twitchtv.v5+json");
 	}
 
 	if (level() != ANONYMOUS && !token().isEmpty() && pAuthed)

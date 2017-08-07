@@ -84,6 +84,7 @@ private:
 
 	AuthScopes mScopes;
 	QString mClientID;
+	QString mUserID;
 
 	ChatServerPtr mChatServer;
 
