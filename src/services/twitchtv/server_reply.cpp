@@ -27,7 +27,7 @@ Profile * ServerReply::profile() const
 
 void ServerReply::log() const
 {
-	ReplyBase::log(mData);
+	ReplyBase::log(addHeadersToData(mData));
 }
 
 bool ServerReply::parse()
@@ -36,7 +36,7 @@ bool ServerReply::parse()
 	if (lOk)
 	{
 		QByteArray lApi = mReply.rawHeader("X-API-Version");
-		if (lApi == "3" || lApi.isNull())
+		if (lApi == "5" || lApi.isNull())
 		{
 			mData = parseJsonReply();
 		}
