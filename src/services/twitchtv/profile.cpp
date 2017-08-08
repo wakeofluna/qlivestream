@@ -32,6 +32,7 @@ Profile::Profile()
 	mPendingPoints = MaxPending;
 	mPendingTimer = new QTimer();
 	mPendingTimer->setInterval(PendingDelay);
+	mClientID = "ijvu4femgqm4vrc7fu0c7vi3irsqj37";
 	QObject::connect(mPendingTimer, &QTimer::timeout, this, &Profile::throttlePing);
 }
 
