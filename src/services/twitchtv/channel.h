@@ -21,6 +21,7 @@ public:
 	Profile & profile() const;
 	User & owner() const;
 	QString name() const;
+	QString id() const;
 
 	QString logoCacheString() const override;
 	IChannelChat * chat() override;

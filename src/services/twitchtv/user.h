@@ -21,6 +21,8 @@ public:
 	void unfriend();
 
 	void updateFlag(Flag pFlag, bool pEnabled);
+	void updateFromChannel(QVariantMap pMap);
+	void updateFromUserInfo(QVariantMap pMap);
 
 private:
 	IChannel * newChannel();

@@ -26,6 +26,7 @@ namespace twitchtv
 Channel::Channel(User & pUser) : IChannel(pUser)
 {
 	mChat = new ChannelChat(*this, pUser.profile().chatServer());
+	mId = pUser.id();
 
 	if (mUser.isSelf())
 	{
@@ -51,6 +52,11 @@ User & Channel::owner() const
 QString Channel::name() const
 {
 	return owner().name();
+}
+
+QString Channel::id() const
+{
+	return mId.toString();
 }
 
 QString Channel::logoCacheString() const
@@ -132,7 +138,7 @@ QUrl Channel::streamUrl(UrlType pType)
 void Channel::refresh()
 {
 	QNetworkRequest lRequest = profile().serviceRequest(true);
-	lRequest.setUrl(profile().krakenUrl(QString("/streams/%1").arg(name())));
+	lRequest.setUrl(profile().krakenUrl(QString("/streams/%1").arg(id())));
 
 	profile().throttledGet(lRequest, [this] (QNetworkReply & pReply)
 	{
@@ -160,7 +166,7 @@ void Channel::refresh()
 		if (mNumViews == -1)
 		{
 			QNetworkRequest lRequest = profile().serviceRequest(true);
-			lRequest.setUrl(profile().krakenUrl(QString("/channels/%1").arg(name())));
+			lRequest.setUrl(profile().krakenUrl(QString("/channels/%1").arg(id())));
 
 			profile().throttledGet(lRequest, [this] (QNetworkReply & pReply)
 			{
@@ -177,7 +183,7 @@ void Channel::refresh()
 void Channel::modifyStreamSettings(QString pTitle, ICategory * pCategory, bool pMature, int pDelay)
 {
 	QNetworkRequest lRequest = profile().serviceRequest(true);
-	lRequest.setUrl(profile().krakenUrl(QString("/channels/%1/").arg(name())));
+	lRequest.setUrl(profile().krakenUrl(QString("/channels/%1/").arg(id())));
 	lRequest.setHeader(lRequest.ContentTypeHeader, "application/json");
 
 	QVariantMap lChannel;
@@ -206,7 +212,7 @@ void Channel::setFollowed(bool pFollow)
 	if (profile().hasScope(AuthScope::user_follows_edit))
 	{
 		QNetworkRequest lRequest = profile().serviceRequest(true);
-		lRequest.setUrl(profile().krakenUrl(QString("/users/%1/follows/channels/%2").arg(profile().account()).arg(name())));
+		lRequest.setUrl(profile().krakenUrl(QString("/users/%1/follows/channels/%2").arg(profile().userID()).arg(id())));
 
 		if (pFollow)
 		{
@@ -251,7 +257,7 @@ void Channel::rollupVideos()
 	lUrlQuery.addQueryItem("hls", "true");
 	lUrlQuery.addQueryItem("broadcasts", "true");
 
-	QUrl lUrl = profile().krakenUrl(QString("/channels/%1/videos").arg(name()));
+	QUrl lUrl = profile().krakenUrl(QString("/channels/%1/videos").arg(id()));
 	lUrl.setQuery(lUrlQuery);
 
 	QNetworkRequest lRequest = profile().serviceRequest(false);

@@ -128,7 +128,7 @@ void Profile::rollupFollowedChannels()
 	lUrlQuery.addQueryItem("limit", "50");
 	lUrlQuery.addQueryItem("offset", QString::number(qMax(0, mFollowedChannels.count() - 5)));
 
-	QUrl lUrl = krakenUrl(QString("/users/%1/follows/channels").arg(mAccount));
+	QUrl lUrl = krakenUrl(QString("/users/%1/follows/channels").arg(mUserID));
 	lUrl.setQuery(lUrlQuery);
 
 	QNetworkRequest lRequest = serviceRequest(false);
@@ -282,7 +282,41 @@ void Profile::getFollowedStreams()
 			emit followedChannelsUpdated();
 		}
 	});
+}
 
+void Profile::getUserInfo(QString pName)
+{
+	QUrlQuery lUrlQuery;
+	lUrlQuery.addQueryItem("login", pName);
+
+	QUrl lUrl = krakenUrl("/users");
+	lUrl.setQuery(lUrlQuery);
+
+	QNetworkRequest lRequest = serviceRequest(false);
+	lRequest.setUrl(lUrl);
+
+	throttledGet(lRequest, [this] (QNetworkReply & pReply)
+	{
+		twitchtv::ServerReply lReply(this, pReply, "UserInfo");
+		if (lReply.hasError())
+			return;
+
+		QVariantList lList = lReply.data().value("users").toList();
+		if (!lList.isEmpty())
+		{
+			for (QVariant & lInfoItem : lList)
+			{
+				QVariantMap lMap = lInfoItem.toMap();
+				QString lName = lMap.value("name").toString();
+				if (lName.isEmpty())
+					continue;
+
+				IUser * lIUser = getUserFor(lName, true);
+				User * lUser = static_cast<User*>(lIUser);
+				lUser->updateFromUserInfo(lMap);
+			}
+		}
+	});
 }
 
 QUrl Profile::apiUrl(QString pAppend) const
@@ -423,8 +457,10 @@ Channel * Profile::processChannel(QVariant pValue)
 		return nullptr;
 
 	IUser * lIUser = getUserFor(lName);
-	IChannel * lIChannel = lIUser->channel(true);
+	User * lUser = static_cast<User*>(lIUser);
+	lUser->updateFromChannel(lCheck);
 
+	IChannel * lIChannel = lUser->channel(true);
 	Channel * lChannel = static_cast<Channel*>(lIChannel);
 	lChannel->updateFromVariant(pValue);
 

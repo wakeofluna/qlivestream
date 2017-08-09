@@ -56,6 +56,9 @@ public:
 	void rollupFollowedCategories() override;
 	void rollupTopCategories() override;
 	void getFollowedStreams();
+	void getUserInfo(QString pName);
+
+	inline QString userID() const { return mUserID; }
 
 	// Networking
 	QUrl apiUrl(QString pAppend) const;
