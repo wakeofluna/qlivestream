@@ -159,7 +159,7 @@ void Video::updateFromVariant(QVariant pData)
 	lChanged |= updateIfChanged(mViews, lItem.value("views").toInt(&lOk), lOk);
 
 	lChanged |= updateIfChanged(mBroadcastId, lItem.value("broadcast_id"));
-	lChanged |= updateIfChanged(mPreviewImage, lItem.value("preview").toUrl());
+	lChanged |= updateIfChanged(mPreviewImage, lItem.value("preview").toMap().value("medium").toUrl());
 	lChanged |= updateIfChanged(mWebpage, lItem.value("url").toUrl());
 	lChanged |= updateIfChanged(mTags, lItem.value("tag_list").toStringList());
 	lChanged |= updateIfChanged(mQualities, lQualities);
