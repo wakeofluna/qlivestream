@@ -51,12 +51,13 @@ public:
 
 	QUrl acquireTokenUrl() const override;
 	void performLogin(DefaultCallback && pCallback) override;
+	void performPostLogin(DefaultCallback && pCallback) override;
 
 	void rollupFollowedChannels() override;
 	void rollupFollowedCategories() override;
 	void rollupTopCategories() override;
 	void getFollowedStreams();
-	void getUserInfo(QString pName);
+	void getUserInfo(QStringList pName);
 
 	inline QString userID() const { return mUserID; }
 

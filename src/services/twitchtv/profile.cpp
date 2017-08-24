@@ -75,13 +75,20 @@ QUrl Profile::acquireTokenUrl() const
 
 void Profile::performLogin(DefaultCallback && pCallback)
 {
+	mLoggedIn = false;
+	mScopes.reset();
+
+	if (level() == ANONYMOUS)
+	{
+		mLoggedIn = true;
+		pCallback();
+		return;
+	}
+
 	QUrl lUrl = krakenUrl();
 
 	QNetworkRequest lRequest = serviceRequest();
 	lRequest.setUrl(lUrl);
-
-	mLoggedIn = false;
-	mScopes.reset();
 
 	throttledGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
 	{
@@ -111,6 +118,20 @@ void Profile::performLogin(DefaultCallback && pCallback)
 
 		pCallback();
 	});
+}
+
+void Profile::performPostLogin(DefaultCallback && pCallback)
+{
+	if (mUserID.isEmpty())
+	{
+		QObject::connect(mSelf, &IUser::infoUpdated, [this] () {
+			mUserID = mSelf->id().toString();
+		});
+
+		mUserID = mSelf->id().toString();
+		getUserInfo({ mSelf->name() });
+	}
+	pCallback();
 }
 
 // XXX -DRY- rollups for Profile
@@ -284,10 +305,10 @@ void Profile::getFollowedStreams()
 	});
 }
 
-void Profile::getUserInfo(QString pName)
+void Profile::getUserInfo(QStringList pName)
 {
 	QUrlQuery lUrlQuery;
-	lUrlQuery.addQueryItem("login", pName);
+	lUrlQuery.addQueryItem("login", pName.join(','));
 
 	QUrl lUrl = krakenUrl("/users");
 	lUrl.setQuery(lUrlQuery);
@@ -485,8 +506,8 @@ Category * Profile::processCategory(QVariant pValue)
 
 void Profile::initProfile()
 {
-	IProfile::initProfile();
 	mAccount = mAccount.toLower();
+	IProfile::initProfile();
 }
 
 IUser * Profile::newUserFor(QString pName)

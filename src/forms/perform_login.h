@@ -29,6 +29,7 @@ private:
 	void proceed();
 	void restart();
 	void runStep();
+	void runStepImpl();
 
 private:
 	Ui::PerformLogin * ui;

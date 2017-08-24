@@ -82,16 +82,10 @@ void SelectProfile::on_btnBox_accepted()
 	ConfigProfile & lConfig = mProfiles[ui->cbbProfile->currentIndex()];
 	std::unique_ptr<IProfile> lProfile = lConfig.load();
 
-	int lResult;
-	if (lProfile->level() == IProfile::ANONYMOUS)
-		lResult = QDialog::Accepted;
-	else
-	{
-		PerformLogin * lPerformLogin = new PerformLogin(*lProfile, this);
-		lPerformLogin->setAttribute(Qt::WA_DeleteOnClose);
-		lResult = lPerformLogin->exec();
-	}
+	PerformLogin * lPerformLogin = new PerformLogin(*lProfile, this);
+	lPerformLogin->setAttribute(Qt::WA_DeleteOnClose);
 
+	int lResult = lPerformLogin->exec();
 	if (lResult == QDialog::Accepted)
 	{
 		MainWindow * lMainWindow = new MainWindow(std::move(lProfile));
