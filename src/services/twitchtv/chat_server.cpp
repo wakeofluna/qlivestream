@@ -10,7 +10,7 @@
 
 static const int MAX_PENDING = 4;
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 QStringRef ChatServer::RawMessage::username() const
@@ -296,7 +296,7 @@ void ChatServer::socketReady()
 		if (lLine.length() == 0)
 			continue;
 
-		qDebug() << "[TWITCHTV3 CHAT] <<" << lLine;
+		qDebug() << "[TWITCHTV CHAT] <<" << lLine;
 
 		RawMessage lMessage;
 
@@ -395,7 +395,7 @@ void ChatServer::sendPing()
 
 void ChatServer::sendRawBytes(QByteArray const & pMessage)
 {
-	qDebug() << "[TWITCHTV3 CHAT] >>" << QString::fromUtf8(pMessage).trimmed();
+	qDebug() << "[TWITCHTV CHAT] >>" << QString::fromUtf8(pMessage).trimmed();
 	mSocket->write(pMessage);
 }
 
@@ -542,4 +542,4 @@ ChannelChat * ChatServer::findChannel(QString pName) const
 	return nullptr;
 }
 
-} // namespace twitchtv3
+} // namespace twitchtv

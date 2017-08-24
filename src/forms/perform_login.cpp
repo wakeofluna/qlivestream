@@ -5,6 +5,8 @@
 #include "../core/i_profile.h"
 #include "ui_perform_login.h"
 
+#include <QTimer>
+
 namespace forms
 {
 
@@ -42,6 +44,11 @@ void PerformLogin::restart()
 
 void PerformLogin::runStep()
 {
+	QTimer::singleShot(0, [this] () { runStepImpl(); });
+}
+
+void PerformLogin::runStepImpl()
+{
 	if (mSubPanel)
 	{
 		ui->layout->removeWidget(mSubPanel);
@@ -54,7 +61,7 @@ void PerformLogin::runStep()
 		case 0:
 			ui->prgStep->setValue(25);
 			ui->prgStep->setFormat(tr("Login to service"));
-			if (mProfile.token().isEmpty())
+			if (mProfile.token().isEmpty() && mProfile.level() != IProfile::ANONYMOUS)
 			{
 				SubPanelAcquire * lPanel = new SubPanelAcquire(mProfile, this);
 				connect(lPanel, &SubPanelAcquire::onSetToken, [this] (QString pToken)
@@ -64,10 +71,12 @@ void PerformLogin::runStep()
 				});
 				mSubPanel = lPanel;
 				ui->layout->addWidget(mSubPanel);
-				break;
 			}
-			proceed();
-			return;
+			else
+			{
+				proceed();
+			}
+			break;
 
 		case 1:
 		{
@@ -84,9 +93,11 @@ void PerformLogin::runStep()
 					});
 					mSubPanel = lPanel;
 					ui->layout->addWidget(mSubPanel);
-					return;
 				}
-				proceed();
+				else
+				{
+					proceed();
+				}
 			});
 			break;
 		}
@@ -106,16 +117,21 @@ void PerformLogin::runStep()
 				});
 				mSubPanel = lPanel;
 				ui->layout->addWidget(mSubPanel);
-				break;
 			}
-			proceed();
-			return;
+			else
+			{
+				proceed();
+			}
+			break;
 
 		case 3:
 			ui->prgStep->setValue(75);
 			ui->prgStep->setFormat("Getting channel information");
-			proceed();
-			return;
+			mProfile.performPostLogin([this] ()
+			{
+				proceed();
+			});
+			break;
 
 		case 4:
 			accept();

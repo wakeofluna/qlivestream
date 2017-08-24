@@ -1,5 +1,5 @@
-#ifndef SERVICES_TWITCHTV3_VIDEO_H_
-#define SERVICES_TWITCHTV3_VIDEO_H_
+#ifndef SERVICES_TWITCHTV_VIDEO_H_
+#define SERVICES_TWITCHTV_VIDEO_H_
 
 #include <QMap>
 #include <QString>
@@ -9,7 +9,7 @@
 
 #include "../../core/i_video.h"
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 class Channel;
@@ -46,6 +46,6 @@ private:
 	QMap<QString,Quality> mQualities;
 };
 
-} // namespace twitchtv3
+} // namespace twitchtv
 
-#endif // SERVICES_TWITCHTV3_VIDEO_H_
+#endif // SERVICES_TWITCHTV_VIDEO_H_

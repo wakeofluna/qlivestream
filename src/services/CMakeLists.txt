@@ -1,1 +1,1 @@
-add_subdirectory(twitchtv3)
+add_subdirectory(twitchtv)

@@ -51,6 +51,7 @@ public:
 
 	virtual QUrl acquireTokenUrl() const = 0;
 	virtual void performLogin(DefaultCallback && pCallback) = 0;
+	virtual void performPostLogin(DefaultCallback && pCallback);
 	virtual void downloadLogo(QUrl const & pUrl, DataCallback && pCallback);
 
 	inline QList<IChannel *> followedChannels() const { return mFollowedChannels; }

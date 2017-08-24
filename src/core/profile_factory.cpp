@@ -57,7 +57,7 @@ QStringList ProfileFactory::listServices() const
 void ProfileFactory::initialize()
 {
 	// Hardcoded list of possibly available service plugins
-	loadModule("twitchtv3");
+	loadModule("twitchtv");
 }
 
 void ProfileFactory::finalize()

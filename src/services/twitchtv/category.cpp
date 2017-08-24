@@ -15,7 +15,7 @@
 #include "../../core/reply_base.h"
 #include "../../misc.h"
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 Category::Category(Profile & pProfile, QString pName) : ICategory(pProfile)
@@ -35,7 +35,7 @@ Profile & Category::profile() const
 
 QString Category::logoCacheString() const
 {
-	return ICategory::logoCacheString(QString("twitchtv3:%1").arg(mName));
+	return ICategory::logoCacheString(QString("twitchtv:%1").arg(mName));
 }
 
 void Category::rollupChannels()
@@ -60,7 +60,7 @@ void Category::rollupChannels()
 
 	profile().throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
 	{
-		twitchtv3::ServerReply lReply(&profile(), pReply, "CategoryChannels");
+		twitchtv::ServerReply lReply(&profile(), pReply, "CategoryChannels");
 		if (lReply.hasError())
 			return;
 
@@ -168,4 +168,4 @@ void Category::updateFlag(Flag pFlag, bool pEnabled)
 		emit infoUpdated();
 }
 
-} // namespace twitchtv3
+} // namespace twitchtv

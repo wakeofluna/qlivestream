@@ -11,7 +11,6 @@ pipeline {
 	stages {
 		stage('Build') {
 			steps {
-				sh 'printenv'
 				sh '''
 					mkdir build
 					cd build

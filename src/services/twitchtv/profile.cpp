@@ -23,7 +23,7 @@
 static Q_CONSTEXPR int MaxPending = 4;
 static Q_CONSTEXPR int PendingDelay = 1200;
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 Profile::Profile()
@@ -32,6 +32,7 @@ Profile::Profile()
 	mPendingPoints = MaxPending;
 	mPendingTimer = new QTimer();
 	mPendingTimer->setInterval(PendingDelay);
+	mClientID = "ijvu4femgqm4vrc7fu0c7vi3irsqj37";
 	QObject::connect(mPendingTimer, &QTimer::timeout, this, &Profile::throttlePing);
 }
 
@@ -74,17 +75,24 @@ QUrl Profile::acquireTokenUrl() const
 
 void Profile::performLogin(DefaultCallback && pCallback)
 {
+	mLoggedIn = false;
+	mScopes.reset();
+
+	if (level() == ANONYMOUS)
+	{
+		mLoggedIn = true;
+		pCallback();
+		return;
+	}
+
 	QUrl lUrl = krakenUrl();
 
 	QNetworkRequest lRequest = serviceRequest();
 	lRequest.setUrl(lUrl);
 
-	mLoggedIn = false;
-	mScopes.reset();
-
 	throttledGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)
 	{
-		twitchtv3::ServerReply lReply(this, pReply, "Authentication");
+		twitchtv::ServerReply lReply(this, pReply, "Authentication");
 		if (lReply.hasError())
 			return;
 
@@ -97,6 +105,7 @@ void Profile::performLogin(DefaultCallback && pCallback)
 		{
 			mLoggedIn = true;
 			mClientID = lToken.value("client_id").toString();
+			mUserID = lToken.value("user_id").toString();
 
 			QVariantMap lTokenAuth = lToken.value("authorization").toMap();
 			QVariantList lTokenScopes = lTokenAuth.value("scopes").toList();
@@ -109,6 +118,20 @@ void Profile::performLogin(DefaultCallback && pCallback)
 
 		pCallback();
 	});
+}
+
+void Profile::performPostLogin(DefaultCallback && pCallback)
+{
+	if (mUserID.isEmpty())
+	{
+		QObject::connect(mSelf, &IUser::infoUpdated, [this] () {
+			mUserID = mSelf->id().toString();
+		});
+
+		mUserID = mSelf->id().toString();
+		getUserInfo({ mSelf->name() });
+	}
+	pCallback();
 }
 
 // XXX -DRY- rollups for Profile
@@ -126,7 +149,7 @@ void Profile::rollupFollowedChannels()
 	lUrlQuery.addQueryItem("limit", "50");
 	lUrlQuery.addQueryItem("offset", QString::number(qMax(0, mFollowedChannels.count() - 5)));
 
-	QUrl lUrl = krakenUrl(QString("/users/%1/follows/channels").arg(mAccount));
+	QUrl lUrl = krakenUrl(QString("/users/%1/follows/channels").arg(mUserID));
 	lUrl.setQuery(lUrlQuery);
 
 	QNetworkRequest lRequest = serviceRequest(false);
@@ -136,7 +159,7 @@ void Profile::rollupFollowedChannels()
 
 	throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
 	{
-		twitchtv3::ServerReply lReply(this, pReply, "UserFollowsChannels");
+		twitchtv::ServerReply lReply(this, pReply, "UserFollowsChannels");
 		if (lReply.hasError())
 			return;
 
@@ -178,7 +201,7 @@ void Profile::rollupFollowedCategories()
 
 	throttledGet(lRequest, [this] (QNetworkReply & pReply)
 	{
-		twitchtv3::ServerReply lReply(this, pReply, "UserFollowsCategories");
+		twitchtv::ServerReply lReply(this, pReply, "UserFollowsCategories");
 		if (lReply.hasError())
 			return;
 
@@ -224,7 +247,7 @@ void Profile::rollupTopCategories()
 
 	throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
 	{
-		twitchtv3::ServerReply lReply(this, pReply, "TopCategories");
+		twitchtv::ServerReply lReply(this, pReply, "TopCategories");
 		if (lReply.hasError())
 			return;
 
@@ -262,7 +285,7 @@ void Profile::getFollowedStreams()
 
 	throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
 	{
-		twitchtv3::ServerReply lReply(this, pReply, "UserFollowsStreams");
+		twitchtv::ServerReply lReply(this, pReply, "UserFollowsStreams");
 		if (lReply.hasError())
 			return;
 
@@ -280,7 +303,41 @@ void Profile::getFollowedStreams()
 			emit followedChannelsUpdated();
 		}
 	});
+}
 
+void Profile::getUserInfo(QStringList pName)
+{
+	QUrlQuery lUrlQuery;
+	lUrlQuery.addQueryItem("login", pName.join(','));
+
+	QUrl lUrl = krakenUrl("/users");
+	lUrl.setQuery(lUrlQuery);
+
+	QNetworkRequest lRequest = serviceRequest(false);
+	lRequest.setUrl(lUrl);
+
+	throttledGet(lRequest, [this] (QNetworkReply & pReply)
+	{
+		twitchtv::ServerReply lReply(this, pReply, "UserInfo");
+		if (lReply.hasError())
+			return;
+
+		QVariantList lList = lReply.data().value("users").toList();
+		if (!lList.isEmpty())
+		{
+			for (QVariant & lInfoItem : lList)
+			{
+				QVariantMap lMap = lInfoItem.toMap();
+				QString lName = lMap.value("name").toString();
+				if (lName.isEmpty())
+					continue;
+
+				IUser * lIUser = getUserFor(lName, true);
+				User * lUser = static_cast<User*>(lIUser);
+				lUser->updateFromUserInfo(lMap);
+			}
+		}
+	});
 }
 
 QUrl Profile::apiUrl(QString pAppend) const
@@ -318,7 +375,7 @@ QNetworkRequest Profile::serviceRequest(bool pAuthed, bool pJson) const
 	if (pJson)
 	{
 		lRequest.setHeader(QNetworkRequest::UserAgentHeader, APP_NAME);
-		lRequest.setRawHeader("Accept", "application/vnd.twitchtv.v3+json");
+		lRequest.setRawHeader("Accept", "application/vnd.twitchtv.v5+json");
 	}
 
 	if (level() != ANONYMOUS && !token().isEmpty() && pAuthed)
@@ -421,8 +478,10 @@ Channel * Profile::processChannel(QVariant pValue)
 		return nullptr;
 
 	IUser * lIUser = getUserFor(lName);
-	IChannel * lIChannel = lIUser->channel(true);
+	User * lUser = static_cast<User*>(lIUser);
+	lUser->updateFromChannel(lCheck);
 
+	IChannel * lIChannel = lUser->channel(true);
 	Channel * lChannel = static_cast<Channel*>(lIChannel);
 	lChannel->updateFromVariant(pValue);
 
@@ -447,8 +506,8 @@ Category * Profile::processCategory(QVariant pValue)
 
 void Profile::initProfile()
 {
-	IProfile::initProfile();
 	mAccount = mAccount.toLower();
+	IProfile::initProfile();
 }
 
 IUser * Profile::newUserFor(QString pName)
@@ -492,4 +551,4 @@ void Profile::throttlePing()
 	}
 }
 
-} // namespace twitchtv3
+} // namespace twitchtv

@@ -1,12 +1,12 @@
-#ifndef SERVICES_TWITCHTV3_CHANNEL_USER_H_
-#define SERVICES_TWITCHTV3_CHANNEL_USER_H_
+#ifndef SERVICES_TWITCHTV_CHANNEL_USER_H_
+#define SERVICES_TWITCHTV_CHANNEL_USER_H_
 
 #include <QString>
 #include "chat_server.h"
 
 #include "../../core/i_channel_user.h"
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 class Channel;
@@ -33,6 +33,6 @@ private:
 	QString mUserType;
 };
 
-} // namespace twitchtv3
+} // namespace twitchtv
 
-#endif // SERVICES_TWITCHTV3_CHANNEL_USER_H_
+#endif // SERVICES_TWITCHTV_CHANNEL_USER_H_

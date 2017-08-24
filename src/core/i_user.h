@@ -46,7 +46,7 @@ public:
 	IChannel * channel(bool pCreate);
 	IChannelUser * getChannelUser(IChannel & pChannel, bool pCreate);
 
-	inline bool operator== (IUser const & pOther) const { return mId == pOther.mId; }
+	inline bool operator== (IUser const & pOther) const { return mId.isNull() ? mName == pOther.mName : mId == pOther.mId; }
 
 public slots:
 	virtual void befriend() = 0;

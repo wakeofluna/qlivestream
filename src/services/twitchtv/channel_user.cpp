@@ -40,7 +40,7 @@ static Q_CONSTEXPR int _numPredefined = sizeof(_predefined) / sizeof(*_predefine
 
 }
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 ChannelUser::ChannelUser(Channel & pChannel, User & pUser) : IChannelUser(pChannel, pUser)
@@ -124,4 +124,4 @@ ChannelUser::Color ChannelUser::parseColor(QString pInput)
 	return lColor;
 }
 
-} // namespace twitchtv3
+} // namespace twitchtv

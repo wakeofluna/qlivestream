@@ -30,23 +30,9 @@ void ReplyBase::log() const
 void ReplyBase::log(QVariant pData) const
 {
 	if (!hasError())
-	{
 		Logger::get()->logNetworkMessage(mTag, pData);
-	}
 	else
-	{
-		QVariantList lHeaders;
-		for (auto const& i : mReply.rawHeaderPairs())
-			lHeaders.append(QString("%1: %2").arg(QString::fromUtf8(i.first)).arg(QString::fromUtf8(i.second)));
-
-		QVariantMap lMessage;
-		lMessage["Headers"] = lHeaders;
-
-		if (!pData.isNull())
-			lMessage["Data"] = pData;
-
-		Logger::get()->logNetworkError(mTag, lastError(), lMessage);
-	}
+		Logger::get()->logNetworkError(mTag, lastError(), addHeadersToData(pData));
 }
 
 void ReplyBase::setError(QString pError)
@@ -58,6 +44,27 @@ void ReplyBase::setError(QString pError)
 
 	if (mProfile != nullptr)
 		mProfile->setLastError(pError);
+}
+
+QVariantMap ReplyBase::addHeadersToData(QVariant pData) const
+{
+	QVariantMap lMessage;
+
+	if (pData.type() == QVariant::Map)
+		lMessage = pData.toMap();
+	else
+		lMessage["Data"] = pData;
+
+	if (!lMessage.contains("Headers"))
+	{
+		QVariantList lHeaders;
+		for (auto const& i : mReply.rawHeaderPairs())
+			lHeaders.append(QString("%1: %2").arg(QString::fromUtf8(i.first)).arg(QString::fromUtf8(i.second)));
+
+		lMessage["Headers"] = lHeaders;
+	}
+
+	return lMessage;
 }
 
 #define ERR(x,s) case QNetworkReply::x: setError(s); break

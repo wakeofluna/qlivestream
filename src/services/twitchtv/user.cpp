@@ -6,7 +6,7 @@
 #include "../../misc.h"
 
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 User::User(Profile& pProfile, QString pName) : IUser(pProfile)
@@ -33,7 +33,28 @@ void User::unfriend()
 
 void User::updateFlag(Flag pFlag, bool pEnabled)
 {
-	if (updateIfChanged<Flag>(mFlags, pFlag, pEnabled))
+	bool lChanged = false;
+	lChanged |= updateIfChanged<Flag>(mFlags, pFlag, pEnabled);
+
+	if (lChanged)
+		emit infoUpdated();
+}
+
+void User::updateFromChannel(QVariantMap pMap)
+{
+	bool lChanged = false;
+	lChanged |= updateIfChanged(mId, pMap.value("_id"));
+
+	if (lChanged)
+		emit infoUpdated();
+}
+
+void User::updateFromUserInfo(QVariantMap pMap)
+{
+	bool lChanged = false;
+	lChanged |= updateIfChanged(mId, pMap.value("_id"));
+
+	if (lChanged)
 		emit infoUpdated();
 }
 
@@ -47,4 +68,4 @@ IChannelUser * User::newChannelUser(IChannel & pChannel)
 	return new ChannelUser(static_cast<Channel&>(pChannel), *this);
 }
 
-} // namespace twitchtv3
+} // namespace twitchtv

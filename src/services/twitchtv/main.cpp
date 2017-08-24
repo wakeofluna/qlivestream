@@ -4,4 +4,4 @@
 
 #include "../../core/i_profile.h"
 
-MAIN(twitchtv3::Profile, "Twitch.TV")
+MAIN(twitchtv::Profile, "Twitch.TV")

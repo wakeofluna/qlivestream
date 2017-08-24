@@ -27,6 +27,11 @@ void IProfile::setLastError(QString pError)
 	mLastError = pError;
 }
 
+void IProfile::performPostLogin(DefaultCallback && pCallback)
+{
+	pCallback();
+}
+
 void IProfile::downloadLogo(QUrl const & pUrl, DataCallback && pCallback)
 {
 	QNetworkRequest lRequest;

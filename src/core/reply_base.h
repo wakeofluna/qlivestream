@@ -33,6 +33,8 @@ protected:
 	void log(QVariant pData) const;
 	void setError(QString pError);
 
+	QVariantMap addHeadersToData(QVariant pData) const;
+
 	IProfile * mProfile;
 	QNetworkReply & mReply;
 	QString mTag;

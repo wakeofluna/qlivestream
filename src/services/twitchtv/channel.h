@@ -1,12 +1,12 @@
-#ifndef SERVICES_TWITCHTV3_CHANNEL_H_
-#define SERVICES_TWITCHTV3_CHANNEL_H_
+#ifndef SERVICES_TWITCHTV_CHANNEL_H_
+#define SERVICES_TWITCHTV_CHANNEL_H_
 
 #include <QString>
 #include <QVariant>
 
 #include "../../core/i_channel.h"
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 class ChannelChat;
@@ -21,6 +21,7 @@ public:
 	Profile & profile() const;
 	User & owner() const;
 	QString name() const;
+	QString id() const;
 
 	QString logoCacheString() const override;
 	IChannelChat * chat() override;
@@ -40,6 +41,6 @@ private:
 	QUrl mLogoUrl;
 };
 
-} // namespace twitchtv3
+} // namespace twitchtv
 
-#endif // SERVICES_TWITCHTV3_CHANNEL_H_
+#endif // SERVICES_TWITCHTV_CHANNEL_H_

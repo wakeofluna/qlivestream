@@ -1,5 +1,5 @@
-#ifndef SERVICES_TWITCHTV3_PROFILE_H_
-#define SERVICES_TWITCHTV3_PROFILE_H_
+#ifndef SERVICES_TWITCHTV_PROFILE_H_
+#define SERVICES_TWITCHTV_PROFILE_H_
 
 #include <algorithm>
 #include <QByteArray>
@@ -15,7 +15,7 @@
 #include "../../core/i_profile.h"
 #include "../../core/network_access.h"
 
-namespace twitchtv3
+namespace twitchtv
 {
 
 class Category;
@@ -51,11 +51,15 @@ public:
 
 	QUrl acquireTokenUrl() const override;
 	void performLogin(DefaultCallback && pCallback) override;
+	void performPostLogin(DefaultCallback && pCallback) override;
 
 	void rollupFollowedChannels() override;
 	void rollupFollowedCategories() override;
 	void rollupTopCategories() override;
 	void getFollowedStreams();
+	void getUserInfo(QStringList pName);
+
+	inline QString userID() const { return mUserID; }
 
 	// Networking
 	QUrl apiUrl(QString pAppend) const;
@@ -84,6 +88,7 @@ private:
 
 	AuthScopes mScopes;
 	QString mClientID;
+	QString mUserID;
 
 	ChatServerPtr mChatServer;
 
@@ -93,6 +98,6 @@ private:
 	int mPendingPoints;
 };
 
-} // namespace twitchtv3
+} // namespace twitchtv
 
-#endif // SERVICES_TWITCHTV3_PROFILE_H_
+#endif // SERVICES_TWITCHTV_PROFILE_H_
