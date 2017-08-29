@@ -18,6 +18,7 @@ FlowingLayout::FlowingLayout(QWidget * parent) : QLayout(parent)
 	mAnimated = true; // XXX default from settings
 
 	setSizeConstraint(SetMinimumSize);
+	setMargin(0);
 }
 
 FlowingLayout::FlowingLayout(QWidget * parent, Sorter && pSorter) : FlowingLayout(parent)
@@ -260,8 +261,8 @@ QSize FlowingLayout::doLayout(QRect const & pRect, bool pApply)
 			int x = i % lColumns;
 
 			QPoint lTopLeft;
-			lTopLeft.setX(lRect.left() + x * lItemSize.width() + (x-1) * lSpaceX);
-			lTopLeft.setY(lRect.top() + y * lItemSize.height() + (y-1) * lSpaceY);
+			lTopLeft.setX(lRect.left() + x * (lItemSize.width() + lSpaceX));
+			lTopLeft.setY(lRect.top() + y * (lItemSize.height() + lSpaceY));
 
 			QWidget * lWidget = mItems[i]->widget();
 
