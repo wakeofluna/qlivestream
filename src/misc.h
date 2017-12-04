@@ -59,7 +59,7 @@ inline bool updateIfChanged<QString>(QString & pTarget, QString const & pReplace
 }
 
 template <typename T>
-inline bool updateIfChanged(T & pTarget, T const & pReplacement, bool pPredicate)
+inline bool updateIfChanged(T & pTarget, T const & pReplacement, bool const & pPredicate)
 {
 	if (pTarget != pReplacement && pPredicate)
 	{
@@ -73,7 +73,7 @@ inline bool updateIfChanged(T & pTarget, T const & pReplacement, bool pPredicate
 }
 
 template <typename B>
-inline bool updateIfChanged(ClassBitset<B> & pBitset, typename B::enum_type pFlag, bool pSet)
+inline bool updateIfChanged(ClassBitset<B> & pBitset, typename B::enum_type pFlag, bool const & pSet)
 {
 	if (pBitset.test(pFlag) != pSet)
 	{
