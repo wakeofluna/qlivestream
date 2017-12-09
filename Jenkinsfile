@@ -19,6 +19,18 @@ pipeline {
 				'''
 			}
 		}
+		stage('Analyze') {
+			steps {
+				sh '''
+					cppcheck --enable=warning,style --inconclusive -q --template="{file},{line},{severity},{id},{message}" -I build/src -I src src
+				'''
+			}
+			post {
+				success {
+					warnings canResolveRelativePaths: false, consoleParsers: [[parserName: 'CppCheck (custom)']], useStableBuildAsReference: true
+				}
+			}
+		}
 		stage('Deploy') {
 			when {
 				environment name: 'BUILD_TYPE', value: 'Release'
