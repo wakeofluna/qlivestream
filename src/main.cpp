@@ -19,6 +19,7 @@ int main(int argc, char **argv)
 		lWindow->setAttribute(Qt::WA_DeleteOnClose);
 		lWindow->show();
 
+		// cppcheck-suppress memleak
 		return qapp.exec();
 	}
 	catch (Exception & e)

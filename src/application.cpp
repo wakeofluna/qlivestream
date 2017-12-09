@@ -216,7 +216,7 @@ void Application::proxyAuthenticationRequired(QNetworkProxy const & proxy, QAuth
 				int lResult = lDialog->exec();
 				QString lUsername = lDialog->username();
 				QString lPassword = lDialog->password();
-				lDialog->deleteLater();
+				delete lDialog;
 
 				if (lResult == QDialog::Accepted)
 				{
@@ -247,9 +247,8 @@ void Application::sslErrors(QNetworkReply * reply, QList<QSslError> const & erro
 	lDialog->setMessages(errors);
 
 	int lResult = lDialog->exec();
-	lDialog->deleteLater();
+	delete lDialog;
 
 	if (lResult == QDialog::Accepted)
 		reply->ignoreSslErrors();
 }
-

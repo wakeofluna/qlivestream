@@ -27,7 +27,7 @@ pipeline {
 		stage('Analyze') {
 			steps {
 				sh '''
-					cppcheck --enable=warning,style --inconclusive -q --template="{file},{line},{severity},{id},{message}" -I build/src -I src src
+					cppcheck --enable=warning,style --inconclusive --inline-suppr -q --template="{file},{line},{severity},{id},{message}" -I build/src -I src src
 				'''
 			}
 			post {
