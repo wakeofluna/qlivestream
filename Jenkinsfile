@@ -18,6 +18,11 @@ pipeline {
 					make -j
 				'''
 			}
+			post {
+				success {
+					warnings canResolveRelativePaths: false, consoleParsers: [[parserName: 'GNU Make + GNU C Compiler (gcc)']], useStableBuildAsReference: true
+				}
+			}
 		}
 		stage('Analyze') {
 			steps {
