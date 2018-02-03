@@ -11,12 +11,48 @@ class QWidget;
 class COREDLL Logger
 {
 public:
-	struct StatusMessage
+	class StatusMessage
 	{
-		inline StatusMessage(QString pMessage) { Logger::get()->logStatusUpdate(mIdent, pMessage); }
-		inline StatusMessage(StatusMessage const & pOther) { mIdent = pOther.mIdent; pOther.mIdent = -1; }
-		inline ~StatusMessage() { Logger::get()->logStatusClear(mIdent); }
-		mutable int mIdent;
+	public:
+		StatusMessage() = delete;
+
+		inline explicit StatusMessage(QString pMessage) : mIdent(-1)
+		{
+			Logger::get()->logStatusUpdate(mIdent, pMessage);
+		}
+
+		inline StatusMessage(StatusMessage const & pOther) : mIdent(-1)
+		{
+			Q_ASSERT(false && "Invalid use of copy constructor");
+		}
+
+		inline StatusMessage(StatusMessage && pOther) noexcept : mIdent(pOther.mIdent)
+		{
+			pOther.mIdent = -1;
+		}
+
+		inline ~StatusMessage()
+		{
+			if (mIdent != -1)
+				Logger::get()->logStatusClear(mIdent);
+		}
+
+		inline StatusMessage& operator= (StatusMessage const & pOther)
+		{
+			Q_ASSERT(false && "Invalid use of copy assignment operator");
+			mIdent = -1;
+			return *this;
+		}
+
+		inline StatusMessage& operator= (StatusMessage && pOther) noexcept
+		{
+			mIdent = pOther.mIdent;
+			pOther.mIdent = -1;
+			return *this;
+		}
+
+	private:
+		int mIdent;
 	};
 
 public:

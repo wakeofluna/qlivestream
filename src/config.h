@@ -13,7 +13,7 @@
 #endif
 
 // Helper for lambda captures
-#if defined(CDT_PARSER) || __cplusplus < 201402L
+#if defined(CDT_PARSER)
 #define CAPTURE(x) x
 #else
 #define CAPTURE(x) x = std::move(x)

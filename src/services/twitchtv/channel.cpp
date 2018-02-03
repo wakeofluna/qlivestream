@@ -265,7 +265,7 @@ void Channel::rollupVideos()
 
 	Logger::StatusMessage lStatus("Getting videos for channel...");
 
-	profile().throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
+	profile().throttledGet(lRequest, [this, CAPTURE(lStatus)] (QNetworkReply & pReply)
 	{
 		twitchtv::ServerReply lReply(&profile(), pReply, "ChannelVideos");
 		if (lReply.hasError())

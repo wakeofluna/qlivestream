@@ -157,7 +157,7 @@ void Profile::rollupFollowedChannels()
 
 	Logger::StatusMessage lStatus("Getting followed channels...");
 
-	throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
+	throttledGet(lRequest, [this, CAPTURE(lStatus)] (QNetworkReply & pReply)
 	{
 		twitchtv::ServerReply lReply(this, pReply, "UserFollowsChannels");
 		if (lReply.hasError())
@@ -199,7 +199,7 @@ void Profile::rollupFollowedCategories()
 
 	Logger::StatusMessage lStatus("Getting followed categories...");
 
-	throttledGet(lRequest, [this] (QNetworkReply & pReply)
+	throttledGet(lRequest, [this, CAPTURE(lStatus)] (QNetworkReply & pReply)
 	{
 		twitchtv::ServerReply lReply(this, pReply, "UserFollowsCategories");
 		if (lReply.hasError())
@@ -245,7 +245,7 @@ void Profile::rollupTopCategories()
 
 	Logger::StatusMessage lStatus("Getting top categories...");
 
-	throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
+	throttledGet(lRequest, [this, CAPTURE(lStatus)] (QNetworkReply & pReply)
 	{
 		twitchtv::ServerReply lReply(this, pReply, "TopCategories");
 		if (lReply.hasError())
@@ -283,7 +283,7 @@ void Profile::getFollowedStreams()
 
 	Logger::StatusMessage lStatus("Getting followed streams...");
 
-	throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
+	throttledGet(lRequest, [this, CAPTURE(lStatus)] (QNetworkReply & pReply)
 	{
 		twitchtv::ServerReply lReply(this, pReply, "UserFollowsStreams");
 		if (lReply.hasError())

@@ -58,7 +58,7 @@ void Category::rollupChannels()
 
 	Logger::StatusMessage lStatus("Getting online streams for category...");
 
-	profile().throttledGet(lRequest, [this, lStatus] (QNetworkReply & pReply)
+	profile().throttledGet(lRequest, [this, CAPTURE(lStatus)] (QNetworkReply & pReply)
 	{
 		twitchtv::ServerReply lReply(&profile(), pReply, "CategoryChannels");
 		if (lReply.hasError())
