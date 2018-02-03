@@ -211,17 +211,19 @@ void Profile::rollupFollowedCategories()
 			for (QVariant & lCategoryItem : lList)
 			{
 				Category * lCategory = processCategory(lCategoryItem);
-				lCategory->updateFlag(Category::Flag::FOLLOWED, true);
-
 				if (lCategory != nullptr && !mFollowedCategories.contains(lCategory))
 				{
+					lCategory->updateFlag(Category::Flag::FOLLOWED, true);
 					mFollowedCategories.append(lCategory);
 					mCanRollupFollowedCategories = true;
 				}
 			}
 
-			std::sort(mFollowedCategories.begin(), mFollowedCategories.end());
-			emit followedCategoriesUpdated();
+			if (mCanRollupFollowedCategories)
+			{
+				std::sort(mFollowedCategories.begin(), mFollowedCategories.end());
+				emit followedCategoriesUpdated();
+			}
 		}
 	});
 }
