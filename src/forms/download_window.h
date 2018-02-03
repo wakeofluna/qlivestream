@@ -22,7 +22,7 @@ class DownloadWindow : public QWidget
 Q_OBJECT
 
 public:
-	DownloadWindow(IDownloader * pDownloader);
+	explicit DownloadWindow(IDownloader * pDownloader);
 	~DownloadWindow();
 
 public slots:

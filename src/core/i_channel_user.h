@@ -37,6 +37,7 @@ public:
 			MODERATOR,
 			INVALID
 		};
+		// cppcheck-suppress noExplicitConstructor
 		ENUMSTRUCT(Flag, Value, INVALID);
 	};
 	typedef ClassBitset<Flag> Flags;

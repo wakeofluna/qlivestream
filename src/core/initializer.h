@@ -5,7 +5,7 @@ template <typename T>
 class Initializer
 {
 public:
-	inline Initializer(bool pNow = true) : mInitialized(false) { if (pNow) run(); }
+	inline explicit Initializer(bool pNow = true) : mInitialized(false) { if (pNow) run(); }
 	inline ~Initializer() { T::finalize(); }
 	inline void run() { if (!mInitialized) { mInitialized = true; T::initialize(); } }
 	inline operator bool() const { return mInitialized; }

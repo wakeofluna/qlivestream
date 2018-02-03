@@ -14,7 +14,13 @@ public:
 		c.reset();
 	}
 
-	inline ClassBitset(T pos) : c()
+	explicit inline ClassBitset(enum_type pos) : c()
+	{
+		c.reset();
+		c.set(value(pos));
+	}
+
+	explicit inline ClassBitset(T pos) : c()
 	{
 		c.reset();
 		c.set(value(pos));
@@ -24,7 +30,7 @@ public:
 	{
 	}
 
-	inline bool test(T pos) const
+	inline bool test(enum_type pos) const
 	{
 		return c.test(value(pos));
 	}
@@ -35,7 +41,7 @@ public:
 		return *this;
 	}
 
-	inline ClassBitset<T> & set(T pos, bool val = true)
+	inline ClassBitset<T> & set(enum_type pos, bool val = true)
 	{
 		c.set(value(pos), val);
 		return *this;
@@ -47,7 +53,7 @@ public:
 		return *this;
 	}
 
-	inline ClassBitset<T> & reset(T pos)
+	inline ClassBitset<T> & reset(enum_type pos)
 	{
 		c.reset(value(pos));
 		return *this;
@@ -89,13 +95,13 @@ public:
 protected:
 	std::bitset<T::max> c;
 
-	inline ClassBitset(std::bitset<T::max> const & b) : c(b)
+	explicit inline ClassBitset(std::bitset<T::max> const & b) : c(b)
 	{
 	}
 
-	inline size_t value(T pos) const
+	static inline size_t value(enum_type pos)
 	{
-		return static_cast<size_t>(enum_type(pos));
+		return static_cast<size_t>(pos);
 	}
 };
 

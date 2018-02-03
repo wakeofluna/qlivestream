@@ -16,7 +16,7 @@ class MainAbout : public QWidget
 Q_OBJECT
 
 public:
-	MainAbout(QWidget *parent = 0);
+	explicit MainAbout(QWidget *parent = nullptr);
 	~MainAbout();
 
 private:

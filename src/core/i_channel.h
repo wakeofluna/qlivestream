@@ -40,6 +40,7 @@ public:
 			AM_EDITOR,
 			INVALID
 		};
+		// cppcheck-suppress noExplicitConstructor
 		ENUMSTRUCT(Flag, Value, INVALID);
 	};
 	typedef ClassBitset<Flag> Flags;

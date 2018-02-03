@@ -50,6 +50,7 @@ public:
 		// Terminator value
 		max_auth_scope
 	};
+	// cppcheck-suppress noExplicitConstructor
 	ENUMSTRUCT(AuthScope, Scope, max_auth_scope);
 
 public:

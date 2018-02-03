@@ -24,7 +24,7 @@ public:
 	};
 
 public:
-	VideoDownloader(Video & pVideo);
+	explicit VideoDownloader(Video & pVideo);
 	~VideoDownloader();
 
 	QString suggestedFolder() const override;

@@ -18,7 +18,7 @@ class DebugNetworkMessages : public QWidget
 Q_OBJECT
 
 public:
-	DebugNetworkMessages(QWidget *parent = 0);
+	explicit DebugNetworkMessages(QWidget *parent = nullptr);
 	~DebugNetworkMessages();
 
 	bool isCapturing() const;
