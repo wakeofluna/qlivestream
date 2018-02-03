@@ -68,10 +68,10 @@ public:
 	QNetworkRequest serviceRequest(bool pAuthed = true, bool pJson = true) const;
 
 	QNetworkReply * synchronisedGet(QNetworkRequest const & pRequest);
-	void throttledGet(QNetworkRequest const & pRequest, Receiver && pReceiver);
-	void throttledPost(QNetworkRequest const & pRequest, QByteArray const& pData, Receiver && pReceiver);
-	void throttledPut(QNetworkRequest const & pRequest, QByteArray const& pData, Receiver && pReceiver);
-	void throttledDelete(QNetworkRequest const & pRequest, Receiver && pReceiver);
+	void throttledGet(QNetworkRequest & pRequest, Receiver && pReceiver);
+	void throttledPost(QNetworkRequest & pRequest, QByteArray const& pData, Receiver && pReceiver);
+	void throttledPut(QNetworkRequest & pRequest, QByteArray const& pData, Receiver && pReceiver);
+	void throttledDelete(QNetworkRequest & pRequest, Receiver && pReceiver);
 
 	inline ChatServerPtr chatServer() const { return mChatServer; }
 

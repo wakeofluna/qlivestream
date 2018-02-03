@@ -33,31 +33,13 @@ QNetworkReply * NetworkAccess::networkGetAsync(QNetworkRequest const & pRequest)
 	return mNetworkAccessManager->get(pRequest);
 }
 
-void NetworkAccess::networkGet(QNetworkRequest const & pRequest, Receiver && pReceiver, int pRedirection) const
+void NetworkAccess::networkGet(QNetworkRequest const & pRequest, Receiver && pReceiver) const
 {
 	QNetworkReply * lReply = mNetworkAccessManager->get(pRequest);
-	QUrl pRequestUrl = pRequest.url();
 
-	QSignalMapper * lMapper = new QSignalMapper(lReply);
-	lMapper->setMapping(lReply, lReply);
-	QObject::connect(lReply, &QNetworkReply::finished, lMapper, (void (QSignalMapper::*) ()) &QSignalMapper::map);
-	QObject::connect(lMapper, (void (QSignalMapper::*)(QObject*)) &QSignalMapper::mapped, [this,pRequestUrl,CAPTURE(pReceiver),pRedirection] (QObject * o) mutable
+	QObject::connect(lReply, &QNetworkReply::finished, [this,lReply,CAPTURE(pReceiver)] ()
 	{
-		QNetworkReply * lReply = qobject_cast<QNetworkReply*>(o);
 		lReply->deleteLater();
-
-		QVariant lRedirect = lReply->attribute(QNetworkRequest::RedirectionTargetAttribute);
-		if (lRedirect.isValid() && pRedirection < 5)
-		{
-			QUrl lLocation = pRequestUrl.resolved(lRedirect.toUrl());
-			if (lLocation.isValid())
-			{
-				QNetworkRequest lRequest(lLocation);
-				networkGet(lRequest, std::move(pReceiver), pRedirection + 1);
-				return;
-			}
-		}
-
 		pReceiver(*lReply);
 	});
 }
@@ -66,14 +48,9 @@ void NetworkAccess::networkPost(QNetworkRequest const & pRequest, QByteArray con
 {
 	QNetworkReply * lReply = mNetworkAccessManager->post(pRequest, pBytes);
 
-	QSignalMapper * lMapper = new QSignalMapper(lReply);
-	lMapper->setMapping(lReply, lReply);
-	QObject::connect(lReply, &QNetworkReply::finished, lMapper, (void (QSignalMapper::*) ()) &QSignalMapper::map);
-	QObject::connect(lMapper, (void (QSignalMapper::*)(QObject*)) &QSignalMapper::mapped, [this,CAPTURE(pReceiver)] (QObject * o) mutable
+	QObject::connect(lReply, &QNetworkReply::finished, [this,lReply,CAPTURE(pReceiver)] ()
 	{
-		QNetworkReply * lReply = qobject_cast<QNetworkReply*>(o);
 		lReply->deleteLater();
-
 		pReceiver(*lReply);
 	});
 }
@@ -82,14 +59,9 @@ void NetworkAccess::networkPut(QNetworkRequest const & pRequest, QByteArray cons
 {
 	QNetworkReply * lReply = mNetworkAccessManager->put(pRequest, pBytes);
 
-	QSignalMapper * lMapper = new QSignalMapper(lReply);
-	lMapper->setMapping(lReply, lReply);
-	QObject::connect(lReply, &QNetworkReply::finished, lMapper, (void (QSignalMapper::*) ()) &QSignalMapper::map);
-	QObject::connect(lMapper, (void (QSignalMapper::*)(QObject*)) &QSignalMapper::mapped, [this,CAPTURE(pReceiver)] (QObject * o) mutable
+	QObject::connect(lReply, &QNetworkReply::finished, [this,lReply,CAPTURE(pReceiver)] ()
 	{
-		QNetworkReply * lReply = qobject_cast<QNetworkReply*>(o);
 		lReply->deleteLater();
-
 		pReceiver(*lReply);
 	});
 }
@@ -98,14 +70,9 @@ void NetworkAccess::networkDelete(QNetworkRequest const & pRequest, Receiver && 
 {
 	QNetworkReply * lReply = mNetworkAccessManager->deleteResource(pRequest);
 
-	QSignalMapper * lMapper = new QSignalMapper(lReply);
-	lMapper->setMapping(lReply, lReply);
-	QObject::connect(lReply, &QNetworkReply::finished, lMapper, (void (QSignalMapper::*) ()) &QSignalMapper::map);
-	QObject::connect(lMapper, (void (QSignalMapper::*)(QObject*)) &QSignalMapper::mapped, [this,CAPTURE(pReceiver)] (QObject * o) mutable
+	QObject::connect(lReply, &QNetworkReply::finished, [this,lReply,CAPTURE(pReceiver)] ()
 	{
-		QNetworkReply * lReply = qobject_cast<QNetworkReply*>(o);
 		lReply->deleteLater();
-
 		pReceiver(*lReply);
 	});
 }

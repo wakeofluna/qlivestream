@@ -36,6 +36,7 @@ void IProfile::downloadLogo(QUrl const & pUrl, DataCallback && pCallback)
 {
 	QNetworkRequest lRequest;
 	lRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
+	lRequest.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 	lRequest.setUrl(pUrl);
 
 	networkGet(lRequest, [this,CAPTURE(pCallback)] (QNetworkReply & pReply)

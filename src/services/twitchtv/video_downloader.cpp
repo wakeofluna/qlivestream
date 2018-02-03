@@ -71,6 +71,7 @@ void VideoDownloader::initialize()
 {
 	QNetworkRequest lRequest;
 	lRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
+	lRequest.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 	lRequest.setUrl(mUrl);
 
 	networkGet(lRequest, [this] (QNetworkReply & pReply)

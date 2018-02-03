@@ -395,8 +395,11 @@ QNetworkReply * Profile::synchronisedGet(QNetworkRequest const & pRequest)
 	return networkGetSync(pRequest);
 }
 
-void Profile::throttledGet(QNetworkRequest const& pRequest, Receiver && pReceiver)
+void Profile::throttledGet(QNetworkRequest & pRequest, Receiver && pReceiver)
 {
+	pRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
+	pRequest.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
 	QMutexLocker lGuard(&mPendingMutex);
 
 	if (mPendingPoints > 0)
@@ -413,8 +416,11 @@ void Profile::throttledGet(QNetworkRequest const& pRequest, Receiver && pReceive
 		mPendingTimer->start();
 }
 
-void Profile::throttledPost(const QNetworkRequest& pRequest, const QByteArray& pData, Receiver&& pReceiver)
+void Profile::throttledPost(QNetworkRequest & pRequest, const QByteArray& pData, Receiver&& pReceiver)
 {
+	pRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
+	pRequest.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
 	QMutexLocker lGuard(&mPendingMutex);
 
 	if (mPendingPoints > 0)
@@ -431,8 +437,11 @@ void Profile::throttledPost(const QNetworkRequest& pRequest, const QByteArray& p
 		mPendingTimer->start();
 }
 
-void Profile::throttledPut(const QNetworkRequest& pRequest, QByteArray const & pData, Receiver && pReceiver)
+void Profile::throttledPut(QNetworkRequest & pRequest, QByteArray const & pData, Receiver && pReceiver)
 {
+	pRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
+	pRequest.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
 	QMutexLocker lGuard(&mPendingMutex);
 
 	if (mPendingPoints > 0)
@@ -449,8 +458,11 @@ void Profile::throttledPut(const QNetworkRequest& pRequest, QByteArray const & p
 		mPendingTimer->start();
 }
 
-void Profile::throttledDelete(QNetworkRequest const & pRequest, Receiver && pReceiver)
+void Profile::throttledDelete(QNetworkRequest & pRequest, Receiver && pReceiver)
 {
+	pRequest.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
+	pRequest.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
 	QMutexLocker lGuard(&mPendingMutex);
 
 	if (mPendingPoints > 0)
