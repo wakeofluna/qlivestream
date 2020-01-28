@@ -37,7 +37,7 @@ void NetworkAccess::networkGet(QNetworkRequest const & pRequest, Receiver && pRe
 {
 	QNetworkReply * lReply = mNetworkAccessManager->get(pRequest);
 
-	QObject::connect(lReply, &QNetworkReply::finished, [this,lReply,CAPTURE(pReceiver)] ()
+	QObject::connect(lReply, &QNetworkReply::finished, [lReply,CAPTURE(pReceiver)] ()
 	{
 		lReply->deleteLater();
 		pReceiver(*lReply);
@@ -48,7 +48,7 @@ void NetworkAccess::networkPost(QNetworkRequest const & pRequest, QByteArray con
 {
 	QNetworkReply * lReply = mNetworkAccessManager->post(pRequest, pBytes);
 
-	QObject::connect(lReply, &QNetworkReply::finished, [this,lReply,CAPTURE(pReceiver)] ()
+	QObject::connect(lReply, &QNetworkReply::finished, [lReply,CAPTURE(pReceiver)] ()
 	{
 		lReply->deleteLater();
 		pReceiver(*lReply);
@@ -59,7 +59,7 @@ void NetworkAccess::networkPut(QNetworkRequest const & pRequest, QByteArray cons
 {
 	QNetworkReply * lReply = mNetworkAccessManager->put(pRequest, pBytes);
 
-	QObject::connect(lReply, &QNetworkReply::finished, [this,lReply,CAPTURE(pReceiver)] ()
+	QObject::connect(lReply, &QNetworkReply::finished, [lReply,CAPTURE(pReceiver)] ()
 	{
 		lReply->deleteLater();
 		pReceiver(*lReply);
@@ -70,7 +70,7 @@ void NetworkAccess::networkDelete(QNetworkRequest const & pRequest, Receiver && 
 {
 	QNetworkReply * lReply = mNetworkAccessManager->deleteResource(pRequest);
 
-	QObject::connect(lReply, &QNetworkReply::finished, [this,lReply,CAPTURE(pReceiver)] ()
+	QObject::connect(lReply, &QNetworkReply::finished, [lReply,CAPTURE(pReceiver)] ()
 	{
 		lReply->deleteLater();
 		pReceiver(*lReply);
