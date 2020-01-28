@@ -5,6 +5,7 @@
 #include <QList>
 #include <QSslError>
 #include <QString>
+#include <QStyle>
 #include <QTextStream>
 
 namespace forms

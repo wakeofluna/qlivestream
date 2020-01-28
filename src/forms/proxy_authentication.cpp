@@ -2,6 +2,8 @@
 #include "proxy_authentication.h"
 #include "ui_proxy_authentication.h"
 
+#include <QStyle>
+
 namespace forms
 {
 
